@@ -9,10 +9,11 @@ const isProtected = createRouteMatcher([
   "/api/partner(.*)",
 ]);
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtected(req)) auth().protect();
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtected(req)) await auth.protect();
 });
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
+
