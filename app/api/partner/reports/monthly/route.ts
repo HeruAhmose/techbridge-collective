@@ -141,7 +141,7 @@ export async function GET(req: NextRequest) {
 
   const pdf = await done;
 
-  return new Response(pdf, {
+  return new Response(new Uint8Array(pdf), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="partner-${org.name.replace(/\s+/g, "-").toLowerCase()}-${month}.pdf"`,
@@ -149,3 +149,4 @@ export async function GET(req: NextRequest) {
     },
   });
 }
+
