@@ -1,19 +1,20 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isProtected = createRouteMatcher([
+const isProtectedRoute = createRouteMatcher([
   "/navigator(.*)",
-  "/api/chatbase-jwt(.*)",
-  "/api/techminutes(.*)",
-  "/api/admin(.*)",
   "/partner(.*)",
+  "/dashboard(.*)",
+  "/api/admin(.*)",
   "/api/partner(.*)",
+  "/api/techminutes(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtected(req)) await auth.protect();
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
 });
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next|.*\\..*).*)", "/(api|trpc)(.*)"],
 };
-
