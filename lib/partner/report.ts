@@ -219,9 +219,13 @@ export async function buildHubCsvFilesForMonth(params: { orgId: string; month: s
 export async function buildHubSessionRowCsvFilesForMonth(params: {
   orgId: string;
   month: string;
+  includeResolution?: boolean;
+  allowedExtraColumns?: string[];
   maxRows?: number;
   chunkSize?: number;
 }) {
+  ...
+}
   const org = await prisma.partnerOrganization.findUnique({ where: { id: params.orgId } });
   if (!org) return { files: [], warning: "Org not found." };
 
@@ -242,14 +246,15 @@ export async function buildHubSessionRowCsvFilesForMonth(params: {
     orderBy: [{ hubLocationId: "asc" }, { createdAt: "asc" }],
     take: maxRows + 1,
     select: {
-      id: true,
-      createdAt: true,
-      hubLocationId: true,
-      minutes: true,
-      category: true,
-      outcome: true,
-      isEscalated: true,
-    },
+  id: true,
+  createdAt: true,
+  hubLocationId: true,
+  minutes: true,
+  category: true,
+  outcome: true,
+  isEscalated: true,
+  resolution: true, // ok even if you don't output it unless includeResolution is true
+},
   });
 
   if (rows.length > maxRows) {
