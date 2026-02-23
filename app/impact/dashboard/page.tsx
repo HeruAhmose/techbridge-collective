@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Interactive, non‑PII TechMinutes® dashboard for partners and funders.",
 };
 
-export const dynamicRoute = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 export default function ImpactDashboardPage() {
   return (
@@ -40,3 +40,4 @@ export default function ImpactDashboardPage() {
     </main>
   );
 }
+
