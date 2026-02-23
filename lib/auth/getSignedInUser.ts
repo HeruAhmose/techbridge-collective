@@ -21,7 +21,7 @@ function primaryEmail(u: any): string | null {
 }
 
 export async function getSignedInUser(): Promise<SignedInUser | null> {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return null;
 
   const cu = await clerkClient.users.getUser(userId);
@@ -55,3 +55,4 @@ export async function getSignedInUser(): Promise<SignedInUser | null> {
     role: dbUser.role,
   };
 }
+
