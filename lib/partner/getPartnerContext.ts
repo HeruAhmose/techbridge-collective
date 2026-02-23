@@ -33,5 +33,6 @@ export async function assertOrgAccess(orgId: string) {
     where: { partnerOrgId_userId: { partnerOrgId: orgId, userId: user.id } },
   });
 
-  return { user, ok: Boolean(membership) as const };
+  return { user, ok: Boolean(membership) };
 }
+
