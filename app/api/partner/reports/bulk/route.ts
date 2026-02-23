@@ -112,7 +112,7 @@ const rangeLabel = `${sortedMonths[0]}_to_${sortedMonths[sortedMonths.length - 1
 
   const buf = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
 
-  return new NextResponse(buf, {
+  return new NextResponse(new Uint8Array(buf), {
     status: 200,
     headers: {
       "Content-Type": "application/zip",
@@ -121,3 +121,4 @@ const rangeLabel = `${sortedMonths[0]}_to_${sortedMonths[sortedMonths.length - 1
     },
   });
 }
+
