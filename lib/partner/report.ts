@@ -37,18 +37,23 @@ export async function getPartnerScopedData(params: { orgId: string; month: strin
   const hubName = new Map(hubs.map((h) => [h.id, h.name]));
 
   const { start, end } = monthRange(params.month);
+
   const where = {
     createdAt: { gte: start, lt: end },
     hubLocationId: { in: hubIds.length ? hubIds : ["__none__"] },
-  };
+  } as const;
 
-  const total = await prisma.techMinute.aggregate({ _sum: { minutes: true }, _count: { _all: true }, where });
+  const total = await prisma.techMinute.aggregate({
+    _sum: { minutes: true },
+    _count: { _all: true },
+    where: where as any,
+  });
 
   const byHub = await prisma.techMinute.groupBy({
     by: ["hubLocationId"],
     _sum: { minutes: true },
     _count: { _all: true },
-    where,
+    where: where as any,
     orderBy: [{ _sum: { minutes: "desc" } }],
   });
 
@@ -56,12 +61,16 @@ export async function getPartnerScopedData(params: { orgId: string; month: strin
     by: ["category"],
     _sum: { minutes: true },
     _count: { _all: true },
-    where,
+    where: where as any,
     orderBy: [{ _sum: { minutes: "desc" } }],
     take: 10,
   });
 
-  const byOutcome = await prisma.techMinute.groupBy({ by: ["outcome"], _count: { _all: true }, where });
+  const byOutcome = await prisma.techMinute.groupBy({
+    by: ["outcome"],
+    _count: { _all: true },
+    where: where as any,
+  });
 
   return { org, hubs, hubName, total, byHub, byCategory, byOutcome };
 }
@@ -84,6 +93,7 @@ export function buildPartnerCsv(params: {
     ...params.byCategory.map((c) => ({ metric: `category_${c.category}`, value: `${c.minutes}m (${c.sessions} sessions)` })),
     ...params.byHub.map((h) => ({ metric: `hub_${h.hub}`, value: `${h.minutes}m (${h.sessions} sessions)` })),
   ];
+
   return toCsv(rows);
 }
 
@@ -136,7 +146,6 @@ export async function buildPartnerPdf(params: {
   return await done;
 }
 
-
 export async function buildHubCsvFilesForMonth(params: { orgId: string; month: string }) {
   const org = await prisma.partnerOrganization.findUnique({ where: { id: params.orgId } });
   if (!org) return [];
@@ -144,44 +153,38 @@ export async function buildHubCsvFilesForMonth(params: { orgId: string; month: s
   const hubs = await prisma.hubLocation.findMany({ where: { partnerOrgId: params.orgId } });
   if (hubs.length === 0) return [];
 
-  const hubIds = hubs.map((h) => h.id);
   const hubName = new Map(hubs.map((h) => [h.id, h.name]));
   const hubSlug = new Map(hubs.map((h) => [h.id, slug(h.name)]));
+  const hubIds = hubs.map((h) => h.id);
 
   const { start, end } = monthRange(params.month);
-  const where = {
-    createdAt: { gte: start, lt: end },
-    hubLocationId: { in: hubIds },
-  } as const;
 
   const totals = await prisma.techMinute.groupBy({
     by: ["hubLocationId"],
     _sum: { minutes: true },
     _count: { _all: true },
-    where: where as any,
+    where: { createdAt: { gte: start, lt: end }, hubLocationId: { in: hubIds } } as any,
   });
 
   const outcomes = await prisma.techMinute.groupBy({
     by: ["hubLocationId", "outcome"],
     _count: { _all: true },
-    where: where as any,
+    where: { createdAt: { gte: start, lt: end }, hubLocationId: { in: hubIds } } as any,
   });
 
   const cats = await prisma.techMinute.groupBy({
     by: ["hubLocationId", "category"],
     _sum: { minutes: true },
     _count: { _all: true },
-    where: where as any,
+    where: { createdAt: { gte: start, lt: end }, hubLocationId: { in: hubIds } } as any,
   });
 
   const totalByHub = new Map(totals.map((t) => [t.hubLocationId, { minutes: t._sum.minutes ?? 0, sessions: t._count._all }]));
-
   const outcomeByHub = new Map<string, Record<string, number>>();
   for (const o of outcomes) {
-    const k = o.hubLocationId;
-    const m = outcomeByHub.get(k) ?? {};
+    const m = outcomeByHub.get(o.hubLocationId) ?? {};
     m[String(o.outcome)] = o._count._all;
-    outcomeByHub.set(k, m);
+    outcomeByHub.set(o.hubLocationId, m);
   }
 
   const catByHub = new Map<string, Array<{ category: string; minutes: number; sessions: number }>>();
@@ -208,13 +211,11 @@ export async function buildHubCsvFilesForMonth(params: { orgId: string; month: s
       ...c.map((x) => ({ metric: `category_${x.category}`, value: `${x.minutes}m (${x.sessions} sessions)` })),
     ];
 
-    const csv = toCsv(rows);
-    files.push({ filename: `hubs/hub-${hubSlug.get(h.id) || h.id}-${params.month}.csv`, csv });
+    files.push({ filename: `hubs/hub-${hubSlug.get(h.id) || h.id}-${params.month}.csv`, csv: toCsv(rows) });
   }
 
   return files;
 }
-
 
 export async function buildHubSessionRowCsvFilesForMonth(params: {
   orgId: string;
@@ -224,13 +225,11 @@ export async function buildHubSessionRowCsvFilesForMonth(params: {
   maxRows?: number;
   chunkSize?: number;
 }) {
-  ...
-}
   const org = await prisma.partnerOrganization.findUnique({ where: { id: params.orgId } });
-  if (!org) return { files: [], warning: "Org not found." };
+  if (!org) return { files: [], warning: "Org not found." as string | null };
 
   const hubs = await prisma.hubLocation.findMany({ where: { partnerOrgId: params.orgId } });
-  if (hubs.length === 0) return { files: [], warning: null };
+  if (hubs.length === 0) return { files: [], warning: null as string | null };
 
   const hubName = new Map(hubs.map((h) => [h.id, h.name]));
   const hubSlug = new Map(hubs.map((h) => [h.id, slug(h.name)]));
@@ -239,22 +238,27 @@ export async function buildHubSessionRowCsvFilesForMonth(params: {
   const maxRows = params.maxRows ?? Number(process.env.SESSION_EXPORT_MAX_ROWS || 50_000);
   const chunkSize = params.chunkSize ?? Number(process.env.SESSION_EXPORT_CHUNK_SIZE || 10_000);
 
+  const allow = new Set(params.allowedExtraColumns ?? []);
+  const includeResolutionCol = Boolean(params.includeResolution) || allow.has("resolution");
+
   const { start, end } = monthRange(params.month);
 
+  const select: any = {
+    id: true,
+    createdAt: true,
+    hubLocationId: true,
+    minutes: true,
+    category: true,
+    outcome: true,
+    isEscalated: true,
+  };
+  if (includeResolutionCol) select.resolution = true;
+
   const rows = await prisma.techMinute.findMany({
-    where: { createdAt: { gte: start, lt: end }, hubLocationId: { in: hubIds } },
+    where: { createdAt: { gte: start, lt: end }, hubLocationId: { in: hubIds } } as any,
     orderBy: [{ hubLocationId: "asc" }, { createdAt: "asc" }],
     take: maxRows + 1,
-    select: {
-  id: true,
-  createdAt: true,
-  hubLocationId: true,
-  minutes: true,
-  category: true,
-  outcome: true,
-  isEscalated: true,
-  resolution: true, // ok even if you don't output it unless includeResolution is true
-},
+    select,
   });
 
   if (rows.length > maxRows) {
@@ -264,12 +268,14 @@ export async function buildHubSessionRowCsvFilesForMonth(params: {
     };
   }
 
-  const byHub = new Map<string, typeof rows>();
+  const byHub = new Map<string, any[]>();
   for (const r of rows) {
     const arr = byHub.get(r.hubLocationId) ?? [];
     arr.push(r);
     byHub.set(r.hubLocationId, arr);
   }
+
+  const q = (v: string) => (/[",\n]/.test(v) ? `"${v.replaceAll('"', '""')}"` : v);
 
   const files: Array<{ filename: string; csv: string }> = [];
 
@@ -277,36 +283,28 @@ export async function buildHubSessionRowCsvFilesForMonth(params: {
     const hSlug = hubSlug.get(hubId) || hubId;
     const hName = hubName.get(hubId) || hubId;
 
-    // Chunk per hub to keep files manageable.
     const parts = Math.max(1, Math.ceil(hubRows.length / chunkSize));
 
     for (let i = 0; i < parts; i += 1) {
       const chunk = hubRows.slice(i * chunkSize, (i + 1) * chunkSize);
-      const includeResolutionCol = Boolean(params.includeResolution);
-          const header = includeResolutionCol
-            ? "session_id,created_at,hub,minutes,category,outcome,escalated,resolution"
-            : "session_id,created_at,hub,minutes,category,outcome,escalated";
+
+      const header = includeResolutionCol
+        ? "session_id,created_at,hub,minutes,category,outcome,escalated,resolution"
+        : "session_id,created_at,hub,minutes,category,outcome,escalated";
+
       const lines = chunk.map((x) => {
-        const created = x.createdAt.toISOString();
+        const created = new Date(x.createdAt).toISOString();
         const esc = x.isEscalated ? "yes" : "no";
-        const q = (v: string) => (/[",\n]/.test(v) ? `"${v.replaceAll('"', '""')}"` : v);
-        return [
-          q(x.id),
-          q(created),
-          q(hName),
-          String(x.minutes),
-          q(x.category),
-          q(String(x.outcome)),
-          esc,
-        ].join(",");
+        const base = [q(String(x.id)), q(created), q(hName), String(x.minutes), q(String(x.category)), q(String(x.outcome)), esc];
+        if (!includeResolutionCol) return base.join(",");
+
+        const reso = q(String(x.resolution || "").replace(/\s+/g, " ").slice(0, 300));
+        return [...base, reso].join(",");
       });
 
       const csv = [header, ...lines].join("\n");
       const suffix = parts > 1 ? `-part-${String(i + 1).padStart(3, "0")}` : "";
-      files.push({
-        filename: `sessions/hub-${hSlug}-${params.month}-sessions${suffix}.csv`,
-        csv,
-      });
+      files.push({ filename: `sessions/hub-${hSlug}-${params.month}-sessions${suffix}.csv`, csv });
     }
   }
 
