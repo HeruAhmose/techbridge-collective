@@ -1,10 +1,38 @@
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+generator client {
+  provider = "prisma-client-js"
+}
 
-enum UserRole { PUBLIC PARTNER NAVIGATOR ADMIN }
-enum TechOutcome { RESOLVED NEEDS_HELP FOLLOW_UP }
-enum InviteEmailStatus { NOT_SENT SENT DELIVERED FAILED }
-enum CronRunStatus { STARTED SUCCESS FAILED SKIPPED }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PUBLIC
+  PARTNER
+  NAVIGATOR
+  ADMIN
+}
+
+enum TechOutcome {
+  RESOLVED
+  NEEDS_HELP
+  FOLLOW_UP
+}
+
+enum InviteEmailStatus {
+  NOT_SENT
+  SENT
+  DELIVERED
+  FAILED
+}
+
+enum CronRunStatus {
+  STARTED
+  SUCCESS
+  FAILED
+  SKIPPED
+}
 
 model User {
   id          String   @id @default(cuid())
@@ -14,7 +42,7 @@ model User {
   role        UserRole @default(PUBLIC)
   createdAt   DateTime @default(now())
 
-  techMinutes TechMinute[]
+  techMinutes        TechMinute[]
   partnerMemberships PartnerMembership[]
 
   @@index([role])
@@ -25,18 +53,19 @@ model PartnerOrganization {
   name      String   @unique
   createdAt DateTime @default(now())
 
-  hubs        HubLocation[]
-  memberships PartnerMembership[]
+  hubs          HubLocation[]
+  memberships   PartnerMembership[]
+  PartnerInvite PartnerInvite[]
 }
 
 model PartnerMembership {
-  id              String   @id @default(cuid())
-  partnerOrgId    String
-  userId          String
-  createdAt       DateTime @default(now())
+  id           String   @id @default(cuid())
+  partnerOrgId String
+  userId       String
+  createdAt    DateTime @default(now())
 
   partnerOrg PartnerOrganization @relation(fields: [partnerOrgId], references: [id], onDelete: Cascade)
-  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([partnerOrgId, userId])
   @@index([userId])
@@ -44,21 +73,21 @@ model PartnerMembership {
 }
 
 model PartnerInvite {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
   partnerOrgId     String
   email            String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   consumedAt       DateTime?
   consumedByUserId String?
 
-  emailStatus       InviteEmailStatus @default(NOT_SENT)
-  emailProvider     String?
-  emailMessageId    String?
-  emailAttempts     Int               @default(0)
+  emailStatus        InviteEmailStatus @default(NOT_SENT)
+  emailProvider      String?
+  emailMessageId     String?
+  emailAttempts      Int               @default(0)
   emailLastAttemptAt DateTime?
-  emailDeliveredAt  DateTime?
-  emailLastError    String?
+  emailDeliveredAt   DateTime?
+  emailLastError     String?
 
   partnerOrg          PartnerOrganization  @relation(fields: [partnerOrgId], references: [id], onDelete: Cascade)
   emailDeliveryEvents EmailDeliveryEvent[]
@@ -91,21 +120,21 @@ model EmailDeliveryEvent {
 }
 
 model CronRun {
-  id          String        @id @default(cuid())
-  jobName     String
-  status      CronRunStatus @default(STARTED)
-  startedAt   DateTime      @default(now())
-  finishedAt  DateTime?
-  durationMs  Int?
-  locked      Boolean       @default(true)
+  id         String        @id @default(cuid())
+  jobName    String
+  status     CronRunStatus @default(STARTED)
+  startedAt  DateTime      @default(now())
+  finishedAt DateTime?
+  durationMs Int?
+  locked     Boolean       @default(true)
 
-  attempted   Int           @default(0)
-  processed   Int           @default(0)
-  skipped     Int           @default(0)
-  errorsCount Int           @default(0)
+  attempted   Int     @default(0)
+  processed   Int     @default(0)
+  skipped     Int     @default(0)
+  errorsCount Int     @default(0)
   lastError   String?
 
-  meta        Json?
+  meta Json?
 
   @@index([jobName, startedAt])
   @@index([status])
@@ -136,9 +165,9 @@ model HubLocation {
 model HubSchedule {
   id            String  @id @default(cuid())
   hubLocationId String
-  dayOfWeek     Int     // 0=Sun..6=Sat
-  startTime     String  // "10:00"
-  endTime       String  // "13:00"
+  dayOfWeek     Int // 0=Sun..6=Sat
+  startTime     String // "10:00"
+  endTime       String // "13:00"
   cadence       String  @default("Weekly")
   isActive      Boolean @default(true)
 
