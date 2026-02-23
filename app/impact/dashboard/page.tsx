@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import dynamicImport from "next/dynamic";
 import Link from "next/link";
 import { Card } from "@/components/ui";
 
-const ImpactDashboardClient = dynamic(() => import("@/components/impact/ImpactDashboardClient"), { ssr: false });
+const ImpactDashboardClient = dynamicImport(() => import("@/components/impact/ImpactDashboardClient"), { ssr: false });
 
 export const metadata: Metadata = {
   title: "Impact Dashboard — TechMinutes®",
@@ -40,4 +40,5 @@ export default function ImpactDashboardPage() {
     </main>
   );
 }
+
 
