@@ -24,7 +24,7 @@ export async function getSignedInUser(): Promise<SignedInUser | null> {
   const { userId } = await auth();
   if (!userId) return null;
 
-  const cu = await clerkClient.users.getUser(userId);
+  const cu = await (await clerkClient()).users.getUser(userId);
   const email = primaryEmail(cu);
   if (!email) return null;
 
@@ -55,5 +55,6 @@ export async function getSignedInUser(): Promise<SignedInUser | null> {
     role: dbUser.role,
   };
 }
+
 
 
