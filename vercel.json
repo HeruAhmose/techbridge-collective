@@ -13,7 +13,7 @@
   "crons": [
     {
       "path": "/api/cron/invite-retry",
-      "schedule": "*/10 * * * *"
+      "schedule": "5 3 * * *"
     },
     {
       "path": "/api/cron/prune",
