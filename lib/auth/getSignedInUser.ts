@@ -2,11 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 
 export type SignedInUser = {
-  id: string;
-  clerkUserId: string;
-  email: string;
-  name: string | null;
-  role: string;
+  id: string; clerkUserId: string; email: string; name: string | null; role: string;
 };
 
 export async function getSignedInUser(): Promise<SignedInUser | null> {

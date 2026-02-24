@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const user = await getSignedInUser().catch(() => null);
+  const user = await getSignedInUser().catch(() => null).catch(() => null);
 
   return (
     <html lang="en" className={`${outfit.variable} ${cormorant.variable} ${dmMono.variable}`}>
@@ -83,4 +83,5 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     </html>
   );
 }
+
 
