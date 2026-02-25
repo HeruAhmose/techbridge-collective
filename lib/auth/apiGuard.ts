@@ -21,7 +21,7 @@ export function apiGuard(
       { status: 401, headers: { "Cache-Control": "no-store" } },
     );
   }
-  if (!roles.includes(user.role)) {
+  if (!roles.includes(user.role as any)) {
     return NextResponse.json(
       { error: "Forbidden" },
       { status: 403, headers: { "Cache-Control": "no-store" } },
@@ -29,3 +29,4 @@ export function apiGuard(
   }
   return null;
 }
+
