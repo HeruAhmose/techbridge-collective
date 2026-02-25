@@ -229,3 +229,4 @@ model TechMinute {
   @@index([outcome])
   @@index([hubLocationId, createdAt])
 }
+
