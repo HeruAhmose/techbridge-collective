@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
@@ -416,3 +417,4 @@ export default async function DemoPage() {
     </div>
   );
 }
+

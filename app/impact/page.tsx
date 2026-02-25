@@ -1,10 +1,11 @@
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { Card } from "@/components/ui";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 
-const ImpactDashboardClient = dynamic(() => import("@/components/impact/ImpactDashboardClient"), { ssr: false });
+const ImpactDashboardClient = nextDynamic(() => import("@/components/impact/ImpactDashboardClient"), { ssr: false });
 
 export const metadata: Metadata = {
   title: "TechMinutes® Impact",
@@ -169,3 +170,5 @@ export default async function ImpactPage() {
     </div>
   );
 }
+
+

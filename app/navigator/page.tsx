@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { Card, Button } from "@/components/ui";
@@ -86,3 +87,4 @@ export default async function NavigatorDashboard() {
     </div>
   );
 }
+

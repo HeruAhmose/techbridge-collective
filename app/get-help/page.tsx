@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db/prisma";
 import ResidentIntakeForm from "@/components/forms/ResidentIntakeForm";
@@ -100,3 +101,4 @@ export default async function GetHelpPage() {
     </div>
   );
 }
+

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button, Card } from "@/components/ui";
@@ -91,3 +92,4 @@ export default function AboutPage() {
     </div>
   );
 }
+

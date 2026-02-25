@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { fmtSchedule } from "@/lib/time";
@@ -231,3 +232,4 @@ export default async function HomePage() {
     </div>
   );
 }
+

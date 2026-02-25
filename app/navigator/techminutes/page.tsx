@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/db/prisma";
 import TechMinuteForm from "@/components/navigator/TechMinuteForm";
 import { Card } from "@/components/ui";
@@ -43,3 +44,4 @@ export default async function NavigatorTechMinutes() {
     </div>
   );
 }
+

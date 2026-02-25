@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import TechBridgeDashboard from "@/components/dashboard/TechBridgeDashboard";
@@ -14,3 +15,4 @@ export default async function DashboardPage() {
   if (!userId) redirect("/sign-in");
   return <TechBridgeDashboard />;
 }
+
