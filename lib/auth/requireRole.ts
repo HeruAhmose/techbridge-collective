@@ -5,6 +5,7 @@ import { getSignedInUser } from "@/lib/auth/getSignedInUser";
 export async function requireRole(roles: UserRole[]) {
   const user = await getSignedInUser();
   if (!user) redirect("/sign-in");
-  if (!roles.includes(user.role)) redirect("/");
+  if (!roles.includes(user.role as any)) redirect("/");
   return user;
 }
+
