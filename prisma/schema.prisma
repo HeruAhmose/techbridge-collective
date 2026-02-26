@@ -230,3 +230,4 @@ model TechMinute {
   @@index([hubLocationId, createdAt])
 }
 
+
