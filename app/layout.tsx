@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Outfit, Cormorant_Garamond, DM_Mono } from "next/font/google";
 import SiteNav from "@/components/SiteNav";
 import Footer from "@/components/Footer";
@@ -26,13 +27,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${outfit.variable} ${cormorant.variable} ${dmMono.variable}`}>
       <body className="font-sans antialiased">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:rounded-md focus:bg-gold focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink">
-          Skip to content
-        </a>
-        <SiteNav user={null} />
-        <main id="main-content" tabIndex={-1}>{children}</main>
-        <Footer />
-        <ChatbaseWidgetLoader />
+        <ClerkProvider>
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:rounded-md focus:bg-gold focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink">
+            Skip to content
+          </a>
+          <SiteNav user={null} />
+          <main id="main-content" tabIndex={-1}>{children}</main>
+          <Footer />
+          <ChatbaseWidgetLoader />
+        </ClerkProvider>
       </body>
     </html>
   );
