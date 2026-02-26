@@ -1,13 +1,27 @@
 "use client";
 import { useEffect } from "react";
 
+const BOT_ID = "3ylVDc3243y5659rIjvcd";
+
 export default function ChatbaseWidgetLoader() {
   useEffect(() => {
-    if (document.getElementById("chatbase-loader")) return;
+    if (document.getElementById(BOT_ID)) return;
+
+    // Init stub
+    if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+      (window as any).chatbase = (...args: any[]) => {
+        ((window as any).chatbase.q = (window as any).chatbase.q || []).push(args);
+      };
+    }
+
+    // Load embed script
     const s = document.createElement("script");
-    s.id = "chatbase-loader";
-    s.innerHTML = `(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const el=document.createElement("script");el.src="https://www.chatbase.co/embed.min.js";el.id="3ylVDc3243y5659rIjvcd";el.domain="www.chatbase.co";document.body.appendChild(el)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`;
-    document.head.appendChild(s);
+    s.src = "https://www.chatbase.co/embed.min.js";
+    s.id = BOT_ID;
+    s.setAttribute("domain", "www.chatbase.co");
+    s.defer = true;
+    document.body.appendChild(s);
   }, []);
+
   return null;
 }
