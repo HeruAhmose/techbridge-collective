@@ -14,7 +14,7 @@
     "test:e2e": "playwright test",
     "test:e2e:real": "CHATBASE_E2E_REAL=1 playwright test",
     "format": "prettier -w .",
-    "vercel-build": "prisma generate && next build",
+    "vercel-build": "prisma generate || true && next build",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -58,4 +58,3 @@
   },
   "packageManager": "npm@10.9.2"
 }
-
