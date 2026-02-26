@@ -1,16 +1,13 @@
 "use client";
-import Script from "next/script";
-
-const BOT_ID = process.env.NEXT_PUBLIC_CHATBASE_BOT_ID || "3ylVDc3243y5659rIjvcd";
-
-const script = `(function(){var id="${BOT_ID}";if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...a)=>(window.chatbase.q=window.chatbase.q||[]).push(a);window.chatbase=new Proxy(window.chatbase,{get(t,p){if(p==="q")return t.q;return(...a)=>t(p,...a)}});}function onLoad(){var s=document.createElement("script");s.src="https://www.chatbase.co/embed.min.js";s.id=id;s.setAttribute("chatbotId",id);s.defer=true;document.head.appendChild(s);}if(document.readyState==="complete")onLoad();else window.addEventListener("load",onLoad);})();`;
+import { useEffect } from "react";
 
 export default function ChatbaseWidgetLoader() {
-  return (
-    <Script
-      id="chatbase-loader"
-      strategy="afterInteractive"
-      dangerouslySetInnerHTML={{ __html: script }}
-    />
-  );
+  useEffect(() => {
+    if (document.getElementById("chatbase-loader")) return;
+    const s = document.createElement("script");
+    s.id = "chatbase-loader";
+    s.innerHTML = `(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const el=document.createElement("script");el.src="https://www.chatbase.co/embed.min.js";el.id="3ylVDc3243y5659rIjvcd";el.domain="www.chatbase.co";document.body.appendChild(el)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`;
+    document.head.appendChild(s);
+  }, []);
+  return null;
 }
