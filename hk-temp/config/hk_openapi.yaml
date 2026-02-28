@@ -1,0 +1,1298 @@
+openapi: "3.1.0"
+info:
+  title: "H.K. — Horace King AI Help Desk Architect API"
+  version: "2.0.0"
+  description: |
+    Production API for the H.K. generative tech support triage system.
+    Built for TechBridge Collective community technology hubs.
+    
+    ## Authentication
+    All endpoints require Bearer JWT (ML-DSA-65 signed) in the Authorization header.
+    Tokens issued via /api/v1/auth/token with tenant-scoped claims.
+    
+    ## Tenant Isolation
+    Every request is scoped to a tenant (hub) via the X-Tenant-ID header.
+    Row-Level Security (RLS) enforces isolation at the database layer.
+    
+    ## Rate Limits
+    - Community members: 30 req/min
+    - Digital Navigators: 120 req/min
+    - System admins: 600 req/min
+    Headers: X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset
+  contact:
+    name: "TechBridge Collective Engineering"
+    url: "https://techbridge-collective.vercel.app"
+  license:
+    name: "Proprietary"
+
+servers:
+  - url: "https://api.hk.techbridge.org/api/v1"
+    description: "Production (SaaS)"
+  - url: "https://staging-api.hk.techbridge.org/api/v1"
+    description: "Staging"
+  - url: "http://localhost:8000/api/v1"
+    description: "Local development"
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: triage
+    description: "Core triage workflow — intake, classify, clarify, fix, escalate"
+  - name: tickets
+    description: "ITSM ticket operations via adapter layer"
+  - name: knowledge
+    description: "RAG knowledge base search and management"
+  - name: feedback
+    description: "Human feedback loops for self-learning"
+  - name: audit
+    description: "PQ-signed audit trail access"
+  - name: analytics
+    description: "Dashboard metrics and reporting"
+  - name: admin
+    description: "System administration and configuration"
+  - name: health
+    description: "Health checks and readiness probes"
+
+paths:
+  # ═══════════════════════════════════════════
+  # TRIAGE WORKFLOW
+  # ═══════════════════════════════════════════
+  /intake:
+    post:
+      operationId: createIntake
+      tags: [triage]
+      summary: "Submit a new support request for triage"
+      description: |
+        Entry point for all support requests. Accepts unstructured text,
+        optional environment context, and attachments. Returns a triage
+        result with classification, severity, routing, and action plan.
+        
+        State machine: INTAKE → CLASSIFY → (CLARIFY if confidence < 0.65)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntakeRequest"
+            examples:
+              sso_failure:
+                summary: "SSO login failure"
+                value:
+                  channel: "chat"
+                  request_text: "I can't log into my email. It keeps saying authentication failed after I enter my code."
+                  requester:
+                    user_id: "usr_abc123"
+                    display_name: "Maria G."
+                    role: "customer"
+                    org_id: "hub_durham_library"
+                    tier: "standard"
+                  env:
+                    device:
+                      os: "Windows"
+                      os_version: "11"
+                    app:
+                      name: "Outlook Web"
+                      version: "16.0"
+                    network:
+                      location_region: "us-east-1"
+                      vpn: false
+                      connection: "wifi"
+              quick_start:
+                summary: "Quick start — email recovery"
+                value:
+                  channel: "web"
+                  request_text: "Recover my email"
+                  requester:
+                    user_id: "anon_visitor"
+                    role: "customer"
+                    org_id: "hub_durham_library"
+                    tier: "standard"
+      responses:
+        "200":
+          description: "Triage completed successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TriageResult"
+        "202":
+          description: "Triage in progress — clarification needed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClarificationResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /sessions/{session_id}/clarify:
+    post:
+      operationId: submitClarification
+      tags: [triage]
+      summary: "Submit answers to H.K.'s clarifying questions"
+      description: |
+        Provides answers to questions from the CLARIFY state.
+        H.K. re-evaluates classification with new evidence.
+        Max 3 clarification rounds before auto-escalation.
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClarificationAnswers"
+      responses:
+        "200":
+          description: "Updated triage result"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TriageResult"
+        "202":
+          description: "Additional clarification needed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClarificationResponse"
+
+  /sessions/{session_id}/fix:
+    post:
+      operationId: attemptFix
+      tags: [triage]
+      summary: "Execute safe troubleshooting steps"
+      description: |
+        Triggers the FIX state. Only executes low-risk, reversible actions
+        from the action_plan. Requires confidence >= 0.80.
+        Actions on the require_confirmation list need explicit approval.
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [approved_steps]
+              properties:
+                approved_steps:
+                  type: array
+                  items:
+                    type: integer
+                  description: "Indices of action_plan steps the user approves"
+                user_confirmation:
+                  type: boolean
+                  default: true
+      responses:
+        "200":
+          description: "Fix result with outcomes"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FixResult"
+
+  /sessions/{session_id}/verify:
+    post:
+      operationId: verifyResolution
+      tags: [triage]
+      summary: "Confirm issue is resolved"
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resolved]
+              properties:
+                resolved:
+                  type: boolean
+                additional_notes:
+                  type: string
+      responses:
+        "200":
+          description: "Session closed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionClosed"
+
+  /sessions/{session_id}/escalate:
+    post:
+      operationId: escalateSession
+      tags: [triage]
+      summary: "Escalate to human support with complete evidence package"
+      description: |
+        Produces an engineer-ready incident brief and creates a ticket
+        in the configured ITSM (JSM by default). Includes full evidence
+        bundle, triage reasoning, and suggested next actions.
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: "User or system reason for escalation"
+                prefer_hub_hours:
+                  type: boolean
+                  default: false
+                  description: "Route to next in-person hub session"
+      responses:
+        "200":
+          description: "Ticket created and routed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EscalationResult"
+
+  /sessions/{session_id}:
+    get:
+      operationId: getSession
+      tags: [triage]
+      summary: "Get current session state and history"
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: "Session details"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionDetail"
+
+  # ═══════════════════════════════════════════
+  # TICKETS
+  # ═══════════════════════════════════════════
+  /tickets:
+    post:
+      operationId: createTicket
+      tags: [tickets]
+      summary: "Create a ticket directly (bypasses triage)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketPayload"
+      responses:
+        "201":
+          description: "Ticket created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketRef"
+    get:
+      operationId: listTickets
+      tags: [tickets]
+      summary: "List tickets for the current tenant"
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [open, in_progress, pending, resolved, closed]
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [S0, S1, S2, S3, S4]
+        - name: queue
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Paginated ticket list"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketList"
+
+  /tickets/{ticket_id}:
+    get:
+      operationId: getTicket
+      tags: [tickets]
+      summary: "Get ticket details"
+      parameters:
+        - $ref: "#/components/parameters/TicketId"
+      responses:
+        "200":
+          description: "Ticket details"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketDetail"
+    patch:
+      operationId: updateTicket
+      tags: [tickets]
+      summary: "Update ticket fields"
+      parameters:
+        - $ref: "#/components/parameters/TicketId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketUpdate"
+      responses:
+        "200":
+          description: "Updated ticket"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketDetail"
+
+  # ═══════════════════════════════════════════
+  # KNOWLEDGE BASE
+  # ═══════════════════════════════════════════
+  /knowledge/search:
+    post:
+      operationId: searchKnowledge
+      tags: [knowledge]
+      summary: "Semantic search across KB articles and runbooks"
+      description: |
+        RAG-powered search using sentence-transformers embeddings.
+        Returns ranked results with citations and confidence scores.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                category_filter:
+                  type: string
+                limit:
+                  type: integer
+                  default: 5
+                  maximum: 20
+                min_confidence:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                  default: 0.5
+      responses:
+        "200":
+          description: "Search results"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KBSearchResults"
+
+  /knowledge/articles:
+    get:
+      operationId: listArticles
+      tags: [knowledge]
+      summary: "List KB articles"
+      responses:
+        "200":
+          description: "Article list"
+    post:
+      operationId: createArticle
+      tags: [knowledge]
+      summary: "Create a new KB article"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KBArticle"
+      responses:
+        "201":
+          description: "Article created"
+
+  # ═══════════════════════════════════════════
+  # FEEDBACK
+  # ═══════════════════════════════════════════
+  /sessions/{session_id}/feedback:
+    post:
+      operationId: submitFeedback
+      tags: [feedback]
+      summary: "Submit feedback on an H.K. interaction"
+      description: |
+        Accepts feedback from community members, Digital Navigators,
+        and engineers. Feeds into the self-learning pipeline.
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackPayload"
+      responses:
+        "201":
+          description: "Feedback recorded"
+
+  # ═══════════════════════════════════════════
+  # AUDIT
+  # ═══════════════════════════════════════════
+  /audit/{session_id}:
+    get:
+      operationId: getAuditTrail
+      tags: [audit]
+      summary: "Get PQ-signed audit trail for a session"
+      description: |
+        Returns the complete Merkle-chained, ML-DSA-65-signed decision
+        log for a triage session. Each entry includes the state transition,
+        evidence cited, tools invoked, and redactions applied.
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: "Audit trail"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditTrail"
+
+  /audit/verify:
+    post:
+      operationId: verifyAuditChain
+      tags: [audit]
+      summary: "Verify integrity of an audit chain"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [session_id]
+              properties:
+                session_id:
+                  type: string
+      responses:
+        "200":
+          description: "Verification result"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  chain_length:
+                    type: integer
+                  signature_algorithm:
+                    type: string
+                  verified_at:
+                    type: string
+                    format: date-time
+
+  # ═══════════════════════════════════════════
+  # ANALYTICS
+  # ═══════════════════════════════════════════
+  /analytics/dashboard:
+    get:
+      operationId: getDashboardMetrics
+      tags: [analytics]
+      summary: "Get real-time dashboard metrics"
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [1h, 24h, 7d, 30d, 90d]
+            default: "24h"
+        - name: hub_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Dashboard metrics"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardMetrics"
+
+  /analytics/techminutes:
+    get:
+      operationId: getTechMinutes
+      tags: [analytics]
+      summary: "Get TechMinutes impact metrics"
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, 1y]
+            default: "30d"
+      responses:
+        "200":
+          description: "TechMinutes report"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TechMinutesReport"
+
+  # ═══════════════════════════════════════════
+  # ADMIN
+  # ═══════════════════════════════════════════
+  /admin/routing-rules:
+    get:
+      operationId: getRoutingRules
+      tags: [admin]
+      summary: "Get current routing rules"
+      responses:
+        "200":
+          description: "Routing rules"
+    put:
+      operationId: updateRoutingRules
+      tags: [admin]
+      summary: "Update routing rules"
+      responses:
+        "200":
+          description: "Rules updated"
+
+  /admin/taxonomy:
+    get:
+      operationId: getTaxonomy
+      tags: [admin]
+      summary: "Get triage taxonomy"
+      responses:
+        "200":
+          description: "Current taxonomy"
+
+  # ═══════════════════════════════════════════
+  # HEALTH
+  # ═══════════════════════════════════════════
+  /health:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: "System health check"
+      security: []
+      responses:
+        "200":
+          description: "Healthy"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheck"
+
+  /health/ready:
+    get:
+      operationId: readinessCheck
+      tags: [health]
+      summary: "Kubernetes readiness probe"
+      security: []
+      responses:
+        "200":
+          description: "Ready"
+        "503":
+          description: "Not ready"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "ML-DSA-65 signed JWT with tenant claims"
+
+  parameters:
+    SessionId:
+      name: session_id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^hk-sess-[a-z0-9]{12}$"
+    TicketId:
+      name: ticket_id
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: "Invalid request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: "Authentication required"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimited:
+      description: "Rate limit exceeded"
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: "Internal server error"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    # ─── INTAKE ───
+    IntakeRequest:
+      type: object
+      required: [channel, request_text, requester]
+      properties:
+        channel:
+          type: string
+          enum: [chat, email, web, voice, api]
+        request_text:
+          type: string
+          minLength: 1
+          maxLength: 5000
+        requester:
+          type: object
+          required: [user_id, role]
+          properties:
+            user_id:
+              type: string
+            display_name:
+              type: string
+            role:
+              type: string
+              enum: [employee, admin, contractor, customer, unknown]
+            org_id:
+              type: string
+            tier:
+              type: string
+              enum: [standard, vip, regulated]
+        env:
+          type: object
+          properties:
+            device:
+              type: object
+              properties:
+                os:
+                  type: string
+                os_version:
+                  type: string
+                device_id:
+                  type: string
+                mdm_managed:
+                  type: boolean
+            app:
+              type: object
+              properties:
+                name:
+                  type: string
+                version:
+                  type: string
+                tenant:
+                  type: string
+            network:
+              type: object
+              properties:
+                location_region:
+                  type: string
+                vpn:
+                  type: boolean
+                connection:
+                  type: string
+                  enum: [wifi, ethernet, cellular, unknown]
+        attachments:
+          type: array
+          items:
+            type: object
+            required: [type, ref]
+            properties:
+              type:
+                type: string
+                enum: [screenshot, log, video, file]
+              ref:
+                type: string
+
+    # ─── TRIAGE RESULT ───
+    TriageResult:
+      type: object
+      required: [session_id, summary, classification, severity, priority, confidence, routing, action_plan, evidence]
+      properties:
+        session_id:
+          type: string
+        summary:
+          type: string
+        classification:
+          type: object
+          required: [category, subcategory, tags]
+          properties:
+            category:
+              type: string
+            subcategory:
+              type: string
+            tags:
+              type: array
+              items:
+                type: string
+        severity:
+          type: string
+          enum: [S0, S1, S2, S3, S4]
+        priority:
+          type: string
+          enum: [P0, P1, P2, P3, P4]
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        routing:
+          type: object
+          required: [queue, team, escalate]
+          properties:
+            queue:
+              type: string
+            team:
+              type: string
+            escalate:
+              type: boolean
+            oncall:
+              type: string
+        next_questions:
+          type: array
+          items:
+            type: object
+            required: [question, field_key, reason]
+            properties:
+              question:
+                type: string
+              field_key:
+                type: string
+              reason:
+                type: string
+        action_plan:
+          type: array
+          items:
+            type: object
+            required: [step, risk, reversible, expected_outcome]
+            properties:
+              step:
+                type: string
+              risk:
+                type: string
+                enum: [low, medium, high]
+              reversible:
+                type: boolean
+              expected_outcome:
+                type: string
+              requires_approval:
+                type: boolean
+        evidence:
+          type: object
+          properties:
+            observations:
+              type: array
+              items:
+                type: string
+            signals:
+              type: array
+              items:
+                type: string
+            logs:
+              type: array
+              items:
+                type: string
+            citations:
+              type: array
+              items:
+                type: string
+        ticket_payload:
+          $ref: "#/components/schemas/TicketPayload"
+
+    # ─── CLARIFICATION ───
+    ClarificationResponse:
+      type: object
+      required: [session_id, state, questions, clarification_round]
+      properties:
+        session_id:
+          type: string
+        state:
+          type: string
+          const: "CLARIFY"
+        questions:
+          type: array
+          items:
+            type: object
+            required: [question, field_key, reason]
+            properties:
+              question:
+                type: string
+              field_key:
+                type: string
+              reason:
+                type: string
+              input_type:
+                type: string
+                enum: [text, select, boolean]
+              options:
+                type: array
+                items:
+                  type: string
+        clarification_round:
+          type: integer
+          minimum: 1
+          maximum: 3
+        partial_triage:
+          $ref: "#/components/schemas/TriageResult"
+
+    ClarificationAnswers:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            required: [field_key, value]
+            properties:
+              field_key:
+                type: string
+              value:
+                type: string
+
+    # ─── FIX RESULT ───
+    FixResult:
+      type: object
+      required: [session_id, steps_executed, overall_success]
+      properties:
+        session_id:
+          type: string
+        steps_executed:
+          type: array
+          items:
+            type: object
+            properties:
+              step_index:
+                type: integer
+              step:
+                type: string
+              success:
+                type: boolean
+              output:
+                type: string
+              tool_call:
+                $ref: "#/components/schemas/ToolCall"
+        overall_success:
+          type: boolean
+        next_state:
+          type: string
+          enum: [VERIFY, ESCALATE]
+
+    # ─── TICKET ───
+    TicketPayload:
+      type: object
+      required: [title, description_markdown]
+      properties:
+        title:
+          type: string
+        description_markdown:
+          type: string
+        fields:
+          type: object
+          properties:
+            queue:
+              type: string
+            severity:
+              type: string
+            priority:
+              type: string
+            category:
+              type: string
+            subcategory:
+              type: string
+            hub_id:
+              type: string
+            session_id:
+              type: string
+
+    TicketRef:
+      type: object
+      properties:
+        ticket_id:
+          type: string
+        itsm_id:
+          type: string
+          description: "External ITSM ID (e.g., JSM issue key)"
+        url:
+          type: string
+          format: uri
+
+    TicketDetail:
+      allOf:
+        - $ref: "#/components/schemas/TicketPayload"
+        - type: object
+          properties:
+            ticket_id:
+              type: string
+            itsm_id:
+              type: string
+            status:
+              type: string
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+
+    TicketUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        severity:
+          type: string
+        priority:
+          type: string
+        assignee:
+          type: string
+        comment:
+          type: string
+
+    TicketList:
+      type: object
+      properties:
+        tickets:
+          type: array
+          items:
+            $ref: "#/components/schemas/TicketDetail"
+        total:
+          type: integer
+        cursor:
+          type: string
+
+    # ─── TOOL CALL ───
+    ToolCall:
+      type: object
+      required: [tool, operation, args, justification, approval_state]
+      properties:
+        tool:
+          type: string
+        operation:
+          type: string
+        args:
+          type: object
+        justification:
+          type: string
+        approval_state:
+          type: string
+          enum: [not_required, requested, approved, denied]
+        result_ref:
+          type: string
+        redactions_applied:
+          type: array
+          items:
+            type: string
+
+    # ─── FEEDBACK ───
+    FeedbackPayload:
+      type: object
+      required: [source, rating]
+      properties:
+        source:
+          type: string
+          enum: [community_member, digital_navigator, engineer]
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        classification_correct:
+          type: boolean
+        severity_correct:
+          type: boolean
+        route_correct:
+          type: boolean
+        fix_helpful:
+          type: boolean
+        evidence_quality:
+          type: integer
+          minimum: 1
+          maximum: 5
+        notes:
+          type: string
+          maxLength: 2000
+
+    # ─── AUDIT ───
+    AuditTrail:
+      type: object
+      properties:
+        session_id:
+          type: string
+        entries:
+          type: array
+          items:
+            type: object
+            properties:
+              sequence:
+                type: integer
+              timestamp:
+                type: string
+                format: date-time
+              state_from:
+                type: string
+              state_to:
+                type: string
+              action:
+                type: string
+              evidence_cited:
+                type: array
+                items:
+                  type: string
+              tool_calls:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ToolCall"
+              redactions:
+                type: array
+                items:
+                  type: string
+              merkle_hash:
+                type: string
+              signature:
+                type: string
+                description: "ML-DSA-65 signature of this entry"
+
+    # ─── KB ───
+    KBSearchResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              article_id:
+                type: string
+              title:
+                type: string
+              snippet:
+                type: string
+              confidence:
+                type: number
+              citation_ref:
+                type: string
+              category:
+                type: string
+
+    KBArticle:
+      type: object
+      required: [title, content_markdown, category]
+      properties:
+        title:
+          type: string
+        content_markdown:
+          type: string
+        category:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        runbook:
+          type: boolean
+          default: false
+
+    # ─── ANALYTICS ───
+    DashboardMetrics:
+      type: object
+      properties:
+        period:
+          type: string
+        total_sessions:
+          type: integer
+        active_sessions:
+          type: integer
+        deflection_rate:
+          type: number
+        avg_triage_time_ms:
+          type: integer
+        avg_confidence:
+          type: number
+        correct_route_pct:
+          type: number
+        hallucination_rate:
+          type: number
+        severity_distribution:
+          type: object
+          additionalProperties:
+            type: integer
+        category_distribution:
+          type: object
+          additionalProperties:
+            type: integer
+        hub_metrics:
+          type: array
+          items:
+            type: object
+            properties:
+              hub_id:
+                type: string
+              hub_name:
+                type: string
+              active:
+                type: integer
+              resolved:
+                type: integer
+              deflection_rate:
+                type: number
+
+    TechMinutesReport:
+      type: object
+      properties:
+        period:
+          type: string
+        total_techminutes:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              category:
+                type: string
+              minutes:
+                type: integer
+              count:
+                type: integer
+        outcomes:
+          type: object
+          properties:
+            resolved:
+              type: integer
+            needs_help:
+              type: integer
+            follow_up:
+              type: integer
+        hubs:
+          type: array
+          items:
+            type: object
+            properties:
+              hub_name:
+                type: string
+              techminutes:
+                type: integer
+
+    SessionClosed:
+      type: object
+      properties:
+        session_id:
+          type: string
+        state:
+          type: string
+        resolved:
+          type: boolean
+        techminutes_logged:
+          type: integer
+        audit_hash:
+          type: string
+
+    EscalationResult:
+      type: object
+      properties:
+        session_id:
+          type: string
+        ticket:
+          $ref: "#/components/schemas/TicketRef"
+        evidence_bundle_url:
+          type: string
+        next_hub_session:
+          type: object
+          properties:
+            hub_name:
+              type: string
+            date:
+              type: string
+            time:
+              type: string
+
+    SessionDetail:
+      type: object
+      properties:
+        session_id:
+          type: string
+        state:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        triage_result:
+          $ref: "#/components/schemas/TriageResult"
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [user, hk, system]
+              content:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+
+    # ─── HEALTH ───
+    HealthCheck:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        version:
+          type: string
+        uptime_seconds:
+          type: integer
+        components:
+          type: object
+          properties:
+            database:
+              type: string
+            redis:
+              type: string
+            llm:
+              type: string
+            itsm:
+              type: string
+            rag:
+              type: string
+
+    # ─── ERROR ───
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object

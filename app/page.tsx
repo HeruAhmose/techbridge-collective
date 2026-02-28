@@ -2,8 +2,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { fmtSchedule } from "@/lib/time";
-import HKOpenButton from "@/components/HKOpenButton";
-import HKQuickStarts from "@/components/HKQuickStarts";
+import { HKHero, HKChat } from "@/components/HKWidget";
 import { Card, Button } from "@/components/ui";
 
 export const revalidate = 300; // ISR: refresh every 5 min for live stats
@@ -64,7 +63,11 @@ export default async function HomePage() {
                 Host a Hub
               </Button>
             </Link>
-            <HKOpenButton className="w-full sm:w-auto" />
+          </div>
+
+          {/* H.K. Hero Entry — compact button that expands into full chat */}
+          <div className="mt-8 max-w-sm">
+            <HKHero />
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
@@ -139,8 +142,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* H.K. AI */}
-      <section className="bg-linen">
+      {/* H.K. AI — Full interactive chat replaces old Quick Starts */}
+      <section id="hk" className="bg-linen">
         <div className="mx-auto max-w-6xl px-4 py-14">
           <p className="font-mono text-xs tracking-[0.22em] text-sage">H.K. AI</p>
           <div className="mt-2 grid gap-8 md:grid-cols-2 md:items-start">
@@ -156,22 +159,15 @@ export default async function HomePage() {
               <p className="mt-2 text-xs text-ink/50 font-mono">
                 H.K. never asks for passwords, SSNs, or sensitive data.
               </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <HKOpenButton />
+              <div className="mt-6">
                 <Link href="/get-help#intake">
-                  <Button variant="outline">I still need help</Button>
+                  <Button variant="outline">Request a Navigator visit</Button>
                 </Link>
               </div>
             </div>
 
-            <Card className="p-6">
-              <div className="text-sm font-semibold text-forest">Quick starts</div>
-              <HKQuickStarts />
-              <div className="mt-5 rounded-lg border border-teal/25 bg-teal/5 p-4 text-xs text-ink/70">
-                <span className="font-semibold text-ink">Safety:</span> Never share passwords, SSNs, bank info, or 2FA codes.
-                Use official recovery links when resetting accounts.
-              </div>
-            </Card>
+            {/* Interactive H.K. Chat */}
+            <HKChat height={520} />
           </div>
         </div>
       </section>
@@ -232,4 +228,3 @@ export default async function HomePage() {
     </div>
   );
 }
-

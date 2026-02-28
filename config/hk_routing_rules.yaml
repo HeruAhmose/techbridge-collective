@@ -1,0 +1,573 @@
+# ═══════════════════════════════════════════════════════════════════
+# H.K. — Horace King: Routing Rules & Triage Policy Configuration
+# TechBridge Collective · v2.0.0
+# ═══════════════════════════════════════════════════════════════════
+# This file defines the deterministic decision layer that is NOT
+# left to the LLM. Load at startup; hot-reload on SIGHUP.
+# ═══════════════════════════════════════════════════════════════════
+
+version: "2.0.0"
+updated: "2026-02-27"
+
+# ─────────────────────────────────────────────────────────────────
+# TENANT REGISTRY
+# ─────────────────────────────────────────────────────────────────
+tenants:
+  hub_durham_library:
+    name: "Durham County Library"
+    region: "us-east-1"
+    tier: "standard"
+    address: "300 N Roxboro St, Durham, NC 27701"
+    hours:
+      - day: "Tuesday"
+        start: "10:00"
+        end: "13:00"
+      - day: "Thursday"
+        start: "14:00"
+        end: "17:00"
+    navigators:
+      max_concurrent: 2
+      escalation_email: "navigators-durham@techbridge.org"
+
+  hub_raleigh_dip:
+    name: "Raleigh Digital Impact Program"
+    region: "us-east-1"
+    tier: "standard"
+    address: "501 S Person St, Raleigh, NC 27601"
+    hours:
+      - day: "Monday"
+        start: "09:00"
+        end: "12:00"
+      - day: "Wednesday"
+        start: "13:00"
+        end: "16:00"
+    navigators:
+      max_concurrent: 3
+      escalation_email: "navigators-raleigh@techbridge.org"
+
+  hub_concord_community:
+    name: "Concord Community Hub"
+    region: "us-east-1"
+    tier: "standard"
+    address: "Concord, NC"
+    hours:
+      - day: "Friday"
+        start: "10:00"
+        end: "14:00"
+    navigators:
+      max_concurrent: 1
+      escalation_email: "navigators-concord@techbridge.org"
+
+# ─────────────────────────────────────────────────────────────────
+# TRIAGE TAXONOMY
+# ─────────────────────────────────────────────────────────────────
+taxonomy:
+  categories:
+
+    access_identity:
+      label: "Access & Identity"
+      subcategories:
+        sso_login_failure:
+          label: "SSO Login Failure"
+          keywords: ["can't login", "login failed", "authentication error", "sign in", "SSO", "single sign-on"]
+          default_queue: "IT-Identity"
+          default_team: "IAM"
+        password_reset:
+          label: "Password Reset"
+          keywords: ["forgot password", "reset password", "can't remember", "locked out", "password expired"]
+          default_queue: "IT-Identity"
+          default_team: "IAM"
+        mfa_issues:
+          label: "MFA / 2FA Issues"
+          keywords: ["two factor", "2FA", "MFA", "authenticator", "verification code", "security code"]
+          default_queue: "IT-Identity"
+          default_team: "IAM"
+        account_lockout:
+          label: "Account Lockout"
+          keywords: ["locked out", "account locked", "too many attempts", "disabled account"]
+          default_queue: "IT-Identity"
+          default_team: "IAM"
+        permission_denied:
+          label: "Permission / Access Denied"
+          keywords: ["access denied", "permission", "not authorized", "forbidden", "can't access"]
+          default_queue: "IT-Identity"
+          default_team: "IAM"
+        email_recovery:
+          label: "Email Account Recovery"
+          keywords: ["recover email", "email locked", "can't get into email", "email recovery", "hacked email"]
+          default_queue: "IT-Identity"
+          default_team: "IAM"
+
+    endpoint:
+      label: "Endpoint / Device"
+      subcategories:
+        os_issues:
+          label: "Operating System Issues"
+          keywords: ["blue screen", "crash", "won't boot", "slow computer", "update failed", "frozen"]
+          default_queue: "IT-Endpoint"
+          default_team: "Desktop"
+        software_install:
+          label: "Software Installation"
+          keywords: ["install", "download", "setup", "can't install", "app won't open"]
+          default_queue: "IT-Endpoint"
+          default_team: "Desktop"
+        phone_setup:
+          label: "Phone / Tablet Setup"
+          keywords: ["phone setup", "new phone", "transfer data", "set up phone", "tablet", "mobile"]
+          default_queue: "IT-Endpoint"
+          default_team: "Mobile"
+        storage_issues:
+          label: "Storage / Disk Space"
+          keywords: ["no space", "disk full", "storage", "memory full", "can't save"]
+          default_queue: "IT-Endpoint"
+          default_team: "Desktop"
+
+    network:
+      label: "Network & Connectivity"
+      subcategories:
+        wifi_issues:
+          label: "Wi-Fi Connection Issues"
+          keywords: ["wifi", "wi-fi", "can't connect", "no internet", "disconnects", "slow wifi"]
+          default_queue: "IT-Network"
+          default_team: "NetOps"
+        vpn_issues:
+          label: "VPN Issues"
+          keywords: ["VPN", "remote access", "can't connect to VPN", "VPN slow", "VPN disconnects"]
+          default_queue: "IT-Network"
+          default_team: "NetOps"
+        internet_speed:
+          label: "Internet Speed / Performance"
+          keywords: ["slow internet", "buffering", "speed", "bandwidth", "lagging"]
+          default_queue: "IT-Network"
+          default_team: "NetOps"
+        dns_issues:
+          label: "DNS / Website Access"
+          keywords: ["can't reach website", "DNS", "page not loading", "site blocked"]
+          default_queue: "IT-Network"
+          default_team: "NetOps"
+
+    app:
+      label: "Application"
+      subcategories:
+        app_crash:
+          label: "Application Crash / Error"
+          keywords: ["app crashed", "error message", "not responding", "keeps closing", "bug"]
+          default_queue: "IT-Apps"
+          default_team: "AppSupport"
+        feature_question:
+          label: "Feature / How-To"
+          keywords: ["how do I", "where is", "can I", "feature", "setting"]
+          default_queue: "IT-Apps"
+          default_team: "AppSupport"
+        job_applications:
+          label: "Job Application Help"
+          keywords: ["apply for job", "job application", "resume", "online application", "indeed", "linkedin"]
+          default_queue: "Community-Digital-Literacy"
+          default_team: "Navigators"
+        documents:
+          label: "Document Upload / Management"
+          keywords: ["upload document", "scan", "PDF", "print", "fax", "fill out form"]
+          default_queue: "Community-Digital-Literacy"
+          default_team: "Navigators"
+        telehealth:
+          label: "Telehealth Setup"
+          keywords: ["telehealth", "doctor appointment", "video call doctor", "MyChart", "patient portal"]
+          default_queue: "Community-Digital-Literacy"
+          default_team: "Navigators"
+
+    security:
+      label: "Security"
+      subcategories:
+        phishing:
+          label: "Phishing / Suspicious Email"
+          keywords: ["suspicious email", "phishing", "scam", "fake email", "clicked a link"]
+          default_queue: "Security-Ops"
+          default_team: "SecOps"
+          always_escalate: true
+        malware:
+          label: "Malware / Virus"
+          keywords: ["virus", "malware", "infected", "ransomware", "popup won't close"]
+          default_queue: "Security-Ops"
+          default_team: "SecOps"
+          always_escalate: true
+        account_compromise:
+          label: "Compromised Account"
+          keywords: ["hacked", "someone logged in", "didn't send that", "compromised", "stolen"]
+          default_queue: "Security-Ops"
+          default_team: "SecOps"
+          always_escalate: true
+        privacy_concern:
+          label: "Privacy / Data Concern"
+          keywords: ["privacy", "data breach", "personal information", "identity theft"]
+          default_queue: "Security-Ops"
+          default_team: "SecOps"
+          always_escalate: true
+
+    hardware:
+      label: "Hardware"
+      subcategories:
+        printer:
+          label: "Printer Issues"
+          keywords: ["printer", "can't print", "print", "scanner", "ink", "paper jam"]
+          default_queue: "IT-Hardware"
+          default_team: "Facilities"
+        peripheral:
+          label: "Peripheral Devices"
+          keywords: ["mouse", "keyboard", "monitor", "camera", "headset", "USB"]
+          default_queue: "IT-Hardware"
+          default_team: "Facilities"
+        damage:
+          label: "Physical Damage"
+          keywords: ["broken screen", "cracked", "dropped", "water damage", "won't charge"]
+          default_queue: "IT-Hardware"
+          default_team: "Facilities"
+
+    how_to:
+      label: "How-To / Digital Literacy"
+      subcategories:
+        basic_computer:
+          label: "Basic Computer Skills"
+          keywords: ["how to use", "beginner", "first time", "new to computers", "don't know how"]
+          default_queue: "Community-Digital-Literacy"
+          default_team: "Navigators"
+        government_portals:
+          label: "Government Portal Navigation"
+          keywords: ["benefits", "social security", "medicaid", "DMV", "government website", "EBT"]
+          default_queue: "Community-Digital-Literacy"
+          default_team: "Navigators"
+        email_basics:
+          label: "Email Basics"
+          keywords: ["create email", "send email", "attachment", "email address"]
+          default_queue: "Community-Digital-Literacy"
+          default_team: "Navigators"
+
+    fulfillment:
+      label: "Request / Fulfillment"
+      subcategories:
+        access_request:
+          label: "Access Request"
+          keywords: ["need access", "request access", "add me to", "permission to"]
+          default_queue: "IT-Fulfillment"
+          default_team: "Provisioning"
+        equipment_request:
+          label: "Equipment Request"
+          keywords: ["need a laptop", "request equipment", "new device", "replacement"]
+          default_queue: "IT-Fulfillment"
+          default_team: "Provisioning"
+
+# ─────────────────────────────────────────────────────────────────
+# SEVERITY SCORING RULES
+# ─────────────────────────────────────────────────────────────────
+severity_rules:
+  # Deterministic severity assignment based on signals
+  # Priority = severity × scope × SLA × tier
+
+  auto_s0:
+    description: "Automatic S0 — immediate response"
+    conditions:
+      - "security.account_compromise AND evidence.active_session"
+      - "security.malware AND evidence.spreading"
+      - "ANY category AND evidence.data_exfiltration"
+      - "ANY category AND evidence.legal_obligation"
+    response_target_minutes: 15
+    auto_escalate: true
+    notify: ["secops-oncall", "system-admin"]
+
+  auto_s1:
+    description: "Automatic S1 — critical"
+    conditions:
+      - "security.phishing AND evidence.credentials_entered"
+      - "ANY category AND scope.org_wide"
+      - "access_identity.ANY AND scope.many_users"
+      - "network.ANY AND scope.entire_site"
+    response_target_minutes: 60
+    auto_escalate: true
+    notify: ["oncall-primary"]
+
+  auto_s2:
+    description: "Automatic S2 — major"
+    conditions:
+      - "access_identity.ANY AND requester.tier == 'vip'"
+      - "ANY category AND scope.team"
+      - "app.ANY AND evidence.critical_workflow_blocked"
+    response_target_hours: 4
+
+  default_mapping:
+    # If no auto-rule matches, use category defaults
+    security: "S1"  # Security is always at least S1
+    access_identity: "S3"
+    endpoint: "S3"
+    network: "S3"
+    app: "S3"
+    hardware: "S4"
+    how_to: "S4"
+    fulfillment: "S4"
+
+# ─────────────────────────────────────────────────────────────────
+# ROUTING RULES
+# ─────────────────────────────────────────────────────────────────
+routing_rules:
+  # Priority order: security overrides > severity overrides > category defaults
+
+  security_override:
+    description: "All security-tagged issues bypass normal routing"
+    condition: "classification.category == 'security' OR tags CONTAINS 'security'"
+    route_to:
+      queue: "Security-Ops"
+      team: "SecOps"
+      escalate: true
+    notify: ["secops-oncall"]
+
+  critical_severity_override:
+    description: "S0/S1 issues go to on-call regardless of category"
+    condition: "severity IN ['S0', 'S1']"
+    route_to:
+      escalate: true
+    notify: ["oncall-primary", "hub-admin"]
+
+  outage_deflection:
+    description: "If known outage matches, deflect with status + ETA"
+    condition: "status_page.active_incident MATCHES classification"
+    action: "deflect_with_status"
+    message_template: |
+      We're aware of an ongoing issue with {service_name}.
+      Status: {incident_status}
+      ETA: {eta}
+      Updates: {status_page_url}
+      
+      Your report has been logged. You'll be notified when this is resolved.
+
+  hub_hours_routing:
+    description: "During hub hours, prefer in-person Navigator support"
+    condition: "current_time WITHIN tenant.hours AND severity IN ['S3', 'S4']"
+    action: "suggest_in_person"
+    message_template: |
+      Your {hub_name} hub is currently open! A Digital Navigator can help you
+      in person right now at {hub_address}.
+      
+      Would you like to continue here with H.K., or visit the hub?
+
+  community_digital_literacy:
+    description: "How-to and digital literacy go to Navigators"
+    condition: "classification.category IN ['how_to'] OR classification.subcategory IN ['job_applications', 'documents', 'telehealth', 'government_portals', 'basic_computer', 'email_basics']"
+    route_to:
+      queue: "Community-Digital-Literacy"
+      team: "Navigators"
+      escalate: false
+
+  default_routing:
+    description: "Fall through to category default queue"
+    condition: "ALWAYS"
+    action: "use_taxonomy_defaults"
+
+# ─────────────────────────────────────────────────────────────────
+# CONFIDENCE GATING
+# ─────────────────────────────────────────────────────────────────
+confidence_thresholds:
+  safe_fix:
+    minimum: 0.80
+    description: "Confidence required to attempt automated fix"
+    allowed_risk_levels: ["low"]
+    must_be_reversible: true
+
+  classify:
+    minimum: 0.65
+    description: "Confidence required to accept classification"
+    fallback: "CLARIFY"
+    max_clarification_rounds: 3
+
+  auto_escalate:
+    below: 0.50
+    description: "Below this, escalate immediately with evidence plan"
+    action: "ESCALATE"
+    message: "I need more context than I can gather here. Routing to a specialist."
+
+  self_learned_floor:
+    minimum: 0.65
+    description: "Self-learned routes/fixes can never drop below this"
+
+# ─────────────────────────────────────────────────────────────────
+# ESCALATION POLICIES
+# ─────────────────────────────────────────────────────────────────
+escalation_policies:
+  always_escalate_categories:
+    - "security"
+    - "data_loss"
+
+  always_escalate_tags:
+    - "legal"
+    - "compliance"
+    - "outage"
+    - "data_breach"
+
+  time_based_escalation:
+    - condition: "session.age_minutes > 15 AND state == 'CLARIFY'"
+      action: "escalate"
+      reason: "Clarification timeout"
+    - condition: "session.age_minutes > 30 AND state != 'CLOSED'"
+      action: "escalate"
+      reason: "Session timeout"
+
+  navigator_takeover:
+    description: "Digital Navigator can take over any active session"
+    allowed_roles: ["digital_navigator", "hub_admin", "system_admin"]
+    audit_required: true
+
+# ─────────────────────────────────────────────────────────────────
+# ACTION SAFETY POLICIES
+# ─────────────────────────────────────────────────────────────────
+action_safety:
+  allowlist_only: true
+  
+  require_confirmation:
+    - "restart_service"
+    - "disable_account"
+    - "wipe_device"
+    - "delete_data"
+    - "policy_change"
+    - "reset_password"
+
+  never_allow:
+    - "execute_arbitrary_code"
+    - "access_financial_systems"
+    - "modify_security_policy"
+    - "export_bulk_data"
+
+  safe_actions:
+    description: "These can be suggested without confirmation"
+    actions:
+      - "clear_browser_cache"
+      - "restart_browser"
+      - "try_incognito_mode"
+      - "check_caps_lock"
+      - "reconnect_wifi"
+      - "restart_device"
+      - "check_disk_space"
+      - "run_speed_test"
+      - "update_app"
+      - "check_status_page"
+
+# ─────────────────────────────────────────────────────────────────
+# DATA HANDLING POLICIES
+# ─────────────────────────────────────────────────────────────────
+data_handling:
+  redact_secrets: true
+  pii_minimization: true
+  retention_days: 365
+  
+  redaction_patterns:
+    - name: "SSN"
+      pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b"
+      replacement: "[REDACTED-SSN]"
+    - name: "Credit Card"
+      pattern: "\\b(?:\\d{4}[- ]?){3}\\d{4}\\b"
+      replacement: "[REDACTED-CC]"
+    - name: "Phone"
+      pattern: "\\b(?:\\+1)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}\\b"
+      replacement: "[REDACTED-PHONE]"
+    - name: "Email Address"
+      pattern: "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b"
+      replacement: "[REDACTED-EMAIL]"
+    - name: "Password"
+      pattern: "(?i)(?:password|pwd|pass)\\s*[:=]\\s*\\S+"
+      replacement: "[REDACTED-PASSWORD]"
+    - name: "API Key"
+      pattern: "(?i)(?:api[_-]?key|token|secret)\\s*[:=]\\s*[A-Za-z0-9_\\-]{20,}"
+      replacement: "[REDACTED-API-KEY]"
+
+  never_store:
+    - "passwords"
+    - "mfa_codes"
+    - "private_keys"
+    - "ssn"
+    - "credit_card_numbers"
+    - "bank_account_numbers"
+
+# ─────────────────────────────────────────────────────────────────
+# QUICK STARTS (mapped to TechBridge site buttons)
+# ─────────────────────────────────────────────────────────────────
+quick_starts:
+  recover_email:
+    label: "📧 Recover my email"
+    prefill_text: "I need help recovering my email account"
+    category_hint: "access_identity"
+    subcategory_hint: "email_recovery"
+
+  apply_for_jobs:
+    label: "💼 Apply for jobs online"
+    prefill_text: "I need help applying for jobs online"
+    category_hint: "app"
+    subcategory_hint: "job_applications"
+
+  setup_phone:
+    label: "📱 Set up my phone"
+    prefill_text: "I need help setting up my new phone"
+    category_hint: "endpoint"
+    subcategory_hint: "phone_setup"
+
+  upload_documents:
+    label: "📁 Upload documents"
+    prefill_text: "I need help uploading or scanning documents"
+    category_hint: "app"
+    subcategory_hint: "documents"
+
+  reset_password:
+    label: "🔑 Reset a password"
+    prefill_text: "I need to reset my password"
+    category_hint: "access_identity"
+    subcategory_hint: "password_reset"
+
+  setup_telehealth:
+    label: "🏥 Set up telehealth"
+    prefill_text: "I need help setting up a telehealth appointment"
+    category_hint: "app"
+    subcategory_hint: "telehealth"
+
+# ─────────────────────────────────────────────────────────────────
+# SELF-LEARNING CONFIGURATION
+# ─────────────────────────────────────────────────────────────────
+self_learning:
+  enabled: true
+  
+  rag_sync:
+    source: "confluence"
+    sync_interval_minutes: 60
+    embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+    vector_store: "chromadb"
+    reindex_on_kb_update: true
+
+  routing_optimization:
+    algorithm: "bayesian_bandit"
+    reward_signal: "correct_first_route"
+    penalty_signal: "reroute_count"
+    exploration_rate: 0.1
+    min_samples_before_override: 50
+
+  severity_calibration:
+    model: "gradient_boosted_classifier"
+    retrain_schedule: "weekly"
+    drift_alert_threshold: 0.1  # AUC drop
+    features:
+      - "category"
+      - "subcategory"
+      - "scope_indicator"
+      - "critical_path_flag"
+      - "time_of_day"
+      - "hub_id"
+
+  prompt_evolution:
+    framework: "dspy"
+    eval_schedule: "biweekly"
+    golden_tickets_min: 500
+    promote_threshold: 0.05  # improvement over current
+
+  canary_deployment:
+    traffic_percentage: 5
+    duration_hours: 48
+    rollback_on_regression: true
+
+  human_gates:
+    taxonomy_change: true
+    routing_rule_change: true
+    playbook_promotion: true
+    model_promotion: true
