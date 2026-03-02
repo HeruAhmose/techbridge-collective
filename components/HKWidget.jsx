@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /*  ════════════════════════════════════════════════════════════════
@@ -556,7 +557,7 @@ export default function HKDemo() {
               "I still need help" triggers live escalation flow.
             </p>
             <div style={{marginTop:20,padding:14,background:C.sf,borderRadius:10,border:`1px solid ${C.bd}`,textAlign:"left"}}>
-              <div style={{fontSize:11,color:C.tx3,fontFamily:FM,marginBottom:6}}>// layout.tsx</div>
+              <div style={{fontSize:11,color:C.tx3,fontFamily:FM,marginBottom:6}}>{"// layout.tsx"}</div>
               <code style={{fontSize:12,color:C.cyan,fontFamily:FM}}>{'import { HKBubble } from "@/components/HKWidget"'}</code><br/>
               <code style={{fontSize:12,color:C.tx,fontFamily:FM}}>{'<HKBubble />'}</code>
             </div>
