@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
+import { useSound } from "@/contexts/SoundContext";
+import { useRef, useEffect } from "react";
 import type { ReactNode } from "react";
 
 interface Props {
@@ -15,6 +17,15 @@ interface Props {
 
 export default function Section({ id, eyebrow, title, subtitle, dark, children, className = "", noPadding }: Props) {
   const [ref, inView] = useInView({ threshold: 0.05 });
+  const { play } = useSound();
+  const hasPlayed = useRef(false);
+
+  useEffect(() => {
+    if (inView && !hasPlayed.current) {
+      hasPlayed.current = true;
+      play("section_enter");
+    }
+  }, [inView, play]);
 
   return (
     <section

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSound } from "@/contexts/SoundContext";
 
 const NAV_LINKS = [
   { href: "#tech", label: "Technology", id: "tech" },
@@ -14,6 +15,7 @@ export default function Navigation({ visible }: { visible: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { play } = useSound();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +34,7 @@ export default function Navigation({ visible }: { visible: boolean }) {
   }, []);
 
   const scrollTo = (href: string) => {
+    play("click");
     const el = document.querySelector(href);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -85,6 +88,7 @@ export default function Navigation({ visible }: { visible: boolean }) {
               <a
                 href={link.href}
                 onClick={(e) => { e.preventDefault(); scrollTo(link.href); }}
+                onMouseEnter={() => play("hover")}
                 className="relative text-xs font-semibold tracking-[0.08em] uppercase transition-colors duration-300"
                 style={{
                   fontFamily: "'Source Sans 3', sans-serif",
@@ -109,6 +113,7 @@ export default function Navigation({ visible }: { visible: boolean }) {
         <a
           href="#contact"
           onClick={(e) => { e.preventDefault(); scrollTo("#contact"); }}
+          onMouseEnter={() => play("hover")}
           className="hidden md:block relative text-xs font-bold tracking-[0.1em] uppercase overflow-hidden group/btn"
           style={{
             padding: "0.65rem 1.5rem",
@@ -123,7 +128,7 @@ export default function Navigation({ visible }: { visible: boolean }) {
         {/* Mobile toggle */}
         <button
           className="md:hidden flex flex-col gap-1.5 p-1 bg-transparent border-0"
-          onClick={() => setMobileOpen(!mobileOpen)}
+          onClick={() => { setMobileOpen(!mobileOpen); play("click"); }}
           aria-label="Menu"
         >
           <motion.span

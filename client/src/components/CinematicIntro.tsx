@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
+import { soundEngine } from "@/lib/soundEngine";
 
 function IntroParticles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -16,19 +17,20 @@ function IntroParticles() {
     const cy = h / 2;
 
     const hues = [174, 268, 43, 330, 0];
-    const particles = Array.from({ length: 60 }, (_, i) => {
+    const particles = Array.from({ length: 80 }, (_, i) => {
       const angle = Math.random() * Math.PI * 2;
-      const dist = Math.random() * 300 + 100;
+      const dist = Math.random() * 400 + 120;
       return {
         x: cx + Math.cos(angle) * dist,
         y: cy + Math.sin(angle) * dist,
         tx: cx + (Math.random() - 0.5) * 80,
         ty: cy + (Math.random() - 0.5) * 80,
-        s: Math.random() * 2 + 0.5,
+        s: Math.random() * 2.5 + 0.5,
         hu: hues[i % 5],
         progress: 0,
         speed: Math.random() * 0.008 + 0.004,
-        delay: Math.random() * 0.3,
+        delay: Math.random() * 0.4,
+        pulse: Math.random() * Math.PI * 2,
       };
     });
 
@@ -44,30 +46,36 @@ function IntroParticles() {
         if (t > p.delay) {
           p.progress = Math.min(p.progress + p.speed, 1);
         }
+        p.pulse += 0.05;
         const ease = 1 - Math.pow(1 - p.progress, 3);
         const px = p.x + (p.tx - p.x) * ease;
         const py = p.y + (p.ty - p.y) * ease;
+        const pulseScale = 1 + Math.sin(p.pulse) * 0.3;
 
+        // Trail
         if (p.progress > 0 && p.progress < 0.95) {
           ctx!.beginPath();
-          ctx!.moveTo(p.x + (p.tx - p.x) * Math.max(0, ease - 0.2), p.y + (p.ty - p.y) * Math.max(0, ease - 0.2));
+          ctx!.moveTo(p.x + (p.tx - p.x) * Math.max(0, ease - 0.25), p.y + (p.ty - p.y) * Math.max(0, ease - 0.25));
           ctx!.lineTo(px, py);
-          ctx!.strokeStyle = `hsla(${p.hu},60%,65%,${0.15 * (1 - p.progress)})`;
+          ctx!.strokeStyle = `hsla(${p.hu},60%,65%,${0.2 * (1 - p.progress)})`;
           ctx!.lineWidth = 0.5;
           ctx!.stroke();
         }
 
+        // Outer glow
         ctx!.beginPath();
-        ctx!.arc(px, py, p.s * 3, 0, Math.PI * 2);
-        ctx!.fillStyle = `hsla(${p.hu},60%,65%,${0.06 * ease})`;
+        ctx!.arc(px, py, p.s * 4 * pulseScale, 0, Math.PI * 2);
+        ctx!.fillStyle = `hsla(${p.hu},60%,65%,${0.04 * ease})`;
         ctx!.fill();
 
+        // Core
         ctx!.beginPath();
-        ctx!.arc(px, py, p.s * ease, 0, Math.PI * 2);
-        ctx!.fillStyle = `hsla(${p.hu},60%,70%,${0.5 * ease + 0.1})`;
+        ctx!.arc(px, py, p.s * ease * pulseScale, 0, Math.PI * 2);
+        ctx!.fillStyle = `hsla(${p.hu},60%,70%,${0.6 * ease + 0.1})`;
         ctx!.fill();
       }
 
+      // Connection lines
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const a = particles[i];
@@ -79,18 +87,18 @@ function IntroParticles() {
           const bx = b.x + (b.tx - b.x) * eB;
           const by = b.y + (b.ty - b.y) * eB;
           const d = Math.sqrt((ax - bx) ** 2 + (ay - by) ** 2);
-          if (d < 80 && a.progress > 0.5 && b.progress > 0.5) {
+          if (d < 90 && a.progress > 0.5 && b.progress > 0.5) {
             ctx!.beginPath();
             ctx!.moveTo(ax, ay);
             ctx!.lineTo(bx, by);
-            ctx!.strokeStyle = `hsla(174,50%,60%,${(1 - d / 80) * 0.12})`;
+            ctx!.strokeStyle = `hsla(174,50%,60%,${(1 - d / 90) * 0.15})`;
             ctx!.lineWidth = 0.4;
             ctx!.stroke();
           }
         }
       }
 
-      if (frame < 240) {
+      if (frame < 280) {
         animId = requestAnimationFrame(draw);
       }
     }
@@ -109,14 +117,51 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
   onCompleteRef.current = onComplete;
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 500);
-    const t2 = setTimeout(() => setPhase(2), 1800);
-    const t3 = setTimeout(() => setPhase(3), 3000);
+    // Initialize sound on first interaction during intro
+    const initAndPlay = async () => {
+      await soundEngine.init();
+      soundEngine.play("intro_rumble");
+    };
+
+    // Try to init sound immediately (may need user gesture)
+    const handleInteraction = () => {
+      initAndPlay();
+      window.removeEventListener("click", handleInteraction);
+      window.removeEventListener("touchstart", handleInteraction);
+    };
+    window.addEventListener("click", handleInteraction);
+    window.addEventListener("touchstart", handleInteraction);
+
+    // Also try immediately
+    initAndPlay().catch(() => {});
+
+    const t1 = setTimeout(() => {
+      setPhase(1);
+    }, 500);
+    const t2 = setTimeout(() => {
+      setPhase(2);
+      // Crystallize sound when text appears
+      if (soundEngine.initialized) soundEngine.play("crystallize");
+    }, 1800);
+    const t3 = setTimeout(() => {
+      setPhase(3);
+    }, 3000);
     const t4 = setTimeout(() => {
+      // Whoosh + reveal sound on exit
+      if (soundEngine.initialized) {
+        soundEngine.play("whoosh");
+        soundEngine.play("reveal");
+        // Start ambient after intro
+        setTimeout(() => soundEngine.play("ambient"), 800);
+      }
       setShow(false);
       onCompleteRef.current();
     }, 3800);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+    return () => {
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
+      window.removeEventListener("click", handleInteraction);
+      window.removeEventListener("touchstart", handleInteraction);
+    };
   }, []);
 
   return (
@@ -131,6 +176,7 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
           <IntroParticles />
 
           <div className="relative flex flex-col items-center gap-6 z-10">
+            {/* Hexagonal logo with orbital dots */}
             <motion.svg
               viewBox="0 0 120 120"
               className="w-28 h-28"
@@ -166,37 +212,35 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
                 animate={{ pathLength: 1, opacity: 0.5 }}
                 transition={{ duration: 1.2, delay: 0.7, ease: "easeInOut" }}
               />
+              {/* Pulsing center */}
               <motion.circle
-                cx="60"
-                cy="60"
-                r="8"
+                cx="60" cy="60" r="8"
                 fill="none"
                 stroke="#45e8d8"
                 strokeWidth="0.5"
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1.2, opacity: 0.25 }}
-                transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
+                animate={{ scale: [1, 1.4, 1], opacity: [0.15, 0.3, 0.15] }}
+                transition={{ duration: 2, delay: 0.9, repeat: Infinity, ease: "easeInOut" }}
               />
               <motion.circle
-                cx="60"
-                cy="60"
-                r="5"
+                cx="60" cy="60" r="5"
                 fill="#45e8d8"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.8, type: "spring", stiffness: 200 }}
               />
+              {/* Orbital dots */}
               {[0, 72, 144, 216, 288].map((angle, i) => {
                 const r = 38;
                 const rad = (angle * Math.PI) / 180;
-                const cx = 60 + Math.cos(rad) * r;
-                const cy = 60 + Math.sin(rad) * r;
+                const dotCx = 60 + Math.cos(rad) * r;
+                const dotCy = 60 + Math.sin(rad) * r;
                 const colors = ["#45e8d8", "#a485ff", "#e8c44a", "#ff7eb6", "#f0e8d8"];
                 return (
                   <motion.circle
                     key={i}
-                    cx={cx}
-                    cy={cy}
+                    cx={dotCx}
+                    cy={dotCy}
                     r="2.5"
                     fill={colors[i]}
                     initial={{ scale: 0, opacity: 0 }}
@@ -216,6 +260,7 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
               </defs>
             </motion.svg>
 
+            {/* Text reveals */}
             <div className="text-center">
               <motion.div
                 className="overflow-hidden"
@@ -245,6 +290,7 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
               </motion.div>
             </div>
 
+            {/* Loading bar */}
             <motion.div
               className="w-52 h-[2px] mt-5 overflow-hidden relative"
               style={{ background: "rgba(240,232,216,0.06)" }}

@@ -8,6 +8,8 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useSound } from "@/contexts/SoundContext";
+import { soundEngine } from "@/lib/soundEngine";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -21,6 +23,7 @@ import MagneticCursor from "@/components/MagneticCursor";
 import SectionIndicator from "@/components/SectionIndicator";
 import GlowDivider from "@/components/GlowDivider";
 import ScrollToTop from "@/components/ScrollToTop";
+import SoundToggle from "@/components/SoundToggle";
 import TiltCard from "@/components/TiltCard";
 import TextReveal from "@/components/TextReveal";
 import FloatingElements from "@/components/FloatingElements";
@@ -151,6 +154,7 @@ function HeroSection() {
             }}
             whileHover={{ y: -3, boxShadow: "0 12px 40px rgba(69,232,216,0.5)" }}
             whileTap={{ scale: 0.97 }}
+            onMouseEnter={() => { try { soundEngine.play("hover"); } catch {} }}
           >
             <span className="relative z-10">Explore the Science ↓</span>
             <motion.span
@@ -309,6 +313,7 @@ function TechSection({ onCardClick }: { onCardClick: (idx: number) => void }) {
 function TechCard({ card, index, onClick }: { card: typeof TECH_CARDS[number]; index: number; onClick: () => void }) {
   const [ref, inView] = useInView();
   const [hovered, setHovered] = useState(false);
+  const { play } = useSound();
 
   return (
     <motion.div
@@ -332,7 +337,7 @@ function TechCard({ card, index, onClick }: { card: typeof TECH_CARDS[number]; i
         intensity={8}
       >
         <div
-          onMouseEnter={() => setHovered(true)}
+          onMouseEnter={() => { setHovered(true); play("hover"); }}
           onMouseLeave={() => setHovered(false)}
         >
           {/* Background glow on hover */}
@@ -401,7 +406,8 @@ function TechCard({ card, index, onClick }: { card: typeof TECH_CARDS[number]; i
 // ─── Composition Section ───
 function CompositionSection() {
   const [active, setActive] = useState<string | null>(null);
-  const toggle = (m: string) => setActive(active === m ? null : m);
+  const { play: playSound } = useSound();
+  const toggle = (m: string) => { setActive(active === m ? null : m); playSound("click"); };
 
   return (
     <Section id="comp" eyebrow="Composite Architecture — Claim 15" title="Engineered at Every Scale" subtitle="Click any material or orbital node to highlight its role.">
@@ -645,6 +651,7 @@ function EnergySection() {
 function ChartBox({ title, color, note, type }: { title: string; color: string; note: string; type: "piezo" | "thermo" }) {
   const [ref, inView] = useInView();
   const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
+  const { play: playSound } = useSound();
   const [animProgress, setAnimProgress] = useState(0);
 
   useEffect(() => {
@@ -776,6 +783,7 @@ function ChartBox({ title, color, note, type }: { title: string; color: string; 
                   onMouseEnter={(e) => {
                     (e.target as SVGCircleElement).setAttribute("r", "7");
                     setTooltip({ x: cx, y: cy - 18, text: labels[i] });
+                    playSound("data_point");
                   }}
                   onMouseLeave={(e) => {
                     (e.target as SVGCircleElement).setAttribute("r", "4.5");
@@ -823,6 +831,7 @@ function ChartBox({ title, color, note, type }: { title: string; color: string; 
 // ─── Manufacturing Section ───
 function ManufacturingSection() {
   const [step, setStep] = useState(0);
+  const { play: playSound } = useSound();
 
   return (
     <Section id="mfg" eyebrow="Manufacturing — Claim 16" title="Seven Steps to Finished Composite" subtitle="Click each step for details.">
@@ -840,7 +849,7 @@ function ManufacturingSection() {
               border: `1px solid ${i === step ? "var(--tmd)" : "var(--bd)"}`,
               color: i === step ? "#45e8d8" : "var(--t2)",
             }}
-            onClick={() => setStep(i)}
+            onClick={() => { setStep(i); playSound("step"); }}
             whileHover={{ y: -2, borderColor: "var(--bdh)" }}
             whileTap={{ scale: 0.97 }}
           >
@@ -891,7 +900,7 @@ function ManufacturingSection() {
                 key={i}
                 className="h-1.5 flex-1 rounded-full cursor-pointer"
                 style={{ background: i <= step ? "#45e8d8" : "var(--lat)" }}
-                onClick={() => setStep(i)}
+                onClick={() => { setStep(i); playSound("step"); }}
                 whileHover={{ scale: 1.3 }}
                 animate={{ background: i <= step ? "#45e8d8" : "var(--lat)" }}
                 transition={{ duration: 0.3 }}
@@ -1087,6 +1096,7 @@ function ApplicationsSection() {
 // ─── IP / Patents Section ───
 function PatentsSection() {
   const [openAcc, setOpenAcc] = useState<string | null>(null);
+  const { play: playSound } = useSound();
 
   const groups = [
     { k: "composition" as const, t: "Composition & Material Claims (1–15)", c: "#45e8d8", count: 15 },
@@ -1173,7 +1183,7 @@ function PatentsSection() {
                 borderLeft: `3px solid ${g.c}50`,
                 color: "var(--qu)",
               }}
-              onClick={() => setOpenAcc(openAcc === g.k ? null : g.k)}
+              onClick={() => { setOpenAcc(openAcc === g.k ? null : g.k); playSound("accordion"); }}
               whileHover={{ background: "var(--lat)" }}
             >
               <span className="flex items-center gap-3">
@@ -1447,6 +1457,7 @@ export default function Home() {
       <Navigation visible={introComplete} />
       <SectionIndicator />
       <ScrollToTop />
+      <SoundToggle />
 
       {/* Content */}
       <HeroSection />
