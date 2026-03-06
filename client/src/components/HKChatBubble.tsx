@@ -6,7 +6,8 @@
  * - Floating bubble with animated avatar in bottom-right
  * - Expandable chat interface with typing indicators
  * - Quick action buttons for common tasks
- * - Conversational AI responses based on SPAN document
+ * - Claude AI via Manus Forge API for real intelligent responses
+ * - Keyword fallback when API unavailable
  * - Sound effects on open/close/message
  * - Pulse animation when idle, breathing when active
  */
@@ -14,7 +15,27 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tbSoundEngine } from '../lib/TBSoundEngine';
 
-const HK_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/hk-avatar-QQ2ywEsoQGzaBcKPgRZDip.webp';
+const HK_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_1024_6c459caf.jpg';
+const HK_BUBBLE_ICON = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_bubble_icon_512_21e73e43.png';
+
+// Uses Vercel serverless function /api/hk-chat to proxy Claude calls
+const HK_API_ENDPOINT = '/api/hk-chat';
+
+const HK_SYSTEM_PROMPT = `You are H.K. (Horace King), the Help Desk Architect for TechBridge Collective — a nonprofit providing free tech support at community hubs in Durham and Raleigh, NC.
+
+RULES:
+- Be concise, warm, patient. Users may have limited tech experience.
+- Give clear, numbered step-by-step guidance when possible.
+- NEVER ask for passwords, SSNs, credit cards, or sensitive data.
+- If you detect a security issue (phishing, hacking), warn immediately and escalate.
+- Suggest visiting a hub: Durham Library (Tue 10am-1pm, Thu 2-5pm), Raleigh DIP (Mon 9am-12pm, Wed 1-4pm).
+- Keep responses under 120 words. Use plain language. No jargon.
+- If unsure, ask ONE clarifying question.
+- End with hub hours if the issue might need in-person help.
+- You are named after Horace King, the 19th-century bridge builder.
+- TechBridge uses TechMinutes® to measure impact — each minute of help counts.
+- Digital Navigators are paid community members who provide hands-on tech help.
+- The SPAN document (Strategic Playbook, Architecture & Navigator Operations) guides all operations.`;
 
 interface Message {
   id: string;
@@ -32,32 +53,75 @@ const QUICK_ACTIONS = [
   { emoji: '🏥', label: 'Set up telehealth', query: 'I need help setting up a telehealth appointment' },
 ];
 
-// H.K. response knowledge base from SPAN document
-const HK_RESPONSES: Record<string, string> = {
-  email: `Here's how to recover your email, step by step:\n\n1. Go to your email provider's sign-in page (Gmail, Yahoo, Outlook)\n2. Click "Forgot password" or "Can't sign in"\n3. Follow the recovery steps — you'll need your phone number or backup email\n4. Create a new strong password and write it down somewhere safe\n\nIf you're stuck, visit a TechBridge hub and a Digital Navigator will walk you through it on your device. Durham Library Hub: Tue & Thu 10am–2pm. Raleigh Hub: Mon & Wed 11am–3pm.\n\nI never ask for your password or personal info. Your privacy is protected.`,
-  
-  jobs: `Let me help you with online job applications:\n\n1. First, make sure you have an email account set up\n2. Create accounts on job sites like Indeed, LinkedIn, or NCWorks\n3. Have your resume ready — or we can help you build one\n4. Save your work frequently using "Draft" or "Save" buttons\n5. Take screenshots of confirmation pages\n\nFor veterans: Bring your DD-214 for upload. Our Navigators at NCWorks referral sites can help with the full process.\n\nWant in-person help? Visit during hub hours — no appointment needed.`,
-  
-  phone: `Setting up your phone doesn't have to be stressful:\n\n1. Make sure your phone is charged and connected to Wi-Fi\n2. If it's new, follow the on-screen setup wizard\n3. Sign in with your Apple ID (iPhone) or Google account (Android)\n4. If you forgot your Apple ID, go to iforgot.apple.com\n5. Download essential apps: your email, your bank, your health portal\n\nA Digital Navigator can sit with you and walk through every step. Bring your phone to any hub during open hours.`,
-  
-  documents: `Uploading documents from your phone is easier than you think:\n\n1. Open your phone's camera app\n2. Hold it steady over the document — most phones auto-detect documents\n3. Tap to capture, then crop if needed\n4. Save as PDF if the option is available\n5. Go to the website where you need to upload\n6. Tap "Upload" or "Choose file" and select your saved document\n7. Take a screenshot of the confirmation page\n\nFor housing applications, benefits portals, or school forms — our Navigators handle these daily.`,
-  
-  password: `Let's reset your password safely:\n\n1. Go to the website or app where you need to sign in\n2. Click "Forgot password" — don't guess repeatedly\n3. Check your email or phone for a reset link or code\n4. Create a new password: at least 12 characters, mix of letters, numbers, symbols\n5. Write it down in a safe place (not on a sticky note on your screen)\n\n⚠️ Important: I will NEVER ask for your password, SSN, bank info, or 2FA codes. If anyone does, that's a red flag.\n\nNeed hands-on help? Walk into any hub during open hours.`,
-  
-  telehealth: `Setting up telehealth so you can see your doctor from home:\n\n1. Ask your doctor's office which app or portal they use\n2. Download it from the App Store or Google Play\n3. Create an account — you'll need your name, date of birth, and insurance info\n4. If they use MyChart, search for your hospital system\n5. Schedule a video visit and test your camera/microphone beforehand\n\nDorothy came to our Durham hub needing exactly this. In 40 minutes, our Navigator helped her reset her Apple ID, download the portal app, create her account, and book her first appointment.\n\nYou can do this. And we're here to help.`,
-  
-  default: `I'm H.K. — named for Horace King, the master bridge builder who connected communities across the American South.\n\nI can help you with:\n• Email and account recovery\n• Job applications and resumes\n• Phone setup and troubleshooting\n• Document uploads for housing, benefits, school\n• Password resets (safely!)\n• Telehealth and health portal setup\n\nFor complex issues, I'll connect you with a paid Digital Navigator at one of our hubs:\n📍 Durham Library Hub — Tue & Thu, 10am–2pm\n📍 Raleigh Digital Impact Hub — Mon & Wed, 11am–3pm\n\nWhat do you need help with today?`,
-};
+// Keyword fallback responses when API is unavailable
+const KW_RESPONSES: Array<{ keys: string[]; reply: string }> = [
+  {
+    keys: ['email', 'recover', 'gmail', 'yahoo', 'outlook', 'sign in', 'login'],
+    reply: "Here's how to recover your email:\n\n1. Go to your email provider's sign-in page\n2. Click \"Forgot password\" or \"Can't sign in\"\n3. Follow the recovery steps — you'll need your phone number or backup email\n4. Create a new strong password and write it down safely\n\nIf you're stuck, visit a TechBridge hub:\n📍 Durham Library — Tue & Thu 10am–2pm\n📍 Raleigh DIP — Mon & Wed 11am–3pm",
+  },
+  {
+    keys: ['job', 'apply', 'resume', 'work', 'ncworks', 'employment'],
+    reply: "Let me help with online job applications:\n\n1. Make sure you have an email account set up\n2. Create accounts on Indeed, LinkedIn, or NCWorks\n3. Have your resume ready — we can help you build one\n4. Save your work frequently\n5. Take screenshots of confirmation pages\n\nOur Navigators at hubs can help with the full process — no appointment needed.",
+  },
+  {
+    keys: ['phone', 'setup', 'apple', 'android', 'iphone', 'samsung'],
+    reply: "Setting up your phone:\n\n1. Make sure it's charged and connected to Wi-Fi\n2. Follow the on-screen setup wizard\n3. Sign in with your Apple ID or Google account\n4. Download essential apps: email, bank, health portal\n\nA Digital Navigator can walk through every step with you at any hub.",
+  },
+  {
+    keys: ['document', 'upload', 'scan', 'housing', 'form', 'pdf'],
+    reply: "Uploading documents from your phone:\n\n1. Open your camera app\n2. Hold it steady over the document\n3. Tap to capture, then crop if needed\n4. Save as PDF if possible\n5. Go to the website and tap \"Upload\" or \"Choose file\"\n6. Take a screenshot of the confirmation\n\nFor housing, benefits, or school forms — our Navigators handle these daily.",
+  },
+  {
+    keys: ['password', 'reset', 'forgot', '2fa', 'locked out'],
+    reply: "Let's reset your password safely:\n\n1. Go to the website or app\n2. Click \"Forgot password\"\n3. Check email/phone for a reset link\n4. Create a new password: 12+ characters, mix of letters, numbers, symbols\n5. Write it down in a safe place\n\n⚠️ I will NEVER ask for your password, SSN, or bank info. If anyone does, that's a red flag.",
+  },
+  {
+    keys: ['telehealth', 'doctor', 'health', 'mychart', 'medical', 'appointment'],
+    reply: "Setting up telehealth:\n\n1. Ask your doctor's office which app they use\n2. Download it from App Store or Google Play\n3. Create an account with your name, DOB, and insurance info\n4. Schedule a video visit\n5. Test your camera and microphone beforehand\n\nA Navigator can help you set this up at any hub session.",
+  },
+];
 
-function getHKResponse(query: string): string {
+const FALLBACK_REPLY = "I'm H.K. — named for Horace King, the master bridge builder.\n\nI can help with:\n• Email and account recovery\n• Job applications and resumes\n• Phone setup and troubleshooting\n• Document uploads\n• Password resets\n• Telehealth setup\n\nFor hands-on help, visit a hub:\n📍 Durham Library — Tue & Thu, 10am–2pm\n📍 Raleigh DIP — Mon & Wed, 11am–3pm\n\nWhat do you need help with?";
+
+function getKeywordFallback(query: string): string {
   const q = query.toLowerCase();
-  if (q.includes('email') || q.includes('recover') || q.includes('gmail') || q.includes('yahoo')) return HK_RESPONSES.email;
-  if (q.includes('job') || q.includes('apply') || q.includes('resume') || q.includes('work') || q.includes('ncworks')) return HK_RESPONSES.jobs;
-  if (q.includes('phone') || q.includes('setup') || q.includes('apple') || q.includes('android')) return HK_RESPONSES.phone;
-  if (q.includes('document') || q.includes('upload') || q.includes('scan') || q.includes('housing')) return HK_RESPONSES.documents;
-  if (q.includes('password') || q.includes('reset') || q.includes('forgot') || q.includes('sign in') || q.includes('login')) return HK_RESPONSES.password;
-  if (q.includes('telehealth') || q.includes('doctor') || q.includes('health') || q.includes('mychart') || q.includes('medical')) return HK_RESPONSES.telehealth;
-  return HK_RESPONSES.default;
+  const match = KW_RESPONSES.find(kw => kw.keys.some(k => q.includes(k)));
+  return match ? match.reply : FALLBACK_REPLY;
+}
+
+async function askClaude(userText: string, conversationHistory: Message[]): Promise<string> {
+  try {
+    // Build messages array from conversation history
+    const apiMessages = conversationHistory
+      .filter(m => m.id !== 'welcome')
+      .map(m => ({
+        role: m.role === 'hk' ? 'assistant' as const : 'user' as const,
+        content: m.text,
+      }));
+    // Add the new user message
+    apiMessages.push({ role: 'user' as const, content: userText });
+
+    const r = await fetch(HK_API_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        system: HK_SYSTEM_PROMPT,
+        messages: apiMessages,
+      }),
+    });
+
+    if (!r.ok) throw new Error(`API ${r.status}`);
+    const d = await r.json();
+    // Anthropic Messages API returns content array
+    const reply = d.content?.[0]?.text;
+    if (reply) return reply;
+    throw new Error('No reply');
+  } catch {
+    // Fallback to keyword matching
+    return getKeywordFallback(userText);
+  }
 }
 
 export default function HKChatBubble() {
@@ -97,7 +161,6 @@ export default function HKChatBubble() {
       tbSoundEngine.init();
       tbSoundEngine.play('hk_open');
       setIsOpen(true);
-      // Add welcome message if first open
       if (messages.length === 0) {
         setMessages([{
           id: 'welcome',
@@ -112,7 +175,7 @@ export default function HKChatBubble() {
     }
   }, [isOpen, messages.length]);
 
-  const sendMessage = useCallback((text: string) => {
+  const sendMessage = useCallback(async (text: string) => {
     if (!text.trim()) return;
     
     const userMsg: Message = {
@@ -126,21 +189,20 @@ export default function HKChatBubble() {
     setIsTyping(true);
     tbSoundEngine.play('hk_typing');
 
-    // Simulate H.K. thinking + typing
-    const responseDelay = 800 + Math.random() * 1200;
-    setTimeout(() => {
-      const response = getHKResponse(text);
-      const hkMsg: Message = {
-        id: `hk-${Date.now()}`,
-        role: 'hk',
-        text: response,
-        timestamp: Date.now(),
-      };
-      setMessages(prev => [...prev, hkMsg]);
-      setIsTyping(false);
-      tbSoundEngine.play('hk_message');
-    }, responseDelay);
-  }, []);
+    // Call Claude via Forge API with conversation history
+    const currentMessages = [...messages, userMsg];
+    const response = await askClaude(text, currentMessages);
+    
+    const hkMsg: Message = {
+      id: `hk-${Date.now()}`,
+      role: 'hk',
+      text: response,
+      timestamp: Date.now(),
+    };
+    setMessages(prev => [...prev, hkMsg]);
+    setIsTyping(false);
+    tbSoundEngine.play('hk_message');
+  }, [messages]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -217,7 +279,7 @@ export default function HKChatBubble() {
             </motion.div>
           ) : (
             <motion.img
-              src={HK_AVATAR}
+              src={HK_BUBBLE_ICON}
               alt="H.K. AI"
               className="w-full h-full object-cover"
               initial={{ scale: 0.8, opacity: 0 }}
@@ -264,7 +326,7 @@ export default function HKChatBubble() {
                 <h3 className="font-display text-sm font-bold" style={{ color: '#FDF8F0' }}>
                   H.K. <span className="font-normal text-xs" style={{ color: 'rgba(253, 248, 240, 0.5)' }}>Help Desk Architect</span>
                 </h3>
-                <p className="text-xs" style={{ color: '#22c55e' }}>Online · 24/7</p>
+                <p className="text-xs" style={{ color: '#22c55e' }}>Online · Powered by Claude AI</p>
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-3 rounded-full animate-pulse" style={{ background: '#C9A227' }} />
@@ -382,7 +444,7 @@ export default function HKChatBubble() {
               />
               <button
                 type="submit"
-                disabled={!input.trim()}
+                disabled={!input.trim() || isTyping}
                 className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:scale-105 disabled:opacity-30"
                 style={{ background: '#C9A227', color: '#1B4332' }}
               >
