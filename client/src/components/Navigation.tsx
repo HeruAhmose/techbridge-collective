@@ -122,7 +122,7 @@ export default function Navigation() {
 
             {/* Book a Call CTA */}
             <a
-              href="https://calendly.com/thetechbridgecollective/techbridge-15-min-pilot-call"
+              href="https://calendly.com/aitconsult22/30min"
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleNavClick}
@@ -229,7 +229,7 @@ export default function Navigation() {
                   </span>
                 </Link>
                 <a
-                  href="https://calendly.com/thetechbridgecollective/techbridge-15-min-pilot-call"
+                  href="https://calendly.com/aitconsult22/30min"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block text-center py-4 rounded-xl text-lg font-display font-bold transition-all duration-300"

@@ -22,16 +22,14 @@ const PHASE_TEXT = [
 
 export default function CinematicIntro({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState(0);
-  const [dismissed, setDismissed] = useState(() => {
-    return sessionStorage.getItem('tb-intro-seen') === '1';
-  });
+  const [dismissed, setDismissed] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;life:number;maxLife:number;size:number;color:string}>>([]);
   const completedRef = useRef(false);
   const soundInitRef = useRef(false);
 
-  // If already dismissed, call onComplete immediately
+  // If dismissed (safety timer or skip), call onComplete
   useEffect(() => {
     if (dismissed && !completedRef.current) {
       completedRef.current = true;
@@ -107,17 +105,16 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
     };
   }, [dismissed, phase]);
 
-  // Safety timer — force complete after 60 seconds (generous for interactive)
+  // Safety timer — force complete after 25 seconds
   useEffect(() => {
     if (dismissed) return;
     const safetyTimer = setTimeout(() => {
       if (!completedRef.current) {
-        sessionStorage.setItem('tb-intro-seen', '1');
         completedRef.current = true;
         setDismissed(true);
         onComplete();
       }
-    }, 60000);
+    }, 25000);
     return () => clearTimeout(safetyTimer);
   }, [dismissed, onComplete]);
 
@@ -142,7 +139,6 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
       }
     } else {
       // Phase 4 → complete
-      sessionStorage.setItem('tb-intro-seen', '1');
       completedRef.current = true;
       tbSoundEngine.play('section_enter');
       setDismissed(true);
@@ -152,7 +148,6 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
 
   const skip = useCallback(() => {
     if (completedRef.current) return;
-    sessionStorage.setItem('tb-intro-seen', '1');
     completedRef.current = true;
     setDismissed(true);
     tbSoundEngine.init();

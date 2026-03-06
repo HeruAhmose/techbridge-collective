@@ -46,23 +46,19 @@ function LoadingScreen() {
 }
 
 function App() {
-  const [introComplete, setIntroComplete] = useState(() => {
-    // If already seen in this session, skip immediately
-    return sessionStorage.getItem('tb-intro-seen') === '1';
-  });
+  // Intro shows every page refresh — always starts as false
+  const [introComplete, setIntroComplete] = useState(false);
 
   const handleIntroComplete = useCallback(() => {
     setIntroComplete(true);
   }, []);
 
-  // Safety: if intro hasn't completed after 65s, force it
-  // (Interactive intro has its own 60s safety timer)
+  // Safety: if intro hasn't completed after 30s, force it
   useEffect(() => {
     if (introComplete) return;
     const safety = setTimeout(() => {
-      sessionStorage.setItem('tb-intro-seen', '1');
       setIntroComplete(true);
-    }, 65000);
+    }, 30000);
     return () => clearTimeout(safety);
   }, [introComplete]);
 

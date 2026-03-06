@@ -89,7 +89,7 @@ export default function HostAHub() {
               One visit can unlock a job application, unstick housing, recover a school account, or set up telehealth.
             </motion.p>
             <motion.a
-              href="https://calendly.com/thetechbridgecollective/techbridge-15-min-pilot-call"
+              href="https://calendly.com/aitconsult22/30min"
               target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-display font-bold transition-all duration-300 hover:scale-105"
               style={{ background: '#C9A227', color: '#1B4332', boxShadow: '0 4px 20px rgba(201, 162, 39, 0.3)' }}
@@ -267,7 +267,7 @@ export default function HostAHub() {
                 15 minutes to explore if a TechBridge Hub is right for your community. No commitment. No cost for the initial conversation.
               </p>
               <a
-                href="https://calendly.com/thetechbridgecollective/techbridge-15-min-pilot-call"
+                href="https://calendly.com/aitconsult22/30min"
                 target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-display font-bold transition-all duration-300 hover:scale-105"
                 style={{ background: '#C9A227', color: '#1B4332', boxShadow: '0 4px 20px rgba(201, 162, 39, 0.3)' }}

@@ -25,7 +25,7 @@ export default function Footer() {
             One 15-minute call. We bring the staffing, the system, and the reporting. You bring the space.
           </p>
           <a
-            href="https://calendly.com/thetechbridgecollective/techbridge-15-min-pilot-call"
+            href="https://calendly.com/aitconsult22/30min"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-display font-bold transition-all duration-300 hover:scale-105"
