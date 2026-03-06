@@ -1,11 +1,13 @@
 /**
  * TechBridge Collective — Shared Navigation
- * Bridge-themed nav with sound integration and mobile responsive hamburger.
+ * Bridge-themed nav with sound toggle, Ask H.K. AI button, and mobile responsive.
+ * Matches the live site navigation structure.
  */
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tbSoundEngine } from '../lib/TBSoundEngine';
+import SoundToggle from './SoundToggle';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Home' },
@@ -13,7 +15,7 @@ const NAV_ITEMS = [
   { path: '/host-a-hub', label: 'Host a Hub' },
   { path: '/impact', label: 'TechMinutes® Impact' },
   { path: '/about', label: 'About' },
-  { path: '/dashboard', label: 'Dashboard' },
+  { path: '/dashboard', label: 'Dashboard', hasDot: true },
 ];
 
 export default function Navigation() {
@@ -27,7 +29,6 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location]);
@@ -41,17 +42,16 @@ export default function Navigation() {
       <nav
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         style={{
-          background: scrolled ? 'rgba(15, 43, 31, 0.95)' : 'rgba(15, 43, 31, 0.8)',
+          background: scrolled ? 'rgba(15, 43, 31, 0.97)' : 'rgba(15, 43, 31, 0.85)',
           backdropFilter: 'blur(20px)',
           borderBottom: scrolled ? '1px solid rgba(201, 162, 39, 0.2)' : '1px solid transparent',
-          boxShadow: scrolled ? '0 4px 30px rgba(0,0,0,0.15)' : 'none',
+          boxShadow: scrolled ? '0 4px 30px rgba(0,0,0,0.2)' : 'none',
         }}
       >
-        <div className="container flex items-center justify-between h-16 md:h-18">
+        <div className="container flex items-center justify-between h-16 md:h-[68px]">
           {/* Logo */}
           <Link href="/" onClick={handleNavClick}>
             <div className="flex items-center gap-3 cursor-pointer group">
-              {/* Bridge icon */}
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="transition-transform duration-300 group-hover:scale-110">
                 <path d="M4 22 Q16 8 28 22" stroke="#C9A227" strokeWidth="2.5" fill="none" strokeLinecap="round" />
                 <line x1="4" y1="22" x2="28" y2="22" stroke="#C9A227" strokeWidth="2" />
@@ -73,7 +73,7 @@ export default function Navigation() {
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
-              const isActive = location === item.path || (item.path === '/' && location === '/');
+              const isActive = location === item.path;
               return (
                 <Link key={item.path} href={item.path} onClick={handleNavClick}>
                   <span
@@ -84,7 +84,7 @@ export default function Navigation() {
                     }}
                   >
                     {item.label}
-                    {item.label === 'Dashboard' && (
+                    {item.hasDot && (
                       <span
                         className="absolute top-1.5 right-1 w-2 h-2 rounded-full"
                         style={{ background: '#22c55e', boxShadow: '0 0 6px rgba(34, 197, 94, 0.5)' }}
@@ -103,13 +103,30 @@ export default function Navigation() {
               );
             })}
 
+            {/* Sound Toggle */}
+            <SoundToggle />
+
+            {/* Ask H.K. AI Button */}
+            <Link href="/get-help" onClick={handleNavClick}>
+              <span
+                className="ml-2 px-3 py-2 rounded-lg text-sm font-display font-bold transition-all duration-300 hover:scale-105 cursor-pointer flex items-center gap-1.5"
+                style={{
+                  background: 'rgba(45, 106, 79, 0.3)',
+                  color: '#FDF8F0',
+                  border: '1px solid rgba(45, 106, 79, 0.4)',
+                }}
+              >
+                Ask H.K. AI
+              </span>
+            </Link>
+
             {/* Book a Call CTA */}
             <a
               href="https://calendly.com/thetechbridgecollective/techbridge-15-min-pilot-call"
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleNavClick}
-              className="ml-3 px-4 py-2 rounded-lg text-sm font-display font-bold transition-all duration-300 hover:scale-105"
+              className="ml-2 px-4 py-2 rounded-lg text-sm font-display font-bold transition-all duration-300 hover:scale-105"
               style={{
                 background: '#C9A227',
                 color: '#1B4332',
@@ -157,14 +174,12 @@ export default function Navigation() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {/* Backdrop */}
             <div
               className="absolute inset-0"
-              style={{ background: 'rgba(15, 43, 31, 0.95)', backdropFilter: 'blur(20px)' }}
+              style={{ background: 'rgba(15, 43, 31, 0.97)', backdropFilter: 'blur(20px)' }}
               onClick={() => setMobileOpen(false)}
             />
 
-            {/* Menu Content */}
             <motion.div
               className="relative pt-24 px-8 flex flex-col gap-4"
               initial={{ y: -20, opacity: 0 }}
@@ -190,11 +205,8 @@ export default function Navigation() {
                         }}
                       >
                         {item.label}
-                        {item.label === 'Dashboard' && (
-                          <span
-                            className="inline-block w-2 h-2 rounded-full ml-2"
-                            style={{ background: '#22c55e' }}
-                          />
+                        {item.hasDot && (
+                          <span className="inline-block w-2 h-2 rounded-full ml-2" style={{ background: '#22c55e' }} />
                         )}
                       </span>
                     </Link>
@@ -206,21 +218,28 @@ export default function Navigation() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="mt-6"
+                className="mt-4 flex flex-col gap-3"
               >
+                <Link href="/get-help">
+                  <span
+                    className="block text-center py-3 rounded-xl text-base font-display font-bold transition-all cursor-pointer"
+                    style={{ background: 'rgba(45, 106, 79, 0.3)', color: '#FDF8F0', border: '1px solid rgba(45, 106, 79, 0.4)' }}
+                  >
+                    Ask H.K. AI
+                  </span>
+                </Link>
                 <a
                   href="https://calendly.com/thetechbridgecollective/techbridge-15-min-pilot-call"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block text-center py-4 rounded-xl text-lg font-display font-bold transition-all duration-300"
-                  style={{
-                    background: '#C9A227',
-                    color: '#1B4332',
-                    boxShadow: '0 4px 20px rgba(201, 162, 39, 0.3)',
-                  }}
+                  style={{ background: '#C9A227', color: '#1B4332', boxShadow: '0 4px 20px rgba(201, 162, 39, 0.3)' }}
                 >
                   Book a Call
                 </a>
+                <div className="flex justify-center mt-2">
+                  <SoundToggle />
+                </div>
               </motion.div>
             </motion.div>
           </motion.div>

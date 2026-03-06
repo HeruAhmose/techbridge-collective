@@ -141,6 +141,15 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen pt-20" style={{ background: C.deepForest, color: C.cream }}>
       <div className="container py-8">
+        {/* SIMULATED DATA BANNER */}
+        <div className="mb-6 px-5 py-4 rounded-xl flex items-center gap-3" style={{ background: 'rgba(201, 162, 39, 0.08)', border: '1px solid rgba(201, 162, 39, 0.2)' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="#C9A227" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <div>
+            <p className="text-sm font-display font-bold" style={{ color: C.gold }}>Simulated Dashboard</p>
+            <p className="text-xs" style={{ color: 'rgba(253, 248, 240, 0.6)' }}>This dashboard displays simulated data for demonstration purposes. Live data will populate once TechMinutes® tracking goes live at partner sites.</p>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
