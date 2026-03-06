@@ -1,167 +1,401 @@
 @import "tailwindcss";
 
-/* ═══════════════════════════════════════════════════════════════
-   QUEEN CALIFIA CYBERAI — Sovereign Circuitry Design System
-   Afrofuturist Cyber-Throne | Defense-Grade Intelligence
-   ═══════════════════════════════════════════════════════════════ */
-
-@theme inline {
-  --color-void: oklch(0.05 0.01 260);
-  --color-bg: oklch(0.08 0.02 260);
-  --color-panel: oklch(0.11 0.025 260);
-  --color-surface: oklch(0.14 0.03 260);
-  --color-border: oklch(0.18 0.03 260);
-  --color-border-lit: oklch(0.24 0.04 260);
-  
-  --color-gold: oklch(0.78 0.14 85);
-  --color-gold-dim: oklch(0.78 0.14 85 / 0.15);
-  --color-gold-glow: oklch(0.78 0.14 85 / 0.08);
-  --color-gold-bright: oklch(0.88 0.12 90);
-  
-  --color-cyan: oklch(0.78 0.14 195);
-  --color-cyan-dim: oklch(0.78 0.14 195 / 0.12);
-  --color-cyan-glow: oklch(0.78 0.14 195 / 0.06);
-  
-  --color-purple: oklch(0.68 0.15 290);
-  --color-purple-dim: oklch(0.68 0.15 290 / 0.12);
-  
-  --color-red: oklch(0.63 0.22 25);
-  --color-red-dim: oklch(0.63 0.22 25 / 0.12);
-  
-  --color-amber: oklch(0.78 0.16 70);
-  --color-amber-dim: oklch(0.78 0.16 70 / 0.12);
-  
-  --color-green: oklch(0.72 0.17 160);
-  --color-green-dim: oklch(0.72 0.17 160 / 0.12);
-  
-  --color-text: oklch(0.88 0.02 260);
-  --color-text-soft: oklch(0.62 0.04 260);
-  --color-text-dim: oklch(0.42 0.04 260);
-  
-  --font-display: 'Orbitron', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
+/*
+ * DESIGN SYSTEM: "The Bridge" — Narrative Journey
+ * TechBridge Collective · Get Help Page
+ * 
+ * Colors: Forest Green (#1B4332) + Gold (#C9A227) + Cream (#FDF8F0)
+ * Fonts: Fraunces (display) + Inter (body) + JetBrains Mono (data)
+ * Philosophy: Warm Brutalism — structural honesty softened by human warmth
+ */
 
 @layer base {
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  :root {
+    --background: 40 50% 97%;
+    --foreground: 200 10% 15%;
+    --card: 40 40% 95%;
+    --card-foreground: 200 10% 15%;
+    --popover: 40 50% 97%;
+    --popover-foreground: 200 10% 15%;
+    --primary: 153 42% 18%;
+    --primary-foreground: 40 50% 97%;
+    --secondary: 43 70% 46%;
+    --secondary-foreground: 200 10% 15%;
+    --muted: 40 20% 90%;
+    --muted-foreground: 200 5% 45%;
+    --accent: 43 70% 46%;
+    --accent-foreground: 200 10% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 20% 85%;
+    --input: 40 20% 85%;
+    --ring: 153 42% 18%;
+    --radius: 0.625rem;
+
+    /* TechBridge Brand Tokens */
+    --tb-forest: #1B4332;
+    --tb-forest-light: #2D6A4F;
+    --tb-forest-dark: #0F2B1F;
+    --tb-gold: #C9A227;
+    --tb-gold-light: #E8C84A;
+    --tb-gold-warm: #D4A03C;
+    --tb-cream: #FDF8F0;
+    --tb-cream-dark: #F5EDE0;
+    --tb-charcoal: #2D3436;
+    --tb-sage: #7C9A6E;
+    --tb-terracotta: #C4704B;
+
+    /* Typography */
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
   }
-  
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
   html {
     scroll-behavior: smooth;
-  }
-  
-  body {
-    background: var(--color-bg);
-    color: var(--color-text);
-    font-family: var(--font-body);
-    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
-  ::-webkit-scrollbar {
-    width: 6px;
+
+  body {
+    background-color: var(--tb-cream);
+    color: var(--tb-charcoal);
+    font-family: var(--font-body);
+    overflow-x: hidden;
   }
-  ::-webkit-scrollbar-track {
-    background: var(--color-void);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-border-lit);
-    border-radius: 3px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-gold);
-  }
-  
-  ::selection {
-    background: oklch(0.78 0.14 85 / 0.3);
-    color: white;
+
+  /* Paper grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
   }
 }
 
-/* ── Keyframe Animations ─────────────────────────────────── */
+/* ========================================
+   TYPOGRAPHY SYSTEM
+   ======================================== */
 
-@keyframes qc-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.04); }
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
 }
 
-@keyframes qc-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.font-body {
+  font-family: var(--font-body);
 }
 
-@keyframes qc-ascend {
-  0%, 100% { opacity: 0.8; transform: scale(1) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.06) rotate(180deg); }
+.font-mono {
+  font-family: var(--font-mono);
 }
 
-@keyframes qc-scanline {
-  0% { top: -2px; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
+/* ========================================
+   BRIDGE SVG ANIMATIONS
+   ======================================== */
+
+@keyframes bridgeDraw {
+  from { stroke-dashoffset: 1000; }
+  to { stroke-dashoffset: 0; }
 }
 
-@keyframes qc-glow-pulse {
-  0%, 100% { box-shadow: 0 0 8px oklch(0.78 0.14 85 / 0.2); }
-  50% { box-shadow: 0 0 20px oklch(0.78 0.14 85 / 0.4); }
+@keyframes bridgeCableSwing {
+  0%, 100% { transform: rotate(-0.5deg); }
+  50% { transform: rotate(0.5deg); }
 }
 
-@keyframes qc-float {
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideLeft {
+  from { opacity: 0; transform: translateX(-60px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeSlideRight {
+  from { opacity: 0; transform: translateX(60px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes gentlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatGentle {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-8px); }
 }
 
-@keyframes qc-shimmer {
+@keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 
-@keyframes qc-border-flow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes expandBridge {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
-@keyframes qc-fade-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(201, 162, 39, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(201, 162, 39, 0.4); }
 }
 
-@keyframes qc-slide-in-left {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
 }
 
-@keyframes qc-particle-float {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
-@keyframes qc-hex-pulse {
-  0%, 100% { stroke-opacity: 0.1; }
-  50% { stroke-opacity: 0.3; }
+/* ========================================
+   SCROLL-TRIGGERED REVEAL CLASSES
+   ======================================== */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes qc-data-cascade {
-  0% { opacity: 0; transform: translateY(-8px); }
-  50% { opacity: 1; }
-  100% { opacity: 1; transform: translateY(0); }
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-@keyframes qc-threat-pulse {
-  0%, 100% { box-shadow: inset 0 0 0 0 oklch(0.63 0.22 25 / 0); }
-  50% { box-shadow: inset 0 0 60px oklch(0.63 0.22 25 / 0.08); }
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes qc-waveform {
-  0%, 100% { height: 4px; }
-  50% { height: 16px; }
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger children */
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stagger-children.visible > *:nth-child(1) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+.stagger-children.visible > *:nth-child(2) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+.stagger-children.visible > *:nth-child(3) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+.stagger-children.visible > *:nth-child(4) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+.stagger-children.visible > *:nth-child(5) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
+
+/* ========================================
+   BRIDGE STRUCTURAL ELEMENTS
+   ======================================== */
+
+.bridge-cable {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  transition: stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bridge-cable.drawn {
+  stroke-dashoffset: 0;
+}
+
+.bridge-span {
+  transform-origin: center;
+  animation: bridgeCableSwing 6s ease-in-out infinite;
+}
+
+/* ========================================
+   INTERACTIVE STORY CARDS
+   ======================================== */
+
+.story-card {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(27, 67, 50, 0.15),
+              0 0 0 2px var(--tb-gold);
+}
+
+.story-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--tb-forest), var(--tb-gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* ========================================
+   PILLAR CARDS (3D tilt effect)
+   ======================================== */
+
+.pillar-card {
+  perspective: 1000px;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pillar-card:hover {
+  transform: translateY(-8px);
+}
+
+.pillar-card-inner {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+
+.pillar-card:hover .pillar-card-inner {
+  transform: rotateY(3deg) rotateX(2deg);
+}
+
+/* ========================================
+   GOLDEN BRIDGE PROGRESS BAR
+   ======================================== */
+
+.bridge-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--tb-forest), var(--tb-gold), var(--tb-forest-light));
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+  z-index: 100;
+  transition: width 0.1s linear;
+}
+
+/* ========================================
+   CUSTOM SCROLLBAR
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--tb-cream-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--tb-forest-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tb-forest);
+}
+
+/* ========================================
+   RESPONSIVE UTILITIES
+   ======================================== */
+
+@media (max-width: 768px) {
+  .reveal-left, .reveal-right {
+    opacity: 0;
+    transform: translateY(30px) !important;
+  }
+  .reveal-left.visible, .reveal-right.visible {
+    opacity: 1;
+    transform: translateY(0) !important;
+  }
+}
+
+/* Selection color */
+::selection {
+  background: rgba(201, 162, 39, 0.3);
+  color: var(--tb-forest-dark);
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--tb-gold);
+  outline-offset: 2px;
+}
+
+/* Smooth image loading */
+img {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+img[src] {
+  opacity: 1;
+}
+
+/* Container override */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
