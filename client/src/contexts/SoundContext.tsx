@@ -1,55 +1,44 @@
-/*
- * Sound Context — Global sound management with mute toggle
- */
-import { createContext, useContext, useCallback, useEffect, useRef, useState } from "react";
-import { soundEngine, type SoundType } from "@/lib/soundEngine";
+import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { playSound, setMasterVolume, startAmbient, stopAmbient } from "@/lib/SoundEngine";
 
-interface SoundContextValue {
-  play: (type: SoundType) => void;
-  toggleMute: () => void;
-  muted: boolean;
-  initialized: boolean;
+interface SoundContextType {
+  enabled: boolean;
+  toggle: () => void;
+  play: typeof playSound;
 }
 
-const SoundContext = createContext<SoundContextValue>({
+const SoundContext = createContext<SoundContextType>({
+  enabled: false,
+  toggle: () => {},
   play: () => {},
-  toggleMute: () => false,
-  muted: false,
-  initialized: false,
 });
 
-export function SoundProvider({ children }: { children: React.ReactNode }) {
-  const [muted, setMuted] = useState(false);
-  const [initialized, setInitialized] = useState(false);
-  const initRef = useRef(false);
+export function SoundProvider({ children }: { children: ReactNode }) {
+  const [enabled, setEnabled] = useState(false);
 
-  // Initialize on first user interaction
-  useEffect(() => {
-    const initSound = async () => {
-      if (initRef.current) return;
-      initRef.current = true;
-      await soundEngine.init();
-      setInitialized(true);
-    };
-
-    const events = ["click", "touchstart", "keydown"];
-    events.forEach((e) => window.addEventListener(e, initSound, { once: true }));
-    return () => {
-      events.forEach((e) => window.removeEventListener(e, initSound));
-    };
+  const toggle = useCallback(() => {
+    setEnabled(prev => {
+      const next = !prev;
+      if (next) {
+        setMasterVolume(0.3);
+        startAmbient();
+      } else {
+        setMasterVolume(0);
+        stopAmbient();
+      }
+      return next;
+    });
   }, []);
 
-  const play = useCallback((type: SoundType) => {
-    soundEngine.play(type);
-  }, []);
-
-  const toggleMute = useCallback(() => {
-    const newMuted = soundEngine.toggleMute();
-    setMuted(newMuted);
-  }, []);
+  const play = useCallback(
+    (type: Parameters<typeof playSound>[0]) => {
+      if (enabled) playSound(type);
+    },
+    [enabled]
+  );
 
   return (
-    <SoundContext.Provider value={{ play, toggleMute, muted, initialized }}>
+    <SoundContext.Provider value={{ enabled, toggle, play }}>
       {children}
     </SoundContext.Provider>
   );
