@@ -766,6 +766,9 @@ export default function GetHelp() {
               { num: '4', name: 'The Approach', focus: 'Outreach rules, cadence, subject lines', icon: '📨' },
               { num: '5', name: 'The Cables', focus: 'Navigator training, session protocol, escalation', icon: '🔗' },
               { num: '6', name: 'The Deck', focus: 'Production stack, H.K. architecture, security', icon: '💻' },
+              { num: '7', name: 'The Abutments', focus: 'Grant targets, local pipeline, growth roadmap', icon: '📈' },
+              { num: '8', name: 'The Foundation', focus: 'Risk management, what-if scenarios, lean mode', icon: '🛡️' },
+              { num: '9', name: 'The Elevation', focus: 'MBA case study — PESTEL, Porter\'s, SWOT', icon: '🎓' },
             ].map((s, i) => (
               <Reveal key={s.num} delay={i * 0.08}>
                 <div
@@ -816,7 +819,7 @@ export default function GetHelp() {
                 title: 'Education',
                 sdg: 'SDG 4',
                 examples: 'School portals, FAFSA, online learning platforms, student account recovery, grade tracking',
-                stat: 'Most common issue category',
+                stat: 'School portals, FAFSA, homework platforms',
                 color: '#2D6A4F',
               },
               {
@@ -824,7 +827,7 @@ export default function GetHelp() {
                 title: 'Workforce',
                 sdg: 'SDG 8',
                 examples: 'Job applications, resume uploads, hiring portals, VA benefits, professional certifications',
-                stat: 'Highest time-per-session',
+                stat: 'Job applications, resume uploads, career portals',
                 color: '#1B4332',
               },
               {
@@ -832,7 +835,7 @@ export default function GetHelp() {
                 title: 'Health',
                 sdg: 'SDG 3',
                 examples: 'Telehealth setup, patient portals, prescription management, insurance enrollment, appointment scheduling',
-                stat: 'Fastest growing category',
+                stat: 'Telehealth setup, patient portals, insurance',
                 color: '#C4704B',
               },
               {
@@ -840,7 +843,7 @@ export default function GetHelp() {
                 title: 'Housing',
                 sdg: 'SDG 1 & 10',
                 examples: 'Rental applications, housing authority portals, utility assistance, document uploads, lease management',
-                stat: 'Most deadline-sensitive',
+                stat: 'Rental applications, document uploads, utilities',
                 color: '#C9A227',
               },
             ].map((item, i) => (
