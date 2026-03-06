@@ -55,13 +55,14 @@ function App() {
     setIntroComplete(true);
   }, []);
 
-  // Safety: if intro hasn't completed after 8s, force it
+  // Safety: if intro hasn't completed after 65s, force it
+  // (Interactive intro has its own 60s safety timer)
   useEffect(() => {
     if (introComplete) return;
     const safety = setTimeout(() => {
       sessionStorage.setItem('tb-intro-seen', '1');
       setIntroComplete(true);
-    }, 8000);
+    }, 65000);
     return () => clearTimeout(safety);
   }, [introComplete]);
 

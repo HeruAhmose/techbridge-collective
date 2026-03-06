@@ -7,9 +7,12 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { tbSoundEngine } from '../lib/TBSoundEngine';
 
+import Footer from '../components/Footer';
+
 const CDN = {
-  hub: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-community-hub_a2b31bb6.png',
-  navigator: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-navigator-session_55144ac2.png',
+  hub: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/hub-exterior-Dp9FtPxyv99F7AzXgr44Ue.webp',
+  navigator: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp',
+  gathering: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp',
 };
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {

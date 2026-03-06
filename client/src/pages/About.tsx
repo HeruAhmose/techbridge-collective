@@ -1,18 +1,26 @@
 /**
  * TechBridge Collective — About Page
- * Mission, Horace King story, SPAN model, team
- * Bridge theme, warm brutalism, forest green + gold + cream
+ * Mission, Horace King story, SPAN document, team
+ * 
+ * SPAN = Strategic Playbook, Architecture & Navigator Operations
+ * (The operational document name, NOT a resident journey model)
+ * 
+ * Bridge theme, forest green + gold + cream
  */
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { tbSoundEngine } from '../lib/TBSoundEngine';
+import Footer from '../components/Footer';
 
 const CDN = {
   hk: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_80_9e8213b6.jpg',
-  bridge: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-hero-bridge_e2e7e2c5.png',
+  horaceKing: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/horace-king-tribute-WrUcXchvoiExwCufr5cq2T.webp',
+  navigatorHelping: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp',
+  handsGuiding: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/navigator-session-7Fy7vkxQXuw2y8AmS6RLxZ.webp',
+  spanJourney: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/span-journey-fgm8ge9JC6YczpG5dzHFSm.webp',
 };
 
-function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+function Reveal({ children, delay = 0, direction = 'up' }: { children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'right' }) {
   const ref = useRef<HTMLDivElement>(null);
   const [v, setV] = useState(false);
   useEffect(() => {
@@ -22,8 +30,13 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+  const variants: Record<string, any> = {
+    up: { hidden: { y: 30, opacity: 0 }, visible: { y: 0, opacity: 1 } },
+    left: { hidden: { x: -40, opacity: 0 }, visible: { x: 0, opacity: 1 } },
+    right: { hidden: { x: 40, opacity: 0 }, visible: { x: 0, opacity: 1 } },
+  };
   return (
-    <motion.div ref={ref} initial={{ y: 30, opacity: 0 }} animate={v ? { y: 0, opacity: 1 } : { y: 30, opacity: 0 }} transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}>
+    <motion.div ref={ref} initial="hidden" animate={v ? 'visible' : 'hidden'} variants={variants[direction]} transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}>
       {children}
     </motion.div>
   );
@@ -39,8 +52,8 @@ export default function About() {
       {/* HERO */}
       <section className="relative min-h-[70vh] flex items-center overflow-hidden pt-20">
         <div className="absolute inset-0">
-          <img src={CDN.bridge} alt="" className="w-full h-full object-cover" style={{ opacity: 0.1 }} />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(15, 43, 31, 0.95), rgba(27, 67, 50, 0.9))' }} />
+          <img src={CDN.horaceKing} alt="Horace King tribute" className="w-full h-full object-cover" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(15, 43, 31, 0.92), rgba(27, 67, 50, 0.85))' }} />
         </div>
         <div className="container relative z-10">
           <div className="max-w-3xl">
@@ -48,48 +61,54 @@ export default function About() {
               Our Story
             </motion.p>
             <motion.h1
-              className="font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] mb-6"
+              className="font-display text-4xl md:text-6xl font-bold mb-6"
               style={{ color: '#FDF8F0' }}
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.2 }}
             >
-              Built on the legacy of a <span style={{ color: '#C9A227' }}>bridge builder</span>
+              Where Carbon Meets Crystal
             </motion.h1>
-            <motion.p className="text-lg max-w-2xl" style={{ color: 'rgba(253, 248, 240, 0.8)', lineHeight: 1.7 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
-              TechBridge Collective exists because the digital divide isn't a technology problem — it's a human problem that requires human solutions, augmented by technology.
+            <motion.p
+              className="text-base md:text-lg max-w-2xl leading-relaxed"
+              style={{ color: 'rgba(253, 248, 240, 0.8)' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.4 }}
+            >
+              TechBridge Collective exists because the digital divide isn't about devices — it's about access, dignity, and the human connection that makes technology useful.
             </motion.p>
           </div>
         </div>
       </section>
 
-      {/* HORACE KING STORY */}
+      {/* HORACE KING TRIBUTE */}
       <section className="py-20 md:py-28">
         <div className="container">
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
-            <Reveal>
+            <Reveal direction="left">
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(27, 67, 50, 0.12)' }}>
+                <img src={CDN.horaceKing} alt="Horace King, master bridge builder" className="w-full h-auto" />
+              </div>
+            </Reveal>
+            <Reveal direction="right">
               <div>
-                <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>The Namesake</p>
+                <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Our Namesake</p>
                 <h2 className="font-display text-3xl md:text-4xl font-bold mb-6" style={{ color: '#1B4332' }}>
                   Horace King
                 </h2>
-                <p className="text-base mb-4" style={{ color: '#2D3436', lineHeight: 1.8 }}>
-                  Born into slavery in 1807, Horace King became one of the most celebrated bridge builders in the American South. He designed and constructed bridges across Alabama, Georgia, and Mississippi — structures that connected communities separated by rivers and terrain.
+                <p className="text-base mb-4 leading-relaxed" style={{ color: '#2D3436' }}>
+                  Born into slavery, Horace King became the most celebrated bridge builder in the American South. He designed and constructed bridges that connected communities separated by rivers, geography, and circumstance.
                 </p>
-                <p className="text-base mb-4" style={{ color: '#2D3436', lineHeight: 1.8 }}>
-                  After emancipation, King continued building. He was elected to the Alabama House of Representatives and became a respected businessman. His bridges were engineering marvels — but more importantly, they were acts of connection.
+                <p className="text-base mb-4 leading-relaxed" style={{ color: '#2D3436' }}>
+                  His legacy lives in our name and our mission. The digital divide is today's river — and we build the bridges to cross it. Our AI assistant, <strong style={{ color: '#C9A227' }}>H.K.</strong>, carries his initials and his spirit of connection.
                 </p>
-                <p className="text-base" style={{ color: '#2D3436', lineHeight: 1.8 }}>
-                  Our AI assistant, <strong style={{ color: '#C9A227' }}>H.K.</strong>, is named in his honor. Like King's bridges, H.K. connects people to the digital resources they need — spanning the divide between confusion and clarity.
-                </p>
-              </div>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <div className="relative">
-                <div className="rounded-2xl overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(27, 67, 50, 0.15)' }}>
-                  <img src={CDN.hk} alt="H.K. AI — Named for Horace King" className="w-full" />
-                </div>
-                <div className="absolute -bottom-4 -right-4 rounded-xl p-4" style={{ background: '#1B4332', boxShadow: '0 8px 24px rgba(27, 67, 50, 0.2)' }}>
-                  <p className="text-sm font-display font-bold" style={{ color: '#C9A227' }}>H.K. AI</p>
-                  <p className="text-xs" style={{ color: 'rgba(253, 248, 240, 0.7)' }}>Digital Bridge Builder</p>
+                <div className="flex items-center gap-3 mt-6 p-4 rounded-xl" style={{ background: 'rgba(27, 67, 50, 0.04)', border: '1px solid #e8e0d0' }}>
+                  <img src={CDN.hk} alt="H.K. AI" className="w-12 h-12 rounded-full" style={{ border: '2px solid #C9A227' }} />
+                  <div>
+                    <p className="font-display text-sm font-bold" style={{ color: '#1B4332' }}>H.K. — Help Desk Architect</p>
+                    <p className="text-xs" style={{ color: '#5a6c5a' }}>24/7 AI bridge between visits</p>
+                  </div>
                 </div>
               </div>
             </Reveal>
@@ -97,55 +116,71 @@ export default function About() {
         </div>
       </section>
 
-      {/* MISSION */}
-      <section className="py-20" style={{ background: '#1B4332' }}>
-        <div className="container">
-          <Reveal>
-            <div className="max-w-3xl mx-auto text-center">
-              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Our Mission</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-8" style={{ color: '#FDF8F0' }}>
-                Bridge the digital divide through <span style={{ color: '#C9A227' }}>human-centered</span> technology support
+      {/* NAVIGATOR PHOTO SECTION */}
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={CDN.navigatorHelping} alt="Digital Navigator helping community member" className="w-full h-full object-cover" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(27, 67, 50, 0.88), rgba(27, 67, 50, 0.5))' }} />
+        </div>
+        <div className="container relative z-10">
+          <Reveal direction="left">
+            <div className="max-w-xl">
+              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Our Approach</p>
+              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6" style={{ color: '#FDF8F0' }}>
+                You are not tech support. You are a bridge.
               </h2>
-              <p className="text-lg" style={{ color: 'rgba(253, 248, 240, 0.8)', lineHeight: 1.8 }}>
-                We deploy paid Digital Navigators — trained community members who provide free, one-on-one tech help at trusted neighborhood locations. Our AI assistant H.K. extends support between visits, and our TechMinutes® system measures every interaction so communities can prove their impact.
+              <p className="text-base mb-4 leading-relaxed" style={{ color: 'rgba(253, 248, 240, 0.85)' }}>
+                A school portal isn't a password reset — it's a parent reconnecting with their child's education. A job application isn't a form — it's a veteran rebuilding their career.
+              </p>
+              <p className="text-sm italic" style={{ color: 'rgba(253, 248, 240, 0.6)' }}>
+                — From the TechBridge SPAN, Section 1: The Crossing
               </p>
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* THE SPAN MODEL */}
-      <section className="py-20 md:py-28">
-        <div className="container">
+      {/* THE SPAN DOCUMENT — Correct Definition */}
+      <section className="py-20 md:py-28 relative overflow-hidden" style={{ background: '#0F2B1F' }}>
+        <div className="absolute inset-0">
+          <img src={CDN.spanJourney} alt="" className="w-full h-full object-cover" style={{ opacity: 0.06 }} />
+        </div>
+        <div className="container relative z-10">
           <Reveal>
             <div className="text-center mb-16">
-              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Our Methodology</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold" style={{ color: '#1B4332' }}>The SPAN Model</h2>
-              <p className="text-base mt-3 max-w-xl mx-auto" style={{ color: '#2D3436' }}>
-                A 60-day journey from digital crisis to digital confidence.
+              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Our Operational Blueprint</p>
+              <h2 className="font-display text-3xl md:text-4xl font-bold" style={{ color: '#FDF8F0' }}>The SPAN Document</h2>
+              <p className="text-base mt-3 max-w-2xl mx-auto" style={{ color: 'rgba(253, 248, 240, 0.7)' }}>
+                <strong style={{ color: '#C9A227' }}>Strategic Playbook, Architecture & Navigator Operations</strong> — our comprehensive operational document. Every section is named after a part of a bridge, because that's what we build.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {[
-              { letter: 'S', name: 'Stabilize', desc: 'Triage the immediate digital crisis. Restore access, fix urgent issues, establish trust.', days: 'Days 1-7', color: '#C4704B' },
-              { letter: 'P', name: 'Prepare', desc: 'Assess full digital needs. Create a personalized plan. Set up essential accounts and tools.', days: 'Days 8-21', color: '#C9A227' },
-              { letter: 'A', name: 'Activate', desc: 'Build skills through guided practice. Complete key tasks independently with Navigator support.', days: 'Days 22-45', color: '#2D6A4F' },
-              { letter: 'N', name: 'Navigate', desc: 'Sustain independence. Use H.K. AI for ongoing support. Become a community resource yourself.', days: 'Days 46-60+', color: '#1B4332' },
+              { num: '1', name: 'The Crossing', focus: 'Identity, values, brand voice, code of conduct', icon: '🧭' },
+              { num: '2', name: 'The Structure', focus: 'Three pillars, partnership model, 60-day launch', icon: '🏗️' },
+              { num: '3', name: 'The Load', focus: 'Budget, payroll, unit economics', icon: '⚖️' },
+              { num: '4', name: 'The Approach', focus: 'Outreach rules, cadence, subject lines', icon: '📨' },
+              { num: '5', name: 'The Cables', focus: 'Navigator training, session protocol, escalation', icon: '🔗' },
+              { num: '6', name: 'The Deck', focus: 'Production stack, H.K. architecture, security', icon: '💻' },
+              { num: '7', name: 'The Abutments', focus: 'Grant targets, local pipeline, growth roadmap', icon: '📈' },
+              { num: '8', name: 'The Foundation', focus: 'Risk management, what-if scenarios, lean mode', icon: '🛡️' },
+              { num: '9', name: 'The Elevation', focus: 'MBA case study — PESTEL, Porter\'s, SWOT', icon: '🎓' },
             ].map((s, i) => (
-              <Reveal key={s.letter} delay={i * 0.12}>
+              <Reveal key={s.num} delay={i * 0.06}>
                 <motion.div
-                  className="rounded-2xl p-6 h-full text-center transition-all duration-300"
-                  style={{ background: 'white', border: `2px solid ${s.color}22`, boxShadow: '0 4px 20px rgba(27, 67, 50, 0.06)' }}
-                  whileHover={{ y: -6, boxShadow: `0 12px 40px ${s.color}15` }}
+                  className="rounded-xl p-5 h-full cursor-pointer"
+                  style={{ background: 'rgba(253, 248, 240, 0.03)', border: '1px solid rgba(253, 248, 240, 0.06)' }}
+                  whileHover={{ borderColor: 'rgba(201, 162, 39, 0.3)', background: 'rgba(201, 162, 39, 0.05)' }}
+                  onHoverStart={() => tbSoundEngine.play('pillar_hover')}
                 >
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 font-display text-2xl font-bold" style={{ background: `${s.color}12`, color: s.color }}>
-                    {s.letter}
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-lg">{s.icon}</span>
+                    <span className="font-mono text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(201, 162, 39, 0.15)', color: '#C9A227' }}>{s.num}</span>
+                    <h3 className="font-display text-sm font-bold" style={{ color: '#FDF8F0' }}>{s.name}</h3>
                   </div>
-                  <h3 className="font-display text-xl font-bold mb-1" style={{ color: s.color }}>{s.name}</h3>
-                  <p className="text-xs font-mono mb-3" style={{ color: '#7C9A6E' }}>{s.days}</p>
-                  <p className="text-sm" style={{ color: '#2D3436', lineHeight: 1.6 }}>{s.desc}</p>
+                  <p className="text-xs leading-relaxed pl-9" style={{ color: 'rgba(253, 248, 240, 0.5)' }}>{s.focus}</p>
                 </motion.div>
               </Reveal>
             ))}
@@ -154,7 +189,7 @@ export default function About() {
       </section>
 
       {/* WHAT MAKES US DIFFERENT */}
-      <section className="py-20" style={{ background: 'rgba(27, 67, 50, 0.03)' }}>
+      <section className="py-20" style={{ background: '#FDF8F0' }}>
         <div className="container">
           <Reveal>
             <div className="text-center mb-12">
@@ -180,43 +215,29 @@ export default function About() {
         </div>
       </section>
 
-      {/* DIGITAL NAVIGATOR ROLE */}
-      <section className="py-20" style={{ background: '#1B4332' }}>
-        <div className="container">
-          <Reveal>
-            <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-12">
-                <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>The People Behind the Bridge</p>
-                <h2 className="font-display text-3xl md:text-4xl font-bold" style={{ color: '#FDF8F0' }}>Digital Navigators</h2>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {[
-                  { title: 'Who They Are', items: ['Paid community members (not volunteers)', 'Background-checked and trained', 'Culturally competent and bilingual when needed', 'Patient, empathetic, tech-literate'] },
-                  { title: 'What They Do', items: ['1-on-1 tech help sessions at hub sites', 'Triage digital crises (locked accounts, expired benefits)', 'Teach digital skills through guided practice', 'Log every session in TechMinutes®'] },
-                ].map((col, i) => (
-                  <Reveal key={col.title} delay={i * 0.15}>
-                    <div className="rounded-xl p-6" style={{ background: 'rgba(253, 248, 240, 0.04)', border: '1px solid rgba(201, 162, 39, 0.12)' }}>
-                      <h3 className="font-display text-lg font-bold mb-4" style={{ color: '#C9A227' }}>{col.title}</h3>
-                      <ul className="space-y-3">
-                        {col.items.map(item => (
-                          <li key={item} className="flex items-start gap-2 text-sm" style={{ color: 'rgba(253, 248, 240, 0.8)' }}>
-                            <span style={{ color: '#C9A227' }}>•</span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
+      {/* HANDS GUIDING — Photo Section */}
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={CDN.handsGuiding} alt="Navigator guiding a community member through a session" className="w-full h-full object-cover" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to left, rgba(27, 67, 50, 0.88), rgba(27, 67, 50, 0.5))' }} />
+        </div>
+        <div className="container relative z-10">
+          <Reveal direction="right">
+            <div className="max-w-xl ml-auto text-right">
+              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>The People Behind the Bridge</p>
+              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6" style={{ color: '#FDF8F0' }}>
+                Digital Navigators
+              </h2>
+              <p className="text-base mb-4 leading-relaxed" style={{ color: 'rgba(253, 248, 240, 0.85)' }}>
+                Paid community members — not volunteers. Background-checked, trained, culturally competent, and bilingual when needed. They deliver 1-on-1 tech help sessions, triage digital crises, teach digital skills through guided practice, and log every session in TechMinutes®.
+              </p>
             </div>
           </Reveal>
         </div>
       </section>
 
       {/* FUNDING */}
-      <section className="py-20 md:py-28">
+      <section className="py-20 md:py-28" style={{ background: '#FDF8F0' }}>
         <div className="container">
           <Reveal>
             <div className="max-w-3xl mx-auto text-center">
@@ -266,23 +287,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="py-12" style={{ background: '#0F2B1F' }}>
-        <div className="container">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-                <path d="M4 22 Q16 8 28 22" stroke="#C9A227" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                <line x1="4" y1="22" x2="28" y2="22" stroke="#C9A227" strokeWidth="2" />
-                <line x1="16" y1="22" x2="16" y2="11" stroke="#C9A227" strokeWidth="1.5" />
-              </svg>
-              <span className="font-display text-base font-bold" style={{ color: '#C9A227' }}>TechBridge Collective</span>
-            </div>
-            <p className="text-sm italic" style={{ color: 'rgba(253, 248, 240, 0.5)' }}>Bridging the digital divide, one neighborhood at a time.</p>
-            <span className="text-sm" style={{ color: 'rgba(253, 248, 240, 0.4)' }}>2026</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

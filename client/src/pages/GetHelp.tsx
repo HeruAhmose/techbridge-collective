@@ -19,10 +19,12 @@ import { tbSoundEngine } from '../lib/TBSoundEngine';
 // ============================================
 const IMAGES = {
   heroBridge: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-hero-bridge-UbQzT3Yxdjbgg9ttB4ndQo.webp',
-  navigatorSession: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-navigator-session-m6pruiXUssfWTscjuagPF4.webp',
-  communityHub: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-community-hub-mjcoK2qnQkafwbhGuQVL9w.webp',
+  navigatorSession: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp',
+  communityHub: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp',
   hkAI: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_80_9e8213b6.jpg',
   impactData: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-impact-data-bGzJFSEJ2jyfkk7HmWcrYx.webp',
+  successMoment: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/success-moment-hm2uPdPFHXpkuohVUwwfqe.webp',
+  hubExterior: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/hub-exterior-Dp9FtPxyv99F7AzXgr44Ue.webp',
 };
 
 // ============================================
@@ -738,74 +740,49 @@ export default function GetHelp() {
       </section>
 
       {/* ============================================
-          THE SPAN MODEL — From SPAN Document
+          THE SPAN DOCUMENT — Operational Playbook
           ============================================ */}
       <section className="py-20 md:py-32" style={{ background: 'rgba(27, 67, 50, 0.03)' }}>
         <div className="container">
           <Reveal>
             <div className="text-center mb-16">
               <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>
-                Our Framework
+                Our Operational Blueprint
               </p>
               <h2 className="font-display text-3xl md:text-5xl font-bold mb-4" style={{ color: '#1B4332' }}>
-                The SPAN Model
+                The SPAN Document
               </h2>
               <p className="text-lg max-w-2xl mx-auto" style={{ color: '#2D3436' }}>
-                Staffing, Platform, Analytics, and Navigation — a complete system for closing the digital divide.
+                <strong style={{ color: '#C9A227' }}>Strategic Playbook, Architecture & Navigator Operations</strong> — our comprehensive operational blueprint. Every section is named after a part of a bridge.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {[
-              {
-                letter: 'S',
-                title: 'Staffing',
-                desc: 'Paid Digital Navigators — not volunteers. Trained, consistent, and accountable. Zero workload for your site.',
-                accent: '#1B4332',
-              },
-              {
-                letter: 'P',
-                title: 'Platform',
-                desc: 'H.K. AI assistant provides 24/7 triage between hub visits. Step-by-step guidance for common tasks.',
-                accent: '#2D6A4F',
-              },
-              {
-                letter: 'A',
-                title: 'Analytics',
-                desc: 'TechMinutes® tracks every interaction. Monthly reports with issue categories, resolution rates, and demand patterns.',
-                accent: '#C9A227',
-              },
-              {
-                letter: 'N',
-                title: 'Navigation',
-                desc: 'The core service. Sit down, walk through it, solve it. Education, workforce, health, and housing — all in one visit.',
-                accent: '#C4704B',
-              },
-            ].map((item, i) => (
-              <Reveal key={item.letter} delay={i * 0.12}>
+              { num: '1', name: 'The Crossing', focus: 'Identity, values, brand voice, code of conduct', icon: '🧭' },
+              { num: '2', name: 'The Structure', focus: 'Three pillars, partnership model, 60-day launch', icon: '🏗️' },
+              { num: '3', name: 'The Load', focus: 'Budget, payroll, unit economics', icon: '⚖️' },
+              { num: '4', name: 'The Approach', focus: 'Outreach rules, cadence, subject lines', icon: '📨' },
+              { num: '5', name: 'The Cables', focus: 'Navigator training, session protocol, escalation', icon: '🔗' },
+              { num: '6', name: 'The Deck', focus: 'Production stack, H.K. architecture, security', icon: '💻' },
+            ].map((s, i) => (
+              <Reveal key={s.num} delay={i * 0.08}>
                 <div
-                  className="rounded-2xl p-8 h-full relative overflow-hidden transition-transform duration-300 hover:scale-[1.03]"
+                  className="rounded-xl p-5 h-full transition-all duration-300 hover:shadow-lg"
                   style={{
                     background: 'white',
                     border: '1px solid #e8e0d0',
-                    boxShadow: '0 4px 20px rgba(27, 67, 50, 0.06)',
+                    boxShadow: '0 2px 12px rgba(27, 67, 50, 0.04)',
                   }}
                   onMouseEnter={() => tbSoundEngine.play('pillar_hover')}
                 >
-                  <div
-                    className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-display font-bold mb-5"
-                    style={{ background: `${item.accent}15`, color: item.accent }}
-                  >
-                    {item.letter}
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-lg">{s.icon}</span>
+                    <span className="font-mono text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(201, 162, 39, 0.1)', color: '#C9A227' }}>{s.num}</span>
+                    <h3 className="font-display text-sm font-bold" style={{ color: '#1B4332' }}>{s.name}</h3>
                   </div>
-                  <h3 className="font-display text-xl font-bold mb-3" style={{ color: '#1B4332' }}>
-                    {item.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: '#2D3436', lineHeight: '1.7' }}>
-                    {item.desc}
-                  </p>
-                  <div className="absolute bottom-0 left-0 right-0 h-1" style={{ background: item.accent }} />
+                  <p className="text-xs leading-relaxed pl-9" style={{ color: '#5a6c5a' }}>{s.focus}</p>
                 </div>
               </Reveal>
             ))}
