@@ -63,7 +63,7 @@ function App() {
   }, [introComplete]);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#FDF8F0' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--tb-forest)' }}>
       {/* Cinematic Bridge-Building Intro */}
       {!introComplete && <CinematicIntro onComplete={handleIntroComplete} />}
 

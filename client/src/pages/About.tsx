@@ -1,13 +1,9 @@
 /**
  * TechBridge Collective — About Page
- * Mission, Horace King story, SPAN document, team
- * 
+ * Tech-Forward Dark Design System — Glassmorphism, Neon Glow, Circuit Patterns
  * SPAN = Strategic Playbook, Architecture & Navigator Operations
- * (The operational document name, NOT a resident journey model)
- * 
- * Bridge theme, forest green + gold + cream
  */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { tbSoundEngine } from '../lib/TBSoundEngine';
 import Footer from '../components/Footer';
@@ -20,94 +16,92 @@ const CDN = {
   spanJourney: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/span-journey-fgm8ge9JC6YczpG5dzHFSm.webp',
 };
 
-function Reveal({ children, delay = 0, direction = 'up' }: { children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'right' }) {
+function Reveal({ children, delay = 0, direction = 'up', className = '' }: { children: React.ReactNode; delay?: number; direction?: 'up' | 'left' | 'right' | 'scale'; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [v, setV] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setV(true); obs.disconnect(); } }, { threshold: 0.15 });
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setV(true); obs.disconnect(); } }, { threshold: 0.12 });
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
   const variants: Record<string, any> = {
-    up: { hidden: { y: 30, opacity: 0 }, visible: { y: 0, opacity: 1 } },
-    left: { hidden: { x: -40, opacity: 0 }, visible: { x: 0, opacity: 1 } },
-    right: { hidden: { x: 40, opacity: 0 }, visible: { x: 0, opacity: 1 } },
+    up: { hidden: { y: 50, opacity: 0 }, visible: { y: 0, opacity: 1 } },
+    left: { hidden: { x: -60, opacity: 0 }, visible: { x: 0, opacity: 1 } },
+    right: { hidden: { x: 60, opacity: 0 }, visible: { x: 0, opacity: 1 } },
+    scale: { hidden: { scale: 0.85, opacity: 0 }, visible: { scale: 1, opacity: 1 } },
   };
   return (
-    <motion.div ref={ref} initial="hidden" animate={v ? 'visible' : 'hidden'} variants={variants[direction]} transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}>
+    <motion.div ref={ref} className={className} initial="hidden" animate={v ? 'visible' : 'hidden'} variants={variants[direction]} transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}>
       {children}
     </motion.div>
   );
 }
 
-export default function About() {
-  const [soundInit, setSoundInit] = useState(false);
-  const initSound = () => { if (!soundInit) { tbSoundEngine.init(); setSoundInit(true); } };
-
+function CircuitBg({ opacity = 0.05 }: { opacity?: number }) {
   return (
-    <div onClick={initSound} style={{ background: '#FDF8F0', color: '#2D3436' }}>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ opacity }}>
+      <svg className="w-full h-full" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+        <path d="M0 150 H250 V250 H450 V150 H650 V350 H800" stroke="#E8B931" strokeWidth="1" fill="none" opacity="0.4" />
+        <path d="M0 450 H200 V300 H500 V450 H800" stroke="#00D4AA" strokeWidth="1" fill="none" opacity="0.3" />
+        {[{x:250,y:150},{x:450,y:250},{x:650,y:150},{x:200,y:300},{x:500,y:450}].map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r="3" fill="#E8B931" opacity="0.5" />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+export default function About() {
+  return (
+    <div style={{ background: 'var(--tb-forest)', color: 'var(--tb-cream)' }}>
 
       {/* HERO */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden pt-20">
+      <section className="relative min-h-[75vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img src={CDN.horaceKing} alt="Horace King tribute" className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(15, 43, 31, 0.92), rgba(27, 67, 50, 0.85))' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(10,31,20,0.65) 0%, rgba(10,31,20,0.85) 60%, rgba(10,31,20,0.95) 100%)' }} />
         </div>
-        <div className="container relative z-10">
-          <div className="max-w-3xl">
-            <motion.p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-              Our Story
-            </motion.p>
-            <motion.h1
-              className="font-display text-4xl md:text-6xl font-bold mb-6"
-              style={{ color: '#FDF8F0' }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-            >
-              Where Carbon Meets Crystal
-            </motion.h1>
-            <motion.p
-              className="text-base md:text-lg max-w-2xl leading-relaxed"
-              style={{ color: 'rgba(253, 248, 240, 0.8)' }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 }}
-            >
+        <CircuitBg opacity={0.03} />
+        <div className="container relative z-10 pt-32 pb-20">
+          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}>
+            <div className="holo-badge inline-block mb-6" style={{ color: '#00D4AA' }}>Our Story</div>
+            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 max-w-4xl">
+              Where Carbon Meets <span className="text-glow-gold">Crystal</span>
+            </h1>
+            <p className="text-lg md:text-xl max-w-2xl" style={{ color: 'rgba(253, 248, 240, 0.75)' }}>
               TechBridge Collective exists because the digital divide isn't about devices — it's about access, dignity, and the human connection that makes technology useful.
-            </motion.p>
-          </div>
+            </p>
+          </motion.div>
         </div>
       </section>
 
       {/* HORACE KING TRIBUTE */}
-      <section className="py-20 md:py-28">
-        <div className="container">
+      <section className="py-24 md:py-36 relative overflow-hidden" style={{ background: 'var(--tb-forest-mid)' }}>
+        <CircuitBg opacity={0.04} />
+        <div className="container relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
             <Reveal direction="left">
-              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(27, 67, 50, 0.12)' }}>
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(232, 185, 49, 0.08)' }}>
                 <img src={CDN.horaceKing} alt="Horace King, master bridge builder" className="w-full h-auto" />
               </div>
             </Reveal>
             <Reveal direction="right">
               <div>
-                <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Our Namesake</p>
-                <h2 className="font-display text-3xl md:text-4xl font-bold mb-6" style={{ color: '#1B4332' }}>
-                  Horace King
-                </h2>
-                <p className="text-base mb-4 leading-relaxed" style={{ color: '#2D3436' }}>
+                <p className="text-sm font-mono tracking-widest uppercase mb-4 text-glow-gold">Our Namesake</p>
+                <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Horace <span className="text-glow-gold">King</span></h2>
+                <p className="text-base mb-4 leading-relaxed" style={{ color: 'rgba(253, 248, 240, 0.75)' }}>
                   Born into slavery, Horace King became the most celebrated bridge builder in the American South. He designed and constructed bridges that connected communities separated by rivers, geography, and circumstance.
                 </p>
-                <p className="text-base mb-4 leading-relaxed" style={{ color: '#2D3436' }}>
-                  His legacy lives in our name and our mission. The digital divide is today's river — and we build the bridges to cross it. Our AI assistant, <strong style={{ color: '#C9A227' }}>H.K.</strong>, carries his initials and his spirit of connection.
+                <p className="text-base mb-4 leading-relaxed" style={{ color: 'rgba(253, 248, 240, 0.75)' }}>
+                  His legacy lives in our name and our mission. The digital divide is today's river — and we build the bridges to cross it. Our AI assistant, <strong className="text-glow-gold">H.K.</strong>, carries his initials and his spirit of connection.
                 </p>
-                <div className="flex items-center gap-3 mt-6 p-4 rounded-xl" style={{ background: 'rgba(27, 67, 50, 0.04)', border: '1px solid #e8e0d0' }}>
-                  <img src={CDN.hk} alt="H.K. AI" className="w-12 h-12 rounded-full" style={{ border: '2px solid #C9A227' }} />
+                <div className="glass-card flex items-center gap-3 p-4 mt-6">
+                  <img src={CDN.hk} alt="H.K. AI" className="w-12 h-12 rounded-full" style={{ border: '2px solid #E8B931', boxShadow: '0 0 12px rgba(232, 185, 49, 0.3)' }} />
                   <div>
-                    <p className="font-display text-sm font-bold" style={{ color: '#1B4332' }}>H.K. — Help Desk Architect</p>
-                    <p className="text-xs" style={{ color: '#5a6c5a' }}>24/7 AI bridge between visits</p>
+                    <p className="font-display text-sm font-bold" style={{ color: 'var(--tb-cream)' }}>H.K. — Help Desk Architect</p>
+                    <p className="text-xs" style={{ color: 'rgba(0, 212, 170, 0.6)' }}>24/7 AI bridge between visits</p>
                   </div>
                 </div>
               </div>
@@ -120,38 +114,35 @@ export default function About() {
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
           <img src={CDN.navigatorHelping} alt="Digital Navigator helping community member" className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(27, 67, 50, 0.88), rgba(27, 67, 50, 0.5))' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(10,31,20,0.92), rgba(10,31,20,0.5))' }} />
         </div>
         <div className="container relative z-10">
           <Reveal direction="left">
             <div className="max-w-xl">
-              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Our Approach</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6" style={{ color: '#FDF8F0' }}>
-                You are not tech support. You are a bridge.
-              </h2>
+              <p className="text-sm font-mono tracking-widest uppercase mb-4 text-glow-gold">Our Approach</p>
+              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">You are not tech support. You are a <span className="text-glow-gold">bridge</span>.</h2>
               <p className="text-base mb-4 leading-relaxed" style={{ color: 'rgba(253, 248, 240, 0.85)' }}>
                 A school portal isn't a password reset — it's a parent reconnecting with their child's education. A job application isn't a form — it's a veteran rebuilding their career.
               </p>
-              <p className="text-sm italic" style={{ color: 'rgba(253, 248, 240, 0.6)' }}>
-                — From the TechBridge SPAN, Section 1: The Crossing
-              </p>
+              <p className="text-sm italic" style={{ color: 'rgba(253, 248, 240, 0.45)' }}>— From the TechBridge SPAN, Section 1: The Crossing</p>
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* THE SPAN DOCUMENT — Correct Definition */}
-      <section className="py-20 md:py-28 relative overflow-hidden" style={{ background: '#0F2B1F' }}>
+      {/* THE SPAN DOCUMENT */}
+      <section className="py-24 md:py-36 relative overflow-hidden" style={{ background: 'var(--tb-forest)' }}>
         <div className="absolute inset-0">
-          <img src={CDN.spanJourney} alt="" className="w-full h-full object-cover" style={{ opacity: 0.06 }} />
+          <img src={CDN.spanJourney} alt="" className="w-full h-full object-cover" style={{ opacity: 0.04 }} />
         </div>
+        <CircuitBg opacity={0.05} />
         <div className="container relative z-10">
           <Reveal>
             <div className="text-center mb-16">
-              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Our Operational Blueprint</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold" style={{ color: '#FDF8F0' }}>The SPAN Document</h2>
-              <p className="text-base mt-3 max-w-2xl mx-auto" style={{ color: 'rgba(253, 248, 240, 0.7)' }}>
-                <strong style={{ color: '#C9A227' }}>Strategic Playbook, Architecture & Navigator Operations</strong> — our comprehensive operational document. Every section is named after a part of a bridge, because that's what we build.
+              <p className="text-sm font-mono tracking-widest uppercase mb-4 text-glow-teal">Our Operational Blueprint</p>
+              <h2 className="font-display text-3xl md:text-4xl font-bold">The <span className="text-glow-gold">SPAN</span> Document</h2>
+              <p className="text-base mt-3 max-w-2xl mx-auto" style={{ color: 'rgba(253, 248, 240, 0.6)' }}>
+                <strong className="text-glow-gold">Strategic Playbook, Architecture & Navigator Operations</strong> — our comprehensive operational document. Every section is named after a part of a bridge.
               </p>
             </div>
           </Reveal>
@@ -166,19 +157,14 @@ export default function About() {
               { num: '6', name: 'The Deck', focus: 'Production stack, H.K. architecture, security', icon: '💻' },
               { num: '7', name: 'The Abutments', focus: 'Grant targets, local pipeline, growth roadmap', icon: '📈' },
               { num: '8', name: 'The Foundation', focus: 'Risk management, what-if scenarios, lean mode', icon: '🛡️' },
-              { num: '9', name: 'The Elevation', focus: 'MBA case study — PESTEL, Porter\'s, SWOT', icon: '🎓' },
+              { num: '9', name: 'The Elevation', focus: "MBA case study — PESTEL, Porter's, SWOT", icon: '🎓' },
             ].map((s, i) => (
-              <Reveal key={s.num} delay={i * 0.06}>
-                <motion.div
-                  className="rounded-xl p-5 h-full cursor-pointer"
-                  style={{ background: 'rgba(253, 248, 240, 0.03)', border: '1px solid rgba(253, 248, 240, 0.06)' }}
-                  whileHover={{ borderColor: 'rgba(201, 162, 39, 0.3)', background: 'rgba(201, 162, 39, 0.05)' }}
-                  onHoverStart={() => tbSoundEngine.play('pillar_hover')}
-                >
+              <Reveal key={s.num} delay={i * 0.06} direction="scale">
+                <motion.div className="glass-card p-5 h-full" whileHover={{ y: -6, boxShadow: '0 0 20px rgba(232, 185, 49, 0.15)' }} onHoverStart={() => tbSoundEngine.play('pillar_hover')}>
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-lg">{s.icon}</span>
-                    <span className="font-mono text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(201, 162, 39, 0.15)', color: '#C9A227' }}>{s.num}</span>
-                    <h3 className="font-display text-sm font-bold" style={{ color: '#FDF8F0' }}>{s.name}</h3>
+                    <span className="font-mono text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(232, 185, 49, 0.15)', color: '#E8B931' }}>{s.num}</span>
+                    <h3 className="font-display text-sm font-bold" style={{ color: 'var(--tb-cream)' }}>{s.name}</h3>
                   </div>
                   <p className="text-xs leading-relaxed pl-9" style={{ color: 'rgba(253, 248, 240, 0.5)' }}>{s.focus}</p>
                 </motion.div>
@@ -189,26 +175,27 @@ export default function About() {
       </section>
 
       {/* WHAT MAKES US DIFFERENT */}
-      <section className="py-20" style={{ background: '#FDF8F0' }}>
-        <div className="container">
+      <section className="py-24 md:py-36 relative overflow-hidden" style={{ background: 'var(--tb-forest-mid)' }}>
+        <CircuitBg opacity={0.04} />
+        <div className="container relative z-10">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className="font-display text-3xl md:text-4xl font-bold" style={{ color: '#1B4332' }}>What Makes Us Different</h2>
+              <h2 className="font-display text-3xl md:text-4xl font-bold">What Makes Us <span className="text-glow-gold">Different</span></h2>
             </div>
           </Reveal>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {[
-              { title: 'Human-First, AI-Augmented', desc: 'We don\'t replace human connection with technology. We use AI to extend the reach of our human Navigators — not substitute for them.', icon: '🤝' },
-              { title: 'Embedded in Community', desc: 'We go where people already are — libraries, churches, community centers. We don\'t ask people to come to us.', icon: '🏘️' },
-              { title: 'Measurable Impact', desc: 'TechMinutes® gives every partner and funder auditable, non-PII data that proves community impact. No more guessing.', icon: '📊' },
+              { title: 'Human-First, AI-Augmented', desc: "We don't replace human connection with technology. We use AI to extend the reach of our human Navigators.", icon: '🤝', accent: '#00D4AA' },
+              { title: 'Embedded in Community', desc: "We go where people already are — libraries, churches, community centers. We don't ask people to come to us.", icon: '🏘️', accent: '#E8B931' },
+              { title: 'Measurable Impact', desc: 'TechMinutes® gives every partner and funder auditable, non-PII data that proves community impact.', icon: '📊', accent: '#00D4AA' },
             ].map((item, i) => (
-              <Reveal key={item.title} delay={i * 0.1}>
-                <div className="rounded-2xl p-6 h-full" style={{ background: 'white', border: '1px solid #e8e0d0', boxShadow: '0 4px 20px rgba(27, 67, 50, 0.06)' }}>
+              <Reveal key={item.title} delay={i * 0.1} direction="scale">
+                <motion.div className="glass-card p-6 h-full group" whileHover={{ y: -8 }} onHoverStart={() => tbSoundEngine.play('pillar_hover')}>
                   <span className="text-3xl block mb-4">{item.icon}</span>
-                  <h3 className="font-display text-lg font-bold mb-2" style={{ color: '#1B4332' }}>{item.title}</h3>
-                  <p className="text-sm" style={{ color: '#2D3436', lineHeight: 1.7 }}>{item.desc}</p>
-                </div>
+                  <h3 className="font-display text-lg font-bold mb-2" style={{ color: item.accent }}>{item.title}</h3>
+                  <p className="text-sm" style={{ color: 'rgba(253, 248, 240, 0.6)', lineHeight: 1.7 }}>{item.desc}</p>
+                </motion.div>
               </Reveal>
             ))}
           </div>
@@ -218,16 +205,14 @@ export default function About() {
       {/* HANDS GUIDING — Photo Section */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img src={CDN.handsGuiding} alt="Navigator guiding a community member through a session" className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to left, rgba(27, 67, 50, 0.88), rgba(27, 67, 50, 0.5))' }} />
+          <img src={CDN.handsGuiding} alt="Navigator guiding a community member" className="w-full h-full object-cover" />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to left, rgba(10,31,20,0.92), rgba(10,31,20,0.5))' }} />
         </div>
         <div className="container relative z-10">
           <Reveal direction="right">
             <div className="max-w-xl ml-auto text-right">
-              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>The People Behind the Bridge</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6" style={{ color: '#FDF8F0' }}>
-                Digital Navigators
-              </h2>
+              <p className="text-sm font-mono tracking-widest uppercase mb-4 text-glow-gold">The People Behind the Bridge</p>
+              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">Digital <span className="text-glow-teal">Navigators</span></h2>
               <p className="text-base mb-4 leading-relaxed" style={{ color: 'rgba(253, 248, 240, 0.85)' }}>
                 Paid community members — not volunteers. Background-checked, trained, culturally competent, and bilingual when needed. They deliver 1-on-1 tech help sessions, triage digital crises, teach digital skills through guided practice, and log every session in TechMinutes®.
               </p>
@@ -237,25 +222,26 @@ export default function About() {
       </section>
 
       {/* FUNDING */}
-      <section className="py-20 md:py-28" style={{ background: '#FDF8F0' }}>
-        <div className="container">
+      <section className="py-24 md:py-36 relative overflow-hidden" style={{ background: 'var(--tb-forest)' }}>
+        <CircuitBg opacity={0.04} />
+        <div className="container relative z-10">
           <Reveal>
             <div className="max-w-3xl mx-auto text-center">
-              <p className="text-sm font-mono tracking-widest uppercase mb-4" style={{ color: '#C9A227' }}>Sustainability</p>
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6" style={{ color: '#1B4332' }}>How We're Funded</h2>
-              <p className="text-base mb-8" style={{ color: '#2D3436', lineHeight: 1.8 }}>
-                TechBridge operates through a blended funding model: government digital equity grants, philanthropic partnerships, and earned revenue from TechMinutes® reporting services. We're actively seeking partners who want to invest in measurable community impact.
+              <p className="text-sm font-mono tracking-widest uppercase mb-4 text-glow-teal">Sustainability</p>
+              <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">How We're <span className="text-glow-gold">Funded</span></h2>
+              <p className="text-base mb-8" style={{ color: 'rgba(253, 248, 240, 0.65)', lineHeight: 1.8 }}>
+                TechBridge operates through a blended funding model: government digital equity grants, philanthropic partnerships, and earned revenue from TechMinutes® reporting services.
               </p>
               <div className="grid grid-cols-3 gap-4">
                 {[
-                  { label: 'Government Grants', icon: '🏛️' },
-                  { label: 'Philanthropy', icon: '💛' },
-                  { label: 'Earned Revenue', icon: '📈' },
+                  { label: 'Government Grants', icon: '🏛️', accent: '#00D4AA' },
+                  { label: 'Philanthropy', icon: '💛', accent: '#E8B931' },
+                  { label: 'Earned Revenue', icon: '📈', accent: '#00D4AA' },
                 ].map(f => (
-                  <div key={f.label} className="rounded-xl p-4" style={{ background: 'rgba(27, 67, 50, 0.04)', border: '1px solid #e8e0d0' }}>
+                  <motion.div key={f.label} className="glass-card p-4 text-center" whileHover={{ y: -6 }}>
                     <span className="text-2xl block mb-2">{f.icon}</span>
-                    <span className="text-sm font-display font-semibold" style={{ color: '#1B4332' }}>{f.label}</span>
-                  </div>
+                    <span className="text-sm font-display font-semibold" style={{ color: f.accent }}>{f.label}</span>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -264,23 +250,18 @@ export default function About() {
       </section>
 
       {/* CTA */}
-      <section className="py-20" style={{ background: 'linear-gradient(135deg, #1B4332, #0F2B1F)' }}>
-        <div className="container">
+      <section className="py-24 relative overflow-hidden" style={{ background: 'var(--tb-forest-mid)' }}>
+        <CircuitBg opacity={0.06} />
+        <div className="container relative z-10">
           <Reveal>
             <div className="text-center max-w-2xl mx-auto">
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-4" style={{ color: '#FDF8F0' }}>
-                Join the bridge.
-              </h2>
-              <p className="text-base mb-8" style={{ color: 'rgba(253, 248, 240, 0.7)', lineHeight: 1.7 }}>
+              <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Join the <span className="text-glow-gold">bridge</span>.</h2>
+              <p className="text-base mb-8" style={{ color: 'rgba(253, 248, 240, 0.6)' }}>
                 Whether you need help, want to host a hub, or want to fund digital equity — there's a place for you.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/get-help" className="inline-flex items-center justify-center px-8 py-4 rounded-xl text-base font-display font-bold transition-all duration-300 hover:scale-105" style={{ background: '#C9A227', color: '#1B4332' }}>
-                  Get Help
-                </a>
-                <a href="/host-a-hub" className="inline-flex items-center justify-center px-8 py-4 rounded-xl text-base font-display font-bold transition-all duration-300 hover:scale-105" style={{ background: 'transparent', color: '#C9A227', border: '2px solid #C9A227' }}>
-                  Host a Hub
-                </a>
+                <a href="/get-help" className="tb-btn tb-btn-primary !px-8 !py-4 !text-base justify-center" onClick={() => tbSoundEngine.play('nav_click')}>Get Help</a>
+                <a href="/host-a-hub" className="tb-btn tb-btn-ghost !px-8 !py-4 !text-base justify-center" onClick={() => tbSoundEngine.play('nav_click')}>Host a Hub</a>
               </div>
             </div>
           </Reveal>

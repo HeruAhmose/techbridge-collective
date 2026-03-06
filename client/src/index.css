@@ -1,49 +1,60 @@
 @import "tailwindcss";
 
 /*
- * DESIGN SYSTEM: "The Bridge" — Narrative Journey
- * TechBridge Collective · Get Help Page
+ * DESIGN SYSTEM: "The Bridge" — Tech-Forward Narrative
+ * TechBridge Collective
  * 
- * Colors: Forest Green (#1B4332) + Gold (#C9A227) + Cream (#FDF8F0)
+ * Colors: Deep Forest (#0A1F14) + Neon Gold (#E8B931) + Electric Teal (#00D4AA) + Cream (#FDF8F0)
  * Fonts: Fraunces (display) + Inter (body) + JetBrains Mono (data)
- * Philosophy: Warm Brutalism — structural honesty softened by human warmth
+ * Philosophy: Advanced Technology meets Human Warmth — circuit boards and golden bridges
  */
 
 @layer base {
   :root {
-    --background: 40 50% 97%;
-    --foreground: 200 10% 15%;
-    --card: 40 40% 95%;
-    --card-foreground: 200 10% 15%;
-    --popover: 40 50% 97%;
-    --popover-foreground: 200 10% 15%;
-    --primary: 153 42% 18%;
-    --primary-foreground: 40 50% 97%;
-    --secondary: 43 70% 46%;
-    --secondary-foreground: 200 10% 15%;
-    --muted: 40 20% 90%;
-    --muted-foreground: 200 5% 45%;
-    --accent: 43 70% 46%;
-    --accent-foreground: 200 10% 15%;
+    --background: 160 30% 6%;
+    --foreground: 40 50% 96%;
+    --card: 160 25% 10%;
+    --card-foreground: 40 50% 96%;
+    --popover: 160 25% 10%;
+    --popover-foreground: 40 50% 96%;
+    --primary: 43 80% 55%;
+    --primary-foreground: 160 30% 6%;
+    --secondary: 165 100% 42%;
+    --secondary-foreground: 160 30% 6%;
+    --muted: 160 15% 18%;
+    --muted-foreground: 40 10% 60%;
+    --accent: 43 80% 55%;
+    --accent-foreground: 160 30% 6%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 40 20% 85%;
-    --input: 40 20% 85%;
-    --ring: 153 42% 18%;
-    --radius: 0.625rem;
+    --border: 160 20% 20%;
+    --input: 160 20% 20%;
+    --ring: 43 80% 55%;
+    --radius: 0.75rem;
 
-    /* TechBridge Brand Tokens */
-    --tb-forest: #1B4332;
-    --tb-forest-light: #2D6A4F;
-    --tb-forest-dark: #0F2B1F;
-    --tb-gold: #C9A227;
-    --tb-gold-light: #E8C84A;
-    --tb-gold-warm: #D4A03C;
+    /* TechBridge Brand Tokens — Tech-Forward */
+    --tb-forest: #0A1F14;
+    --tb-forest-mid: #122E1F;
+    --tb-forest-light: #1B4332;
+    --tb-forest-glow: #2D6A4F;
+    --tb-gold: #E8B931;
+    --tb-gold-light: #F5D060;
+    --tb-gold-warm: #C9A227;
+    --tb-gold-glow: rgba(232, 185, 49, 0.4);
+    --tb-teal: #00D4AA;
+    --tb-teal-glow: rgba(0, 212, 170, 0.3);
     --tb-cream: #FDF8F0;
     --tb-cream-dark: #F5EDE0;
-    --tb-charcoal: #2D3436;
+    --tb-charcoal: #E8E0D4;
     --tb-sage: #7C9A6E;
-    --tb-terracotta: #C4704B;
+
+    /* Glow & Effect Tokens */
+    --glow-gold: 0 0 20px rgba(232, 185, 49, 0.3), 0 0 60px rgba(232, 185, 49, 0.1);
+    --glow-gold-strong: 0 0 20px rgba(232, 185, 49, 0.5), 0 0 80px rgba(232, 185, 49, 0.2), 0 0 120px rgba(232, 185, 49, 0.1);
+    --glow-teal: 0 0 20px rgba(0, 212, 170, 0.3), 0 0 60px rgba(0, 212, 170, 0.1);
+    --glass-bg: rgba(18, 46, 31, 0.6);
+    --glass-border: rgba(232, 185, 49, 0.15);
+    --glass-border-hover: rgba(232, 185, 49, 0.4);
 
     /* Typography */
     --font-display: 'Fraunces', Georgia, serif;
@@ -62,20 +73,36 @@
   }
 
   body {
-    background-color: var(--tb-cream);
+    background-color: var(--tb-forest);
     color: var(--tb-charcoal);
     font-family: var(--font-body);
     overflow-x: hidden;
   }
 
-  /* Paper grain texture overlay */
+  /* Circuit board grid pattern overlay */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 9999;
-    opacity: 0.03;
+    z-index: 0;
+    opacity: 0.04;
+    background-image:
+      linear-gradient(rgba(0, 212, 170, 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 170, 0.3) 1px, transparent 1px),
+      linear-gradient(rgba(232, 185, 49, 0.2) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232, 185, 49, 0.2) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  }
+
+  /* Subtle noise texture */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.02;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 256px 256px;
@@ -100,18 +127,177 @@
 }
 
 /* ========================================
-   BRIDGE SVG ANIMATIONS
+   TECH-FORWARD BUTTON SYSTEM
    ======================================== */
 
-@keyframes bridgeDraw {
-  from { stroke-dashoffset: 1000; }
-  to { stroke-dashoffset: 0; }
+.tb-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateZ(0);
 }
 
-@keyframes bridgeCableSwing {
-  0%, 100% { transform: rotate(-0.5deg); }
-  50% { transform: rotate(0.5deg); }
+.tb-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
+
+.tb-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
+  opacity: 0;
+}
+
+.tb-btn:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+  transition: 0s;
+}
+
+/* Primary Gold Button */
+.tb-btn-primary {
+  background: linear-gradient(135deg, #E8B931, #C9A227);
+  color: #0A1F14;
+  border: 1px solid rgba(232, 185, 49, 0.5);
+  box-shadow: 0 4px 20px rgba(232, 185, 49, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.tb-btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--glow-gold-strong);
+  border-color: rgba(232, 185, 49, 0.8);
+}
+
+.tb-btn-primary:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 2px 10px rgba(232, 185, 49, 0.3);
+}
+
+/* Secondary Teal Button */
+.tb-btn-secondary {
+  background: rgba(0, 212, 170, 0.1);
+  color: #00D4AA;
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 212, 170, 0.1);
+}
+
+.tb-btn-secondary:hover {
+  background: rgba(0, 212, 170, 0.2);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--glow-teal);
+  border-color: rgba(0, 212, 170, 0.6);
+}
+
+.tb-btn-secondary:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* Ghost Button */
+.tb-btn-ghost {
+  background: transparent;
+  color: var(--tb-cream);
+  border: 1px solid rgba(253, 248, 240, 0.2);
+}
+
+.tb-btn-ghost:hover {
+  background: rgba(253, 248, 240, 0.05);
+  border-color: rgba(232, 185, 49, 0.4);
+  color: var(--tb-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-gold);
+}
+
+/* ========================================
+   GLASSMORPHISM CARD SYSTEM
+   ======================================== */
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(232, 185, 49, 0.05) 0%, transparent 50%, rgba(0, 212, 170, 0.03) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--glass-border-hover);
+  transform: translateY(-6px);
+  box-shadow: var(--glow-gold), 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.glass-card:hover::before {
+  opacity: 1;
+}
+
+/* Scan line effect on hover */
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--tb-gold), var(--tb-teal), transparent);
+  transition: top 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.6;
+}
+
+.glass-card:hover::after {
+  top: 100%;
+}
+
+/* ========================================
+   NEON GLOW TEXT
+   ======================================== */
+
+.text-glow-gold {
+  color: var(--tb-gold);
+  text-shadow: 0 0 10px rgba(232, 185, 49, 0.3), 0 0 40px rgba(232, 185, 49, 0.1);
+}
+
+.text-glow-teal {
+  color: var(--tb-teal);
+  text-shadow: 0 0 10px rgba(0, 212, 170, 0.3), 0 0 40px rgba(0, 212, 170, 0.1);
+}
+
+/* ========================================
+   KEYFRAME ANIMATIONS
+   ======================================== */
 
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(40px); }
@@ -133,11 +319,6 @@
   50% { opacity: 0.7; }
 }
 
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes floatGentle {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
@@ -148,14 +329,34 @@
   100% { background-position: 200% center; }
 }
 
-@keyframes expandBridge {
-  from { width: 0%; }
-  to { width: 100%; }
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(232, 185, 49, 0.2), 0 0 60px rgba(232, 185, 49, 0.05); }
+  50% { box-shadow: 0 0 40px rgba(232, 185, 49, 0.4), 0 0 80px rgba(232, 185, 49, 0.1); }
 }
 
-@keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(201, 162, 39, 0.2); }
-  50% { box-shadow: 0 0 40px rgba(201, 162, 39, 0.4); }
+@keyframes tealPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 170, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(0, 212, 170, 0.4); }
+}
+
+@keyframes scanLine {
+  0% { top: -2px; }
+  100% { top: calc(100% + 2px); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(232, 185, 49, 0.15); }
+  50% { border-color: rgba(232, 185, 49, 0.4); }
+}
+
+@keyframes dataStream {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes typewriter {
@@ -166,6 +367,23 @@
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+@keyframes circuitTrace {
+  0% { stroke-dashoffset: 1000; opacity: 0; }
+  10% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes holographicShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ========================================
@@ -233,28 +451,104 @@
 .stagger-children.visible > *:nth-child(3) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
 .stagger-children.visible > *:nth-child(4) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
 .stagger-children.visible > *:nth-child(5) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
+.stagger-children.visible > *:nth-child(6) { transition-delay: 0.6s; opacity: 1; transform: translateY(0); }
 
 /* ========================================
-   BRIDGE STRUCTURAL ELEMENTS
+   INTERACTIVE ELEMENTS
    ======================================== */
 
-.bridge-cable {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  transition: stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1);
+/* Magnetic hover for nav links */
+.nav-link {
+  position: relative;
+  padding: 0.5rem 0.75rem;
+  color: rgba(253, 248, 240, 0.6);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
 
-.bridge-cable.drawn {
-  stroke-dashoffset: 0;
+.nav-link:hover {
+  color: var(--tb-gold);
+  background: rgba(232, 185, 49, 0.08);
+  text-shadow: 0 0 12px rgba(232, 185, 49, 0.3);
 }
 
-.bridge-span {
-  transform-origin: center;
-  animation: bridgeCableSwing 6s ease-in-out infinite;
+.nav-link.active {
+  color: var(--tb-gold);
+  background: rgba(232, 185, 49, 0.12);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0.75rem;
+  right: 0.75rem;
+  height: 2px;
+  background: var(--tb-gold);
+  box-shadow: 0 0 8px rgba(232, 185, 49, 0.5);
+  border-radius: 1px;
+}
+
+/* Accordion / Expandable sections */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease;
+  opacity: 0;
+}
+
+.accordion-content.open {
+  max-height: 2000px;
+  opacity: 1;
+}
+
+.accordion-trigger {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accordion-trigger:hover {
+  background: rgba(232, 185, 49, 0.05);
+}
+
+.accordion-trigger .accordion-icon {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.accordion-trigger.open .accordion-icon {
+  transform: rotate(180deg);
 }
 
 /* ========================================
-   INTERACTIVE STORY CARDS
+   PILLAR CARDS (3D tilt + glow)
+   ======================================== */
+
+.pillar-card {
+  perspective: 1200px;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pillar-card:hover {
+  transform: translateY(-10px);
+}
+
+.pillar-card-inner {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.pillar-card:hover .pillar-card-inner {
+  transform: rotateY(4deg) rotateX(3deg);
+  box-shadow: var(--glow-gold), 0 30px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
+   STORY CARDS
    ======================================== */
 
 .story-card {
@@ -265,9 +559,8 @@
 }
 
 .story-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(27, 67, 50, 0.15),
-              0 0 0 2px var(--tb-gold);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: var(--glow-gold), 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .story-card::after {
@@ -277,7 +570,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--tb-forest), var(--tb-gold));
+  background: linear-gradient(90deg, var(--tb-teal), var(--tb-gold));
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -285,28 +578,6 @@
 
 .story-card:hover::after {
   transform: scaleX(1);
-}
-
-/* ========================================
-   PILLAR CARDS (3D tilt effect)
-   ======================================== */
-
-.pillar-card {
-  perspective: 1000px;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.pillar-card:hover {
-  transform: translateY(-8px);
-}
-
-.pillar-card-inner {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  transform-style: preserve-3d;
-}
-
-.pillar-card:hover .pillar-card-inner {
-  transform: rotateY(3deg) rotateX(2deg);
 }
 
 /* ========================================
@@ -318,11 +589,48 @@
   top: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--tb-forest), var(--tb-gold), var(--tb-forest-light));
+  background: linear-gradient(90deg, var(--tb-teal), var(--tb-gold), var(--tb-teal));
   background-size: 200% 100%;
   animation: shimmer 3s linear infinite;
   z-index: 100;
   transition: width 0.1s linear;
+  box-shadow: 0 0 10px rgba(232, 185, 49, 0.4), 0 0 30px rgba(232, 185, 49, 0.1);
+}
+
+/* ========================================
+   HOLOGRAPHIC BADGE
+   ======================================== */
+
+.holo-badge {
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.15), rgba(232, 185, 49, 0.15), rgba(0, 212, 170, 0.15));
+  background-size: 200% 200%;
+  animation: holographicShift 4s ease infinite;
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ========================================
+   DATA VISUALIZATION ELEMENTS
+   ======================================== */
+
+.data-bar {
+  background: linear-gradient(90deg, var(--tb-forest-glow), var(--tb-gold));
+  border-radius: 4px;
+  height: 8px;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(232, 185, 49, 0.2);
+}
+
+.stat-number {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--tb-gold);
+  text-shadow: 0 0 20px rgba(232, 185, 49, 0.3);
 }
 
 /* ========================================
@@ -330,20 +638,20 @@
    ======================================== */
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--tb-cream-dark);
+  background: var(--tb-forest);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--tb-forest-light);
-  border-radius: 4px;
+  background: linear-gradient(180deg, var(--tb-forest-glow), var(--tb-gold-warm));
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--tb-forest);
+  background: var(--tb-gold);
 }
 
 /* ========================================
@@ -363,14 +671,15 @@
 
 /* Selection color */
 ::selection {
-  background: rgba(201, 162, 39, 0.3);
-  color: var(--tb-forest-dark);
+  background: rgba(232, 185, 49, 0.3);
+  color: var(--tb-cream);
 }
 
-/* Focus styles */
+/* Focus styles — neon ring */
 :focus-visible {
   outline: 2px solid var(--tb-gold);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  box-shadow: 0 0 12px rgba(232, 185, 49, 0.3);
 }
 
 /* Smooth image loading */
@@ -398,4 +707,81 @@ img[src] {
     padding-left: 2rem;
     padding-right: 2rem;
   }
+}
+
+/* ========================================
+   SECTION DIVIDERS — Circuit Trace
+   ======================================== */
+
+.section-divider {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--tb-gold), var(--tb-teal), var(--tb-gold), transparent);
+  opacity: 0.3;
+  margin: 4rem 0;
+}
+
+.section-divider-glow {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--tb-gold) 20%, var(--tb-teal) 50%, var(--tb-gold) 80%, transparent 100%);
+  box-shadow: 0 0 15px rgba(232, 185, 49, 0.2);
+  margin: 3rem 0;
+}
+
+/* ========================================
+   TOOLTIP SYSTEM
+   ======================================== */
+
+.tooltip-trigger {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dashed rgba(232, 185, 49, 0.4);
+}
+
+.tooltip-trigger:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 0.75rem;
+  background: var(--tb-forest-mid);
+  border: 1px solid rgba(232, 185, 49, 0.3);
+  border-radius: 0.5rem;
+  color: var(--tb-cream);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: var(--glow-gold);
+}
+
+/* ========================================
+   LOADING STATES
+   ======================================== */
+
+.skeleton-glow {
+  background: linear-gradient(90deg, var(--tb-forest-mid) 25%, var(--tb-forest-light) 50%, var(--tb-forest-mid) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 0.5rem;
+}
+
+/* ========================================
+   BRIDGE SVG ANIMATIONS
+   ======================================== */
+
+.bridge-cable {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  transition: stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bridge-cable.drawn {
+  stroke-dashoffset: 0;
+}
+
+.bridge-span {
+  transform-origin: center;
+  animation: floatGentle 6s ease-in-out infinite;
 }
