@@ -21,7 +21,7 @@ const IMAGES = {
   heroBridge: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-hero-bridge-UbQzT3Yxdjbgg9ttB4ndQo.webp',
   navigatorSession: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-navigator-session-m6pruiXUssfWTscjuagPF4.webp',
   communityHub: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-community-hub-mjcoK2qnQkafwbhGuQVL9w.webp',
-  hkAI: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-hk-ai-glow-j3fRn9jTFBDqKcTgru6Ddh.webp',
+  hkAI: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_80_9e8213b6.jpg',
   impactData: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-impact-data-bGzJFSEJ2jyfkk7HmWcrYx.webp',
 };
 

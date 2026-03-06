@@ -14,7 +14,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tbSoundEngine } from '../lib/TBSoundEngine';
 
-const HK_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/hk-avatar-QQ2ywEsoQGzaBcKPgRZDip.webp';
+const HK_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_80_9e8213b6.jpg';
+const HK_BUBBLE_ICON = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_bubble_icon_112_0a24fc22.png';
 
 interface Message {
   id: string;
@@ -217,7 +218,7 @@ export default function HKChatBubble() {
             </motion.div>
           ) : (
             <motion.img
-              src={HK_AVATAR}
+              src={HK_BUBBLE_ICON}
               alt="H.K. AI"
               className="w-full h-full object-cover"
               initial={{ scale: 0.8, opacity: 0 }}

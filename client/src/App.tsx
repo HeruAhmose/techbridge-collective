@@ -7,7 +7,7 @@
  * sound engine, scroll animations, SPAN content integration
  */
 import { Switch, Route } from "wouter";
-import { lazy, Suspense, useState, useCallback } from "react";
+import { lazy, Suspense, useState, useCallback, useEffect } from "react";
 import Navigation from "./components/Navigation";
 import HKChatBubble from "./components/HKChatBubble";
 import BridgeProgressBar from "./components/BridgeProgressBar";
@@ -46,11 +46,24 @@ function LoadingScreen() {
 }
 
 function App() {
-  const [introComplete, setIntroComplete] = useState(false);
+  const [introComplete, setIntroComplete] = useState(() => {
+    // If already seen in this session, skip immediately
+    return sessionStorage.getItem('tb-intro-seen') === '1';
+  });
 
   const handleIntroComplete = useCallback(() => {
     setIntroComplete(true);
   }, []);
+
+  // Safety: if intro hasn't completed after 8s, force it
+  useEffect(() => {
+    if (introComplete) return;
+    const safety = setTimeout(() => {
+      sessionStorage.setItem('tb-intro-seen', '1');
+      setIntroComplete(true);
+    }, 8000);
+    return () => clearTimeout(safety);
+  }, [introComplete]);
 
   return (
     <div style={{ minHeight: '100vh', background: '#FDF8F0' }}>

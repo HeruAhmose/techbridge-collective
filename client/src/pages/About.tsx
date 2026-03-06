@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { tbSoundEngine } from '../lib/TBSoundEngine';
 
 const CDN = {
-  hk: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-hk-ai-glow_e9b0f1f3.png',
+  hk: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_80_9e8213b6.jpg',
   bridge: 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-hero-bridge_e2e7e2c5.png',
 };
 

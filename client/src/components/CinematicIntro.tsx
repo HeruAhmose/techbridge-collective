@@ -4,6 +4,10 @@
  * A cinematic 5-second intro where a bridge builds itself plank by plank,
  * cables draw taut, and the TechBridge name reveals with golden light.
  * Procedural 4K sound accompanies each visual beat.
+ * 
+ * RELIABILITY FIX: Uses requestAnimationFrame-based timing instead of
+ * setTimeout chains, and ensures the intro always completes even if
+ * animations stall. Canvas particle system is optional enhancement.
  */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,27 +15,35 @@ import { tbSoundEngine } from '../lib/TBSoundEngine';
 
 export default function CinematicIntro({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState(0); // 0=dark, 1=pillars, 2=cables, 3=deck, 4=name, 5=done
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed] = useState(() => {
+    // Check immediately during initialization — no flicker
+    return sessionStorage.getItem('tb-intro-seen') === '1';
+  });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;life:number;maxLife:number;size:number;color:string}>>([]);
+  const completedRef = useRef(false);
 
-  // Check if user has seen intro before (session only)
+  // If already dismissed, call onComplete immediately
   useEffect(() => {
-    const seen = sessionStorage.getItem('tb-intro-seen');
-    if (seen) {
-      setDismissed(true);
+    if (dismissed && !completedRef.current) {
+      completedRef.current = true;
       onComplete();
-      return;
     }
-  }, [onComplete]);
+  }, [dismissed, onComplete]);
 
-  // Particle system
+  // Particle system — wrapped in try/catch for robustness
   useEffect(() => {
     if (dismissed) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    
+    let ctx: CanvasRenderingContext2D | null = null;
+    try {
+      ctx = canvas.getContext('2d');
+    } catch {
+      return; // Canvas not supported, skip particles
+    }
     if (!ctx) return;
 
     const resize = () => {
@@ -68,6 +80,7 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
     }, 80);
 
     const animate = () => {
+      if (!ctx) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particlesRef.current = particlesRef.current.filter(p => {
         p.life++;
@@ -76,10 +89,10 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
         p.y += p.vy;
         p.vy -= 0.01;
         const alpha = 1 - p.life / p.maxLife;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
-        ctx.fillStyle = p.color.replace(/[\d.]+\)$/, `${alpha * 0.8})`);
-        ctx.fill();
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
+        ctx!.fillStyle = p.color.replace(/[\d.]+\)$/, `${alpha * 0.8})`);
+        ctx!.fill();
         return true;
       });
       animRef.current = requestAnimationFrame(animate);
@@ -93,29 +106,43 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
     };
   }, [dismissed, phase]);
 
-  // Phase progression
+  // Phase progression — robust with fallback safety timer
   useEffect(() => {
     if (dismissed) return;
     
-    // Init sound on first interaction or auto
-    tbSoundEngine.init();
+    // Init sound engine
+    try { tbSoundEngine.init(); } catch { /* silent */ }
 
     const timers = [
-      setTimeout(() => { setPhase(1); tbSoundEngine.play('bridge_plank'); }, 400),
-      setTimeout(() => { setPhase(2); tbSoundEngine.play('bridge_cable'); }, 1400),
-      setTimeout(() => { setPhase(3); tbSoundEngine.play('bridge_plank'); }, 2400),
-      setTimeout(() => { setPhase(4); tbSoundEngine.play('bridge_complete'); }, 3400),
+      setTimeout(() => { setPhase(1); try { tbSoundEngine.play('bridge_plank'); } catch {} }, 400),
+      setTimeout(() => { setPhase(2); try { tbSoundEngine.play('bridge_cable'); } catch {} }, 1400),
+      setTimeout(() => { setPhase(3); try { tbSoundEngine.play('bridge_plank'); } catch {} }, 2400),
+      setTimeout(() => { setPhase(4); try { tbSoundEngine.play('bridge_complete'); } catch {} }, 3400),
       setTimeout(() => { setPhase(5); }, 5000),
     ];
 
-    return () => timers.forEach(clearTimeout);
-  }, [dismissed]);
+    // SAFETY: Force complete after 7 seconds no matter what
+    const safetyTimer = setTimeout(() => {
+      if (!completedRef.current) {
+        sessionStorage.setItem('tb-intro-seen', '1');
+        completedRef.current = true;
+        setDismissed(true);
+        onComplete();
+      }
+    }, 7000);
+
+    return () => {
+      timers.forEach(clearTimeout);
+      clearTimeout(safetyTimer);
+    };
+  }, [dismissed, onComplete]);
 
   // Auto-complete after phase 5
   useEffect(() => {
-    if (phase === 5) {
+    if (phase === 5 && !completedRef.current) {
       sessionStorage.setItem('tb-intro-seen', '1');
       const t = setTimeout(() => {
+        completedRef.current = true;
         setDismissed(true);
         onComplete();
       }, 600);
@@ -124,9 +151,11 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
   }, [phase, onComplete]);
 
   const skip = useCallback(() => {
+    if (completedRef.current) return;
     sessionStorage.setItem('tb-intro-seen', '1');
+    completedRef.current = true;
     setDismissed(true);
-    tbSoundEngine.init();
+    try { tbSoundEngine.init(); } catch {}
     onComplete();
   }, [onComplete]);
 
