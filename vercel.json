@@ -2,11 +2,6 @@
   "framework": "vite",
   "buildCommand": "pnpm build:client",
   "outputDirectory": "dist/public",
-  "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node@3"
-    }
-  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
