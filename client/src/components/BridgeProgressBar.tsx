@@ -21,7 +21,7 @@ export default function BridgeProgressBar() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[51] h-[3px]" style={{ background: 'rgba(15, 43, 31, 0.3)' }}>
+    <div className="fixed top-0 left-0 right-0 z-[60] h-[3px]" style={{ background: 'rgba(15, 43, 31, 0.3)' }}>
       <div
         className="h-full transition-[width] duration-100 ease-linear"
         style={{
