@@ -1,0 +1,26 @@
+{
+  "name": "TechBridge Collective",
+  "short_name": "TechBridge",
+  "description": "Neighborhood tech help desks and Digital Navigators in Durham and Raleigh NC",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c1a14",
+  "theme_color": "#0c1a14",
+  "icons": [
+    {
+      "src": "/images/hk/HK_favicon_32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/hk/HK_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/hk/HK_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
