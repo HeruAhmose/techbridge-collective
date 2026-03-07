@@ -16,9 +16,14 @@ export const metadata: Metadata = {
   authors: [{ name: "TechBridge Collective" }],
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
   icons: {
-    icon: "/images/hk/HK_favicon_32.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/images/hk/HK_favicon_32.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/hk/HK_icon_192.png", sizes: "192x192", type: "image/png" },
+    ],
     apple: "/images/hk/HK_apple_touch_icon.png",
   },
+  manifest: "/site.webmanifest",
   openGraph: { type: "website", siteName: "TechBridge Collective", title: "TechBridge Collective — Tech help, right in your neighborhood", description: "Free 1:1 Digital Navigator support at Durham County Library and Raleigh Digital Impact. Powered by H.K. AI.", locale: "en_US", images: [{ url: "/images/hk/HK_og_image.jpg", width: 1200, height: 630 }] },
   twitter: { card: "summary", title: "TechBridge Collective", description: "Free neighborhood tech help desks in Durham and Raleigh, NC." },
   robots: { index: true, follow: true },
