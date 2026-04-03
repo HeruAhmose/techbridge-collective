@@ -5,6 +5,7 @@
 **Design Movement**: Afrofuturism meets Military Command Center
 
 **Core Principles**:
+
 1. Sovereign Authority — The Queen presides over her digital domain
 2. Sacred Geometry Meets Silicon — Hexagonal grids, golden ratio, circuit patterns
 3. Living Intelligence — Dashboard breathes with data pulses and particle flows

@@ -1,6 +1,7 @@
 # TechBridge Collective — "Get Help" Page Design Brainstorm
 
 ## Context
+
 TechBridge Collective bridges the digital divide in Raleigh-Durham through paid Digital Navigators, 24/7 H.K. AI triage, and TechMinutes® impact measurement. Named for Horace King (1807–1885), the bridge builder. The "Get Help" page is the primary resident-facing entry point — it must feel warm, accessible, trustworthy, and technically impressive.
 
 ---
@@ -10,6 +11,7 @@ TechBridge Collective bridges the digital divide in Raleigh-Durham through paid 
 **Design Movement**: Warm Brutalism meets Storytelling Web — raw structural honesty softened by human warmth. Inspired by editorial long-form journalism sites.
 
 **Core Principles**:
+
 1. Every scroll reveals a story — the page IS the bridge, you cross it
 2. Warmth through texture — paper grain, soft shadows, hand-drawn accents
 3. Data as poetry — numbers feel human, not corporate
@@ -20,6 +22,7 @@ TechBridge Collective bridges the digital divide in Raleigh-Durham through paid 
 **Layout Paradigm**: Vertical narrative scroll with "bridge crossing" metaphor. The page starts on one side of a divide (the problem) and ends on the other (connected, empowered). Asymmetric sections alternate left/right like bridge cables. Parallax depth layers create the feeling of crossing.
 
 **Signature Elements**:
+
 1. Animated bridge illustration that builds as you scroll — cables connect, spans complete
 2. "Story cards" — Maria, James, Dorothy, Carlos, Keisha appear as interactive vignettes
 3. A living counter showing TechMinutes® delivered (animated odometer)

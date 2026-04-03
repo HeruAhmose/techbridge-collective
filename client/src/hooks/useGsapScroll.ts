@@ -61,7 +61,7 @@ export function useParallax(speed = 0.3) {
     });
 
     return () => {
-      ScrollTrigger.getAll().forEach((t) => {
+      ScrollTrigger.getAll().forEach(t => {
         if (t.trigger === el) t.kill();
       });
     };

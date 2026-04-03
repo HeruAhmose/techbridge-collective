@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from "react";
 
 /**
  * Custom hook for scroll-triggered reveal animations.
  * Uses IntersectionObserver for performant viewport detection.
  */
-export function useScrollReveal(threshold = 0.15, rootMargin = '0px 0px -50px 0px') {
+export function useScrollReveal(
+  threshold = 0.15,
+  rootMargin = "0px 0px -50px 0px"
+) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -68,12 +71,13 @@ export function useScrollProgress() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
       setProgress(docHeight > 0 ? scrollTop / docHeight : 0);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return progress;

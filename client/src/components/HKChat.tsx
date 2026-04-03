@@ -1,20 +1,20 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { tbSoundEngine } from '../lib/TBSoundEngine';
+import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { tbSoundEngine } from "../lib/TBSoundEngine";
 
 /**
  * H.K. Interactive Chat Widget
  * Named for Horace King — TechBridge's 24/7 AI guide.
- * 
+ *
  * States: idle → listening → thinking → responding
  * Warm, inviting personality. Never cold or robotic.
  */
 
-type HKState = 'idle' | 'listening' | 'thinking' | 'responding';
+type HKState = "idle" | "listening" | "thinking" | "responding";
 
 interface Message {
   id: string;
-  role: 'user' | 'hk';
+  role: "user" | "hk";
   text: string;
   timestamp: Date;
 }
@@ -65,23 +65,41 @@ const HK_RESPONSES: Record<string, string[]> = {
 
 function getHKResponse(input: string): string {
   const lower = input.toLowerCase();
-  
+
   if (lower.match(/\b(hi|hello|hey|sup|what's up|greetings)\b/)) {
     return pickRandom(HK_RESPONSES.greeting);
   }
-  if (lower.match(/\b(school|portal|homework|teacher|class|grade|student|canvas|powerschool)\b/)) {
+  if (
+    lower.match(
+      /\b(school|portal|homework|teacher|class|grade|student|canvas|powerschool)\b/
+    )
+  ) {
     return pickRandom(HK_RESPONSES.school);
   }
-  if (lower.match(/\b(job|work|employ|resume|apply|application|career|hire|indeed|linkedin)\b/)) {
+  if (
+    lower.match(
+      /\b(job|work|employ|resume|apply|application|career|hire|indeed|linkedin)\b/
+    )
+  ) {
     return pickRandom(HK_RESPONSES.job);
   }
-  if (lower.match(/\b(health|doctor|telehealth|medical|hospital|clinic|prescription|patient)\b/)) {
+  if (
+    lower.match(
+      /\b(health|doctor|telehealth|medical|hospital|clinic|prescription|patient)\b/
+    )
+  ) {
     return pickRandom(HK_RESPONSES.health);
   }
-  if (lower.match(/\b(hous|rent|apartment|landlord|utility|section 8|voucher)\b/)) {
+  if (
+    lower.match(/\b(hous|rent|apartment|landlord|utility|section 8|voucher)\b/)
+  ) {
     return pickRandom(HK_RESPONSES.housing);
   }
-  if (lower.match(/\b(benefit|snap|medicaid|unemployment|ebt|food stamp|assistance)\b/)) {
+  if (
+    lower.match(
+      /\b(benefit|snap|medicaid|unemployment|ebt|food stamp|assistance)\b/
+    )
+  ) {
     return pickRandom(HK_RESPONSES.benefits);
   }
   if (lower.match(/\b(navigator|help desk|in.person|visit|hub)\b/)) {
@@ -102,31 +120,31 @@ function pickRandom(arr: string[]): string {
 
 // H.K. state colors
 const STATE_COLORS: Record<HKState, string> = {
-  idle: '#1B4332',
-  listening: '#2D6A4F',
-  thinking: '#C9A227',
-  responding: '#1B4332',
+  idle: "#1B4332",
+  listening: "#2D6A4F",
+  thinking: "#C9A227",
+  responding: "#1B4332",
 };
 
 const STATE_LABELS: Record<HKState, string> = {
-  idle: 'Ready to help',
-  listening: 'Listening...',
-  thinking: 'Thinking...',
-  responding: 'H.K. is speaking',
+  idle: "Ready to help",
+  listening: "Listening...",
+  thinking: "Thinking...",
+  responding: "H.K. is speaking",
 };
 
 export default function HKChat() {
   const [isOpen, setIsOpen] = useState(false);
-  const [state, setState] = useState<HKState>('idle');
+  const [state, setState] = useState<HKState>("idle");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [hasGreeted, setHasGreeted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   // Focus input when chat opens
@@ -139,21 +157,23 @@ export default function HKChat() {
   const toggleChat = useCallback(() => {
     const next = !isOpen;
     setIsOpen(next);
-    tbSoundEngine.play(next ? 'hk_open' : 'hk_close');
+    tbSoundEngine.play(next ? "hk_open" : "hk_close");
 
     if (next && !hasGreeted) {
       setHasGreeted(true);
-      setState('thinking');
-      tbSoundEngine.play('hk_typing');
+      setState("thinking");
+      tbSoundEngine.play("hk_typing");
       setTimeout(() => {
-        setMessages([{
-          id: 'greeting',
-          role: 'hk',
-          text: pickRandom(HK_RESPONSES.greeting),
-          timestamp: new Date(),
-        }]);
-        setState('idle');
-        tbSoundEngine.play('hk_message');
+        setMessages([
+          {
+            id: "greeting",
+            role: "hk",
+            text: pickRandom(HK_RESPONSES.greeting),
+            timestamp: new Date(),
+          },
+        ]);
+        setState("idle");
+        tbSoundEngine.play("hk_message");
       }, 1200);
     }
   }, [isOpen, hasGreeted]);
@@ -163,48 +183,48 @@ export default function HKChat() {
 
     const userMsg: Message = {
       id: `user-${Date.now()}`,
-      role: 'user',
+      role: "user",
       text: input.trim(),
       timestamp: new Date(),
     };
 
     setMessages(prev => [...prev, userMsg]);
-    setInput('');
-    setState('thinking');
-    tbSoundEngine.play('hk_typing');
+    setInput("");
+    setState("thinking");
+    tbSoundEngine.play("hk_typing");
 
     // Simulate H.K. thinking (1-2.5 seconds)
     const thinkTime = 1000 + Math.random() * 1500;
     setTimeout(() => {
       const response = getHKResponse(userMsg.text);
-      setState('responding');
-      
+      setState("responding");
+
       const hkMsg: Message = {
         id: `hk-${Date.now()}`,
-        role: 'hk',
+        role: "hk",
         text: response,
         timestamp: new Date(),
       };
 
       setMessages(prev => [...prev, hkMsg]);
-      tbSoundEngine.play('hk_message');
+      tbSoundEngine.play("hk_message");
 
-      setTimeout(() => setState('idle'), 500);
+      setTimeout(() => setState("idle"), 500);
     }, thinkTime);
   }, [input]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
   };
 
   const quickQuestions = [
-    'How do I get help?',
-    'What is a Digital Navigator?',
-    'Help with school portal',
-    'Job application help',
+    "How do I get help?",
+    "What is a Digital Navigator?",
+    "Help with school portal",
+    "Job application help",
   ];
 
   return (
@@ -216,30 +236,39 @@ export default function HKChat() {
         style={{
           width: 64,
           height: 64,
-          background: isOpen ? '#C9A227' : '#1B4332',
-          border: `3px solid ${isOpen ? '#1B4332' : '#C9A227'}`,
-          cursor: 'pointer',
+          background: isOpen ? "#C9A227" : "#1B4332",
+          border: `3px solid ${isOpen ? "#1B4332" : "#C9A227"}`,
+          cursor: "pointer",
         }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         animate={{
-          boxShadow: state === 'thinking'
-            ? '0 0 30px rgba(201, 162, 39, 0.6)'
-            : '0 8px 30px rgba(27, 67, 50, 0.3)',
+          boxShadow:
+            state === "thinking"
+              ? "0 0 30px rgba(201, 162, 39, 0.6)"
+              : "0 8px 30px rgba(27, 67, 50, 0.3)",
         }}
         transition={{ duration: 0.3 }}
-        aria-label={isOpen ? 'Close H.K. chat' : 'Open H.K. chat'}
+        aria-label={isOpen ? "Close H.K. chat" : "Open H.K. chat"}
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
             <motion.svg
               key="close"
-              width="24" height="24" viewBox="0 0 24 24" fill="none"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
               initial={{ rotate: -90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: 90, opacity: 0 }}
             >
-              <path d="M18 6L6 18M6 6l12 12" stroke="#1B4332" strokeWidth="2.5" strokeLinecap="round" />
+              <path
+                d="M18 6L6 18M6 6l12 12"
+                stroke="#1B4332"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
             </motion.svg>
           ) : (
             <motion.div
@@ -251,13 +280,56 @@ export default function HKChat() {
             >
               {/* Bridge icon */}
               <svg width="28" height="20" viewBox="0 0 32 20" fill="none">
-                <path d="M2 16 Q16 2 30 16" stroke="#C9A227" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                <line x1="2" y1="16" x2="30" y2="16" stroke="#C9A227" strokeWidth="2" />
-                <line x1="8" y1="16" x2="8" y2="10" stroke="#C9A227" strokeWidth="1.5" />
-                <line x1="16" y1="16" x2="16" y2="5" stroke="#C9A227" strokeWidth="1.5" />
-                <line x1="24" y1="16" x2="24" y2="10" stroke="#C9A227" strokeWidth="1.5" />
+                <path
+                  d="M2 16 Q16 2 30 16"
+                  stroke="#C9A227"
+                  strokeWidth="2.5"
+                  fill="none"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="2"
+                  y1="16"
+                  x2="30"
+                  y2="16"
+                  stroke="#C9A227"
+                  strokeWidth="2"
+                />
+                <line
+                  x1="8"
+                  y1="16"
+                  x2="8"
+                  y2="10"
+                  stroke="#C9A227"
+                  strokeWidth="1.5"
+                />
+                <line
+                  x1="16"
+                  y1="16"
+                  x2="16"
+                  y2="5"
+                  stroke="#C9A227"
+                  strokeWidth="1.5"
+                />
+                <line
+                  x1="24"
+                  y1="16"
+                  x2="24"
+                  y2="10"
+                  stroke="#C9A227"
+                  strokeWidth="1.5"
+                />
               </svg>
-              <span style={{ fontSize: 8, color: '#C9A227', fontWeight: 700, letterSpacing: 1 }}>H.K.</span>
+              <span
+                style={{
+                  fontSize: 8,
+                  color: "#C9A227",
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                }}
+              >
+                H.K.
+              </span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -266,7 +338,7 @@ export default function HKChat() {
         {!isOpen && !hasGreeted && (
           <motion.div
             className="absolute -top-1 -right-1 w-4 h-4 rounded-full"
-            style={{ background: '#C9A227' }}
+            style={{ background: "#C9A227" }}
             animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
@@ -279,22 +351,22 @@ export default function HKChat() {
           <motion.div
             className="fixed bottom-24 right-6 z-50 flex flex-col overflow-hidden rounded-2xl shadow-2xl"
             style={{
-              width: 'min(400px, calc(100vw - 48px))',
-              height: 'min(560px, calc(100vh - 140px))',
-              background: '#FDF8F0',
-              border: '2px solid rgba(27, 67, 50, 0.15)',
+              width: "min(400px, calc(100vw - 48px))",
+              height: "min(560px, calc(100vh - 140px))",
+              background: "#FDF8F0",
+              border: "2px solid rgba(27, 67, 50, 0.15)",
             }}
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
           >
             {/* Header */}
             <div
               className="flex items-center gap-3 px-5 py-4 shrink-0"
               style={{
-                background: '#1B4332',
-                borderBottom: '2px solid #C9A227',
+                background: "#1B4332",
+                borderBottom: "2px solid #C9A227",
               }}
             >
               {/* H.K. Avatar */}
@@ -302,49 +374,79 @@ export default function HKChat() {
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center"
                   style={{
-                    background: 'rgba(201, 162, 39, 0.2)',
-                    border: '2px solid #C9A227',
+                    background: "rgba(201, 162, 39, 0.2)",
+                    border: "2px solid #C9A227",
                   }}
                 >
                   <svg width="20" height="14" viewBox="0 0 32 20" fill="none">
-                    <path d="M2 16 Q16 2 30 16" stroke="#C9A227" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                    <line x1="2" y1="16" x2="30" y2="16" stroke="#C9A227" strokeWidth="2" />
-                    <line x1="16" y1="16" x2="16" y2="5" stroke="#C9A227" strokeWidth="1.5" />
+                    <path
+                      d="M2 16 Q16 2 30 16"
+                      stroke="#C9A227"
+                      strokeWidth="2.5"
+                      fill="none"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="2"
+                      y1="16"
+                      x2="30"
+                      y2="16"
+                      stroke="#C9A227"
+                      strokeWidth="2"
+                    />
+                    <line
+                      x1="16"
+                      y1="16"
+                      x2="16"
+                      y2="5"
+                      stroke="#C9A227"
+                      strokeWidth="1.5"
+                    />
                   </svg>
                 </div>
                 {/* State indicator */}
                 <motion.div
                   className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2"
                   style={{
-                    borderColor: '#1B4332',
+                    borderColor: "#1B4332",
                     background: STATE_COLORS[state],
                   }}
-                  animate={state === 'thinking' ? {
-                    scale: [1, 1.3, 1],
-                    background: ['#C9A227', '#E8C84A', '#C9A227'],
-                  } : {}}
+                  animate={
+                    state === "thinking"
+                      ? {
+                          scale: [1, 1.3, 1],
+                          background: ["#C9A227", "#E8C84A", "#C9A227"],
+                        }
+                      : {}
+                  }
                   transition={{ duration: 1, repeat: Infinity }}
                 />
               </div>
 
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-sm" style={{ color: '#FDF8F0', fontFamily: 'var(--font-display)' }}>
+                <div
+                  className="font-bold text-sm"
+                  style={{
+                    color: "#FDF8F0",
+                    fontFamily: "var(--font-display)",
+                  }}
+                >
                   H.K. — Digital Guide
                 </div>
-                <div className="text-xs" style={{ color: '#C9A227' }}>
+                <div className="text-xs" style={{ color: "#C9A227" }}>
                   {STATE_LABELS[state]}
                 </div>
               </div>
 
               {/* Sound toggle */}
               <button
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   const next = !tbSoundEngine.isEnabled();
                   tbSoundEngine.setEnabled(next);
                 }}
                 className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                style={{ background: 'rgba(253, 248, 240, 0.1)' }}
+                style={{ background: "rgba(253, 248, 240, 0.1)" }}
                 title="Toggle sound"
               >
                 <span style={{ fontSize: 14 }}>🔊</span>
@@ -354,51 +456,95 @@ export default function HKChat() {
             {/* Messages */}
             <div
               className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3"
-              style={{ scrollBehavior: 'smooth' }}
+              style={{ scrollBehavior: "smooth" }}
             >
-              {messages.length === 0 && state !== 'thinking' && (
+              {messages.length === 0 && state !== "thinking" && (
                 <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
                   <div
                     className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-                    style={{ background: 'rgba(27, 67, 50, 0.08)' }}
+                    style={{ background: "rgba(27, 67, 50, 0.08)" }}
                   >
                     <svg width="32" height="24" viewBox="0 0 32 20" fill="none">
-                      <path d="M2 16 Q16 2 30 16" stroke="#1B4332" strokeWidth="2" fill="none" strokeLinecap="round" />
-                      <line x1="2" y1="16" x2="30" y2="16" stroke="#1B4332" strokeWidth="1.5" />
-                      <line x1="8" y1="16" x2="8" y2="10" stroke="#C9A227" strokeWidth="1.5" />
-                      <line x1="16" y1="16" x2="16" y2="5" stroke="#C9A227" strokeWidth="1.5" />
-                      <line x1="24" y1="16" x2="24" y2="10" stroke="#C9A227" strokeWidth="1.5" />
+                      <path
+                        d="M2 16 Q16 2 30 16"
+                        stroke="#1B4332"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                      <line
+                        x1="2"
+                        y1="16"
+                        x2="30"
+                        y2="16"
+                        stroke="#1B4332"
+                        strokeWidth="1.5"
+                      />
+                      <line
+                        x1="8"
+                        y1="16"
+                        x2="8"
+                        y2="10"
+                        stroke="#C9A227"
+                        strokeWidth="1.5"
+                      />
+                      <line
+                        x1="16"
+                        y1="16"
+                        x2="16"
+                        y2="5"
+                        stroke="#C9A227"
+                        strokeWidth="1.5"
+                      />
+                      <line
+                        x1="24"
+                        y1="16"
+                        x2="24"
+                        y2="10"
+                        stroke="#C9A227"
+                        strokeWidth="1.5"
+                      />
                     </svg>
                   </div>
-                  <p className="text-sm font-semibold mb-1" style={{ color: '#1B4332', fontFamily: 'var(--font-display)' }}>
+                  <p
+                    className="text-sm font-semibold mb-1"
+                    style={{
+                      color: "#1B4332",
+                      fontFamily: "var(--font-display)",
+                    }}
+                  >
                     H.K. is ready to help
                   </p>
-                  <p className="text-xs mb-6" style={{ color: '#7C9A6E' }}>
+                  <p className="text-xs mb-6" style={{ color: "#7C9A6E" }}>
                     Named for Horace King, master bridge builder
                   </p>
                 </div>
               )}
 
-              {messages.map((msg) => (
+              {messages.map(msg => (
                 <motion.div
                   key={msg.id}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
                   <div
                     className="max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed"
-                    style={msg.role === 'hk' ? {
-                      background: '#1B4332',
-                      color: '#FDF8F0',
-                      borderBottomLeftRadius: 4,
-                    } : {
-                      background: 'rgba(201, 162, 39, 0.15)',
-                      color: '#1B4332',
-                      borderBottomRightRadius: 4,
-                      border: '1px solid rgba(201, 162, 39, 0.3)',
-                    }}
+                    style={
+                      msg.role === "hk"
+                        ? {
+                            background: "#1B4332",
+                            color: "#FDF8F0",
+                            borderBottomLeftRadius: 4,
+                          }
+                        : {
+                            background: "rgba(201, 162, 39, 0.15)",
+                            color: "#1B4332",
+                            borderBottomRightRadius: 4,
+                            border: "1px solid rgba(201, 162, 39, 0.3)",
+                          }
+                    }
                   >
                     {msg.text}
                   </div>
@@ -406,7 +552,7 @@ export default function HKChat() {
               ))}
 
               {/* Typing indicator */}
-              {state === 'thinking' && (
+              {state === "thinking" && (
                 <motion.div
                   className="flex justify-start"
                   initial={{ opacity: 0 }}
@@ -414,13 +560,13 @@ export default function HKChat() {
                 >
                   <div
                     className="px-4 py-3 rounded-2xl flex gap-1.5 items-center"
-                    style={{ background: '#1B4332', borderBottomLeftRadius: 4 }}
+                    style={{ background: "#1B4332", borderBottomLeftRadius: 4 }}
                   >
-                    {[0, 1, 2].map((i) => (
+                    {[0, 1, 2].map(i => (
                       <motion.div
                         key={i}
                         className="w-2 h-2 rounded-full"
-                        style={{ background: '#C9A227' }}
+                        style={{ background: "#C9A227" }}
                         animate={{ y: [0, -6, 0] }}
                         transition={{
                           duration: 0.6,
@@ -437,9 +583,9 @@ export default function HKChat() {
             </div>
 
             {/* Quick Questions (show when no messages) */}
-            {messages.length <= 1 && state === 'idle' && (
+            {messages.length <= 1 && state === "idle" && (
               <div className="px-4 pb-2 flex flex-wrap gap-2">
-                {quickQuestions.map((q) => (
+                {quickQuestions.map(q => (
                   <button
                     key={q}
                     onClick={() => {
@@ -447,34 +593,37 @@ export default function HKChat() {
                       setTimeout(() => {
                         const userMsg: Message = {
                           id: `user-${Date.now()}`,
-                          role: 'user',
+                          role: "user",
                           text: q,
                           timestamp: new Date(),
                         };
                         setMessages(prev => [...prev, userMsg]);
-                        setState('thinking');
-                        tbSoundEngine.play('hk_typing');
+                        setState("thinking");
+                        tbSoundEngine.play("hk_typing");
                         const thinkTime = 1000 + Math.random() * 1500;
                         setTimeout(() => {
                           const response = getHKResponse(q);
-                          setState('responding');
-                          setMessages(prev => [...prev, {
-                            id: `hk-${Date.now()}`,
-                            role: 'hk',
-                            text: response,
-                            timestamp: new Date(),
-                          }]);
-                          tbSoundEngine.play('hk_message');
-                          setTimeout(() => setState('idle'), 500);
+                          setState("responding");
+                          setMessages(prev => [
+                            ...prev,
+                            {
+                              id: `hk-${Date.now()}`,
+                              role: "hk",
+                              text: response,
+                              timestamp: new Date(),
+                            },
+                          ]);
+                          tbSoundEngine.play("hk_message");
+                          setTimeout(() => setState("idle"), 500);
                         }, thinkTime);
-                        setInput('');
+                        setInput("");
                       }, 50);
                     }}
                     className="text-xs px-3 py-1.5 rounded-full transition-all duration-200 hover:scale-105"
                     style={{
-                      background: 'rgba(27, 67, 50, 0.06)',
-                      color: '#1B4332',
-                      border: '1px solid rgba(27, 67, 50, 0.15)',
+                      background: "rgba(27, 67, 50, 0.06)",
+                      color: "#1B4332",
+                      border: "1px solid rgba(27, 67, 50, 0.15)",
                     }}
                   >
                     {q}
@@ -487,34 +636,36 @@ export default function HKChat() {
             <div
               className="flex items-center gap-2 px-4 py-3 shrink-0"
               style={{
-                borderTop: '1px solid rgba(27, 67, 50, 0.1)',
-                background: 'rgba(27, 67, 50, 0.02)',
+                borderTop: "1px solid rgba(27, 67, 50, 0.1)",
+                background: "rgba(27, 67, 50, 0.02)",
               }}
             >
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                onFocus={() => tbSoundEngine.play('form_focus')}
+                onFocus={() => tbSoundEngine.play("form_focus")}
                 placeholder="Ask H.K. anything..."
                 className="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none transition-all duration-200"
                 style={{
-                  background: 'white',
-                  border: '1.5px solid rgba(27, 67, 50, 0.15)',
-                  color: '#2D3436',
-                  fontFamily: 'var(--font-body)',
+                  background: "white",
+                  border: "1.5px solid rgba(27, 67, 50, 0.15)",
+                  color: "#2D3436",
+                  fontFamily: "var(--font-body)",
                 }}
-                disabled={state === 'thinking'}
+                disabled={state === "thinking"}
               />
               <motion.button
                 onClick={sendMessage}
-                disabled={!input.trim() || state === 'thinking'}
+                disabled={!input.trim() || state === "thinking"}
                 className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors"
                 style={{
-                  background: input.trim() ? '#1B4332' : 'rgba(27, 67, 50, 0.1)',
-                  cursor: input.trim() ? 'pointer' : 'default',
+                  background: input.trim()
+                    ? "#1B4332"
+                    : "rgba(27, 67, 50, 0.1)",
+                  cursor: input.trim() ? "pointer" : "default",
                 }}
                 whileHover={input.trim() ? { scale: 1.05 } : {}}
                 whileTap={input.trim() ? { scale: 0.95 } : {}}
@@ -522,7 +673,7 @@ export default function HKChat() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"
-                    stroke={input.trim() ? '#C9A227' : '#7C9A6E'}
+                    stroke={input.trim() ? "#C9A227" : "#7C9A6E"}
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"

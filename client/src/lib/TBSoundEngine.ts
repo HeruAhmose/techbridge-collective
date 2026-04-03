@@ -1,28 +1,29 @@
 /**
  * TechBridge Sound Engine — Warm, Organic Procedural Audio
- * 
+ *
  * Web Audio API synthesis for the "Bridge" narrative experience.
  * Sounds are warm, inviting, and human — not cold or techy.
  * Think: wooden bridge planks, golden chimes, gentle water, warm tones.
  */
 
 type SoundType =
-  | 'bridge_plank'      // Wooden plank placed — warm knock
-  | 'bridge_cable'      // Cable drawn — gentle metallic hum
-  | 'bridge_complete'   // Bridge fully built — golden chime cascade
-  | 'story_reveal'      // Story card opens — page turn + warm tone
-  | 'story_close'       // Story card closes — soft close
-  | 'section_enter'     // New section scrolled into view — ambient swell
-  | 'nav_click'         // Navigation click — soft tap
-  | 'form_focus'        // Form field focused — gentle ping
-  | 'form_submit'       // Form submitted — success chime
-  | 'hk_open'           // H.K. chat opens — bridge connection tone
-  | 'hk_close'          // H.K. chat closes — gentle fade
-  | 'hk_message'        // H.K. sends a message — soft notification
-  | 'hk_typing'         // H.K. is typing — subtle pulse
-  | 'pillar_hover'      // Pillar card hovered — resonant touch
-  | 'counter_tick'      // Number counting up — soft tick
-  | 'ambient_loop';     // Background ambient — very subtle
+  | "intro_advance" // Cinematic intro step — soft progression
+  | "bridge_plank" // Wooden plank placed — warm knock
+  | "bridge_cable" // Cable drawn — gentle metallic hum
+  | "bridge_complete" // Bridge fully built — golden chime cascade
+  | "story_reveal" // Story card opens — page turn + warm tone
+  | "story_close" // Story card closes — soft close
+  | "section_enter" // New section scrolled into view — ambient swell
+  | "nav_click" // Navigation click — soft tap
+  | "form_focus" // Form field focused — gentle ping
+  | "form_submit" // Form submitted — success chime
+  | "hk_open" // H.K. chat opens — bridge connection tone
+  | "hk_close" // H.K. chat closes — gentle fade
+  | "hk_message" // H.K. sends a message — soft notification
+  | "hk_typing" // H.K. is typing — subtle pulse
+  | "pillar_hover" // Pillar card hovered — resonant touch
+  | "counter_tick" // Number counting up — soft tick
+  | "ambient_loop"; // Background ambient — very subtle
 
 class TBSoundEngine {
   private ctx: AudioContext | null = null;
@@ -63,29 +64,66 @@ class TBSoundEngine {
     }
   }
 
-  isEnabled() { return this.enabled; }
-  getVolume() { return this.volume; }
+  isEnabled() {
+    return this.enabled;
+  }
+  getVolume() {
+    return this.volume;
+  }
 
   play(type: SoundType) {
     if (!this.ctx || !this.masterGain || !this.enabled) return;
     const t = this.ctx.currentTime;
 
     switch (type) {
-      case 'bridge_plank': this.playBridgePlank(t); break;
-      case 'bridge_cable': this.playBridgeCable(t); break;
-      case 'bridge_complete': this.playBridgeComplete(t); break;
-      case 'story_reveal': this.playStoryReveal(t); break;
-      case 'story_close': this.playStoryClose(t); break;
-      case 'section_enter': this.playSectionEnter(t); break;
-      case 'nav_click': this.playNavClick(t); break;
-      case 'form_focus': this.playFormFocus(t); break;
-      case 'form_submit': this.playFormSubmit(t); break;
-      case 'hk_open': this.playHKOpen(t); break;
-      case 'hk_close': this.playHKClose(t); break;
-      case 'hk_message': this.playHKMessage(t); break;
-      case 'hk_typing': this.playHKTyping(t); break;
-      case 'pillar_hover': this.playPillarHover(t); break;
-      case 'counter_tick': this.playCounterTick(t); break;
+      case "intro_advance":
+        this.playNavClick(t);
+        break;
+      case "bridge_plank":
+        this.playBridgePlank(t);
+        break;
+      case "bridge_cable":
+        this.playBridgeCable(t);
+        break;
+      case "bridge_complete":
+        this.playBridgeComplete(t);
+        break;
+      case "story_reveal":
+        this.playStoryReveal(t);
+        break;
+      case "story_close":
+        this.playStoryClose(t);
+        break;
+      case "section_enter":
+        this.playSectionEnter(t);
+        break;
+      case "nav_click":
+        this.playNavClick(t);
+        break;
+      case "form_focus":
+        this.playFormFocus(t);
+        break;
+      case "form_submit":
+        this.playFormSubmit(t);
+        break;
+      case "hk_open":
+        this.playHKOpen(t);
+        break;
+      case "hk_close":
+        this.playHKClose(t);
+        break;
+      case "hk_message":
+        this.playHKMessage(t);
+        break;
+      case "hk_typing":
+        this.playHKTyping(t);
+        break;
+      case "pillar_hover":
+        this.playPillarHover(t);
+        break;
+      case "counter_tick":
+        this.playCounterTick(t);
+        break;
     }
   }
 
@@ -93,7 +131,7 @@ class TBSoundEngine {
   private playBridgePlank(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'triangle';
+    osc.type = "triangle";
     osc.frequency.setValueAtTime(180, t);
     osc.frequency.exponentialRampToValueAtTime(80, t + 0.15);
     gain.gain.setValueAtTime(0.25, t);
@@ -107,7 +145,7 @@ class TBSoundEngine {
   private playBridgeCable(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.setValueAtTime(440, t);
     osc.frequency.linearRampToValueAtTime(660, t + 0.5);
     gain.gain.setValueAtTime(0, t);
@@ -124,7 +162,7 @@ class TBSoundEngine {
     notes.forEach((freq, i) => {
       const osc = this.ctx!.createOscillator();
       const gain = this.ctx!.createGain();
-      osc.type = 'sine';
+      osc.type = "sine";
       osc.frequency.value = freq;
       gain.gain.setValueAtTime(0, t + i * 0.12);
       gain.gain.linearRampToValueAtTime(0.15, t + i * 0.12 + 0.05);
@@ -150,7 +188,7 @@ class TBSoundEngine {
     noiseGain.gain.setValueAtTime(0.08, t);
     noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
     const hipass = this.ctx!.createBiquadFilter();
-    hipass.type = 'highpass';
+    hipass.type = "highpass";
     hipass.frequency.value = 2000;
     noise.connect(hipass).connect(noiseGain).connect(this.masterGain!);
     noise.start(t);
@@ -158,7 +196,7 @@ class TBSoundEngine {
     // Warm tone
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.value = 392; // G4
     gain.gain.setValueAtTime(0, t);
     gain.gain.linearRampToValueAtTime(0.1, t + 0.05);
@@ -172,7 +210,7 @@ class TBSoundEngine {
   private playStoryClose(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.setValueAtTime(392, t);
     osc.frequency.exponentialRampToValueAtTime(262, t + 0.2);
     gain.gain.setValueAtTime(0.08, t);
@@ -187,9 +225,9 @@ class TBSoundEngine {
     const osc = this.ctx!.createOscillator();
     const osc2 = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.value = 220;
-    osc2.type = 'sine';
+    osc2.type = "sine";
     osc2.frequency.value = 330;
     gain.gain.setValueAtTime(0, t);
     gain.gain.linearRampToValueAtTime(0.06, t + 0.3);
@@ -206,7 +244,7 @@ class TBSoundEngine {
   private playNavClick(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'triangle';
+    osc.type = "triangle";
     osc.frequency.value = 800;
     gain.gain.setValueAtTime(0.12, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
@@ -219,7 +257,7 @@ class TBSoundEngine {
   private playFormFocus(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.value = 587.33; // D5
     gain.gain.setValueAtTime(0, t);
     gain.gain.linearRampToValueAtTime(0.08, t + 0.02);
@@ -234,7 +272,7 @@ class TBSoundEngine {
     [523.25, 659.25, 783.99].forEach((freq, i) => {
       const osc = this.ctx!.createOscillator();
       const gain = this.ctx!.createGain();
-      osc.type = 'sine';
+      osc.type = "sine";
       osc.frequency.value = freq;
       gain.gain.setValueAtTime(0, t + i * 0.1);
       gain.gain.linearRampToValueAtTime(0.12, t + i * 0.1 + 0.03);
@@ -250,10 +288,10 @@ class TBSoundEngine {
     const osc = this.ctx!.createOscillator();
     const osc2 = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.setValueAtTime(330, t);
     osc.frequency.linearRampToValueAtTime(440, t + 0.3);
-    osc2.type = 'sine';
+    osc2.type = "sine";
     osc2.frequency.setValueAtTime(440, t);
     osc2.frequency.linearRampToValueAtTime(554.37, t + 0.3);
     gain.gain.setValueAtTime(0, t);
@@ -271,7 +309,7 @@ class TBSoundEngine {
   private playHKClose(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.setValueAtTime(440, t);
     osc.frequency.linearRampToValueAtTime(330, t + 0.3);
     gain.gain.setValueAtTime(0.1, t);
@@ -285,7 +323,7 @@ class TBSoundEngine {
   private playHKMessage(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.setValueAtTime(523.25, t);
     osc.frequency.setValueAtTime(659.25, t + 0.08);
     gain.gain.setValueAtTime(0, t);
@@ -301,7 +339,7 @@ class TBSoundEngine {
     for (let i = 0; i < 3; i++) {
       const osc = this.ctx!.createOscillator();
       const gain = this.ctx!.createGain();
-      osc.type = 'sine';
+      osc.type = "sine";
       osc.frequency.value = 400 + i * 20;
       gain.gain.setValueAtTime(0, t + i * 0.12);
       gain.gain.linearRampToValueAtTime(0.04, t + i * 0.12 + 0.02);
@@ -316,7 +354,7 @@ class TBSoundEngine {
   private playPillarHover(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'triangle';
+    osc.type = "triangle";
     osc.frequency.value = 349.23; // F4
     gain.gain.setValueAtTime(0, t);
     gain.gain.linearRampToValueAtTime(0.06, t + 0.05);
@@ -330,7 +368,7 @@ class TBSoundEngine {
   private playCounterTick(t: number) {
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.value = 1200;
     gain.gain.setValueAtTime(0.03, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
