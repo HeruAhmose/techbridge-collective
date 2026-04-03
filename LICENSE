@@ -1,0 +1,73 @@
+TechBridge Collective Proprietary License
+Copyright (c) 2026 Tamerian Materials and Jonathan Peoples.
+All rights reserved.
+
+This repository and all source code, models, prompts, workflows, interfaces,
+documentation, visual assets, and related materials contained herein are
+proprietary and confidential unless a separate written agreement states
+otherwise.
+
+1. No Open Source Grant
+
+No open source license is granted for this repository. No right to use, copy,
+modify, merge, publish, distribute, sublicense, sell, train on, reverse
+engineer, or create derivative works from this repository is granted except as
+expressly authorized in a separate written agreement signed by the rights
+holder.
+
+2. Patent and IP Reservation
+
+All patents, patentable subject matter, trade secrets, copyrights, design
+rights, database rights, trademarks, and all other intellectual property rights
+in and to this repository are reserved. No express or implied patent license is
+granted by access to, review of, or possession of this repository.
+
+3. Permitted Internal Evaluation
+
+Authorized recipients may review the repository solely for confidential
+internal evaluation, security review, or implementation support as permitted by
+the applicable written agreement. Any broader use requires prior written
+permission.
+
+4. Restrictions
+
+Unless expressly authorized in writing, you may not:
+
+- copy or redistribute any portion of the repository;
+- publish the code or assets to any public or private package registry;
+- train models on the repository contents;
+- remove or alter copyright, attribution, or proprietary notices;
+- disclose non-public implementation details to third parties;
+- use the repository to create a competing product or derivative system.
+
+5. Third-Party Dependencies
+
+This repository may depend on third-party software packages, runtimes, or
+services that are licensed separately by their respective owners. Those
+dependencies are not relicensed by this document. See `THIRD_PARTY_NOTICES.md`
+for dependency attribution guidance where maintained.
+
+6. Confidentiality
+
+If you obtained access to this repository through a private channel, you must
+treat all non-public contents as confidential information and protect them with
+at least reasonable commercial care.
+
+7. Warranty Disclaimer
+
+THE REPOSITORY IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, TITLE, NON-INFRINGEMENT, SECURITY, OR ACCURACY.
+
+8. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE RIGHTS HOLDER SHALL NOT BE LIABLE
+FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE
+DAMAGES, OR FOR ANY LOSS OF DATA, PROFITS, REVENUE, OR BUSINESS OPPORTUNITY,
+ARISING FROM OR RELATED TO THIS REPOSITORY OR ITS USE.
+
+9. Contact
+
+For licensing, commercial use, patent, or redistribution inquiries, contact
+the repository owner through the designated business channel or a mutually
+agreed written contact point.
