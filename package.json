@@ -79,7 +79,7 @@
     "@types/react-dom": "^19.2.1",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.20",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "pnpm": "^10.28.2",
     "postcss": "^8.4.47",
     "prettier": "^3.6.2",
