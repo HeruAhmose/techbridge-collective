@@ -150,12 +150,17 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
+const isOrganismProductionBuild =
+  process.env.NODE_ENV === "production" ||
+  process.env.TRAI_ORGANISM_STATIC === "true";
+
 const plugins = [
   react(),
   tailwindcss(),
   jsxLocPlugin(),
-  vitePluginManusRuntime(),
-  vitePluginManusDebugCollector(),
+  ...(isOrganismProductionBuild
+    ? []
+    : [vitePluginManusRuntime(), vitePluginManusDebugCollector()]),
 ];
 
 export default defineConfig({

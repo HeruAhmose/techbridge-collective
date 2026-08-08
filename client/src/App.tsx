@@ -6,7 +6,7 @@
  * Features: Cinematic intro, H.K. chat bubble, bridge progress bar,
  * sound engine, scroll animations, SPAN content integration
  */
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { lazy, Suspense, useState, useCallback, useEffect } from "react";
 import Navigation from "./components/Navigation";
 import HKChatBubble from "./components/HKChatBubble";
@@ -115,6 +115,11 @@ function LoadingScreen() {
 function App() {
   // Intro shows every page refresh — always starts as false
   const [introComplete, setIntroComplete] = useState(false);
+  const [location] = useLocation();
+
+  useEffect(() => {
+    (window as any).TRAIOrganismV5?.routeChanged?.(location);
+  }, [location]);
 
   const handleIntroComplete = useCallback(() => {
     setIntroComplete(true);
