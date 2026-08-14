@@ -12,7 +12,8 @@
   var script = document.currentScript;
 
   if (!script) return;
-  if (window.TRAIOrganismV5 && window.TRAIOrganismV5.version === VERSION) return;
+  if (window.TRAIOrganismV5 && window.TRAIOrganismV5.version === VERSION)
+    return;
 
   var SELF = script.dataset.traiWorld || "trai";
   var STATIC_NAVIGATION = script.dataset.traiStatic === "true";
@@ -39,7 +40,9 @@
       "visibility:hidden!important}" +
       "html.trai-v5-pending-arrival .trai-v5-transition{" +
       "visibility:visible!important}";
-    (document.head || document.documentElement).appendChild(pendingArrivalStyle);
+    (document.head || document.documentElement).appendChild(
+      pendingArrivalStyle
+    );
   }
 
   var state = {
@@ -51,8 +54,9 @@
     selected: null,
     previousFocus: null,
     transitionNode: null,
-    routePath: window.location.pathname + window.location.search + window.location.hash,
-    busy: false
+    routePath:
+      window.location.pathname + window.location.search + window.location.hash,
+    busy: false,
   };
 
   var CSS = String.raw`
@@ -992,7 +996,12 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     });
 
     origins.forEach(function (origin) {
-      if (document.head.querySelector('link[data-trai-v5-preconnect="' + window.CSS.escape(origin) + '"]')) return;
+      if (
+        document.head.querySelector(
+          'link[data-trai-v5-preconnect="' + window.CSS.escape(origin) + '"]'
+        )
+      )
+        return;
       var link = document.createElement("link");
       link.rel = "preconnect";
       link.href = origin;
@@ -1277,7 +1286,7 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     var y = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
     return {
       x: Math.max(0, Math.min(100, x)),
-      y: Math.max(0, Math.min(100, y))
+      y: Math.max(0, Math.min(100, y)),
     };
   }
 
@@ -1297,7 +1306,9 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     overlay.className = "trai-v5-transition";
     overlay.dataset.phase = phase;
     overlay.dataset.skin = world.skin || "orbit";
-    overlay.dataset.sourceSkin = sourceWorld ? sourceWorld.skin || "orbit" : "orbit";
+    overlay.dataset.sourceSkin = sourceWorld
+      ? sourceWorld.skin || "orbit"
+      : "orbit";
     overlay.style.setProperty("--accent", world.accent || "#d6a33a");
     overlay.style.setProperty("--secondary", world.secondary || "#5e86c9");
     overlay.style.setProperty("--trai-v5-origin-x", origin.x.toFixed(2) + "%");
@@ -1320,7 +1331,7 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
 
   function animateFinite(node, keyframes, options) {
     var duration = Number(options && options.duration) || 0;
-    var wait = duration + Number(options && options.delay || 0);
+    var wait = duration + Number((options && options.delay) || 0);
 
     if (!node || typeof node.animate !== "function") {
       return delay(wait);
@@ -1347,13 +1358,21 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
   async function playDeparture(overlay) {
     if (!overlay) return;
 
-    var sourceField = overlay.querySelector(".trai-v5-transition__field--source");
-    var destinationField = overlay.querySelector(".trai-v5-transition__field--destination");
+    var sourceField = overlay.querySelector(
+      ".trai-v5-transition__field--source"
+    );
+    var destinationField = overlay.querySelector(
+      ".trai-v5-transition__field--destination"
+    );
     var copy = overlay.querySelector(".trai-v5-transition__copy");
     var veil = overlay.querySelector(".trai-v5-transition__veil");
     var axis = overlay.querySelector(".trai-v5-transition__axis");
-    var ox = getComputedStyle(overlay).getPropertyValue("--trai-v5-origin-x").trim() || "50%";
-    var oy = getComputedStyle(overlay).getPropertyValue("--trai-v5-origin-y").trim() || "50%";
+    var ox =
+      getComputedStyle(overlay).getPropertyValue("--trai-v5-origin-x").trim() ||
+      "50%";
+    var oy =
+      getComputedStyle(overlay).getPropertyValue("--trai-v5-origin-y").trim() ||
+      "50%";
 
     await nextPaint();
 
@@ -1361,45 +1380,115 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
       animateFinite(
         overlay,
         [
-          { opacity: 0, clipPath: "circle(0.1% at " + ox + " " + oy + ")", filter: "brightness(.82)" },
-          { opacity: 1, clipPath: "circle(44% at " + ox + " " + oy + ")", filter: "brightness(1.05)", offset: .42 },
-          { opacity: 1, clipPath: "circle(150% at " + ox + " " + oy + ")", filter: "brightness(1)" }
+          {
+            opacity: 0,
+            clipPath: "circle(0.1% at " + ox + " " + oy + ")",
+            filter: "brightness(.82)",
+          },
+          {
+            opacity: 1,
+            clipPath: "circle(44% at " + ox + " " + oy + ")",
+            filter: "brightness(1.05)",
+            offset: 0.42,
+          },
+          {
+            opacity: 1,
+            clipPath: "circle(150% at " + ox + " " + oy + ")",
+            filter: "brightness(1)",
+          },
         ],
         { duration: 1420, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }
       ),
       animateFinite(
         sourceField,
         [
-          { opacity: .82, transform: "scale(1)", filter: "blur(0px) saturate(1)" },
-          { opacity: .52, transform: "scale(.94)", filter: "blur(2px) saturate(.85)", offset: .48 },
-          { opacity: 0, transform: "scale(.82)", filter: "blur(10px) saturate(.55)" }
+          {
+            opacity: 0.82,
+            transform: "scale(1)",
+            filter: "blur(0px) saturate(1)",
+          },
+          {
+            opacity: 0.52,
+            transform: "scale(.94)",
+            filter: "blur(2px) saturate(.85)",
+            offset: 0.48,
+          },
+          {
+            opacity: 0,
+            transform: "scale(.82)",
+            filter: "blur(10px) saturate(.55)",
+          },
         ],
-        { duration: 1280, easing: "cubic-bezier(.22,.8,.24,1)", fill: "forwards" }
+        {
+          duration: 1280,
+          easing: "cubic-bezier(.22,.8,.24,1)",
+          fill: "forwards",
+        }
       ),
       animateFinite(
         destinationField,
         [
-          { opacity: 0, transform: "scale(1.24) rotate(.8deg)", filter: "blur(12px) saturate(.72)" },
-          { opacity: .18, transform: "scale(1.12) rotate(.2deg)", filter: "blur(7px) saturate(.88)", offset: .36 },
-          { opacity: .88, transform: "scale(1)", filter: "blur(0px) saturate(1.08)" }
+          {
+            opacity: 0,
+            transform: "scale(1.24) rotate(.8deg)",
+            filter: "blur(12px) saturate(.72)",
+          },
+          {
+            opacity: 0.18,
+            transform: "scale(1.12) rotate(.2deg)",
+            filter: "blur(7px) saturate(.88)",
+            offset: 0.36,
+          },
+          {
+            opacity: 0.88,
+            transform: "scale(1)",
+            filter: "blur(0px) saturate(1.08)",
+          },
         ],
-        { duration: 1560, delay: 120, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }
+        {
+          duration: 1560,
+          delay: 120,
+          easing: "cubic-bezier(.16,1,.3,1)",
+          fill: "forwards",
+        }
       ),
       animateFinite(
         copy,
         [
-          { opacity: 0, transform: "translateY(24px) scale(.975)", filter: "blur(7px)" },
-          { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0px)", offset: .58 },
-          { opacity: 1, transform: "translateY(-2px) scale(1)", filter: "blur(0px)" }
+          {
+            opacity: 0,
+            transform: "translateY(24px) scale(.975)",
+            filter: "blur(7px)",
+          },
+          {
+            opacity: 1,
+            transform: "translateY(0) scale(1)",
+            filter: "blur(0px)",
+            offset: 0.58,
+          },
+          {
+            opacity: 1,
+            transform: "translateY(-2px) scale(1)",
+            filter: "blur(0px)",
+          },
         ],
-        { duration: 1320, delay: 180, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }
+        {
+          duration: 1320,
+          delay: 180,
+          easing: "cubic-bezier(.16,1,.3,1)",
+          fill: "forwards",
+        }
       ),
       animateFinite(
         veil,
         [
-          { opacity: .15, transform: "scale(.92) rotate(-6deg)" },
-          { opacity: .82, transform: "scale(1.08) rotate(2deg)", offset: .68 },
-          { opacity: .58, transform: "scale(1.14) rotate(4deg)" }
+          { opacity: 0.15, transform: "scale(.92) rotate(-6deg)" },
+          {
+            opacity: 0.82,
+            transform: "scale(1.08) rotate(2deg)",
+            offset: 0.68,
+          },
+          { opacity: 0.58, transform: "scale(1.14) rotate(4deg)" },
         ],
         { duration: 1580, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }
       ),
@@ -1407,11 +1496,20 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
         axis,
         [
           { opacity: 0, transform: "translate(-50%,-50%) scaleX(.12)" },
-          { opacity: .82, transform: "translate(-50%,-50%) scaleX(1)", offset: .62 },
-          { opacity: .38, transform: "translate(-50%,-50%) scaleX(1.08)" }
+          {
+            opacity: 0.82,
+            transform: "translate(-50%,-50%) scaleX(1)",
+            offset: 0.62,
+          },
+          { opacity: 0.38, transform: "translate(-50%,-50%) scaleX(1.08)" },
         ],
-        { duration: 1380, delay: 120, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }
-      )
+        {
+          duration: 1380,
+          delay: 120,
+          easing: "cubic-bezier(.16,1,.3,1)",
+          fill: "forwards",
+        }
+      ),
     ];
 
     await Promise.allSettled(animations);
@@ -1421,8 +1519,12 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
   async function playArrival(overlay) {
     if (!overlay) return;
 
-    var sourceField = overlay.querySelector(".trai-v5-transition__field--source");
-    var destinationField = overlay.querySelector(".trai-v5-transition__field--destination");
+    var sourceField = overlay.querySelector(
+      ".trai-v5-transition__field--source"
+    );
+    var destinationField = overlay.querySelector(
+      ".trai-v5-transition__field--destination"
+    );
     var copy = overlay.querySelector(".trai-v5-transition__copy");
     var veil = overlay.querySelector(".trai-v5-transition__veil");
     var axis = overlay.querySelector(".trai-v5-transition__axis");
@@ -1445,42 +1547,73 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
       animateFinite(
         destinationField,
         [
-          { opacity: .96, transform: "scale(.98)", filter: "blur(0px) saturate(1.12)" },
-          { opacity: .72, transform: "scale(1.05)", filter: "blur(1px) saturate(1)", offset: .55 },
-          { opacity: 0, transform: "scale(1.18)", filter: "blur(10px) saturate(.72)" }
+          {
+            opacity: 0.96,
+            transform: "scale(.98)",
+            filter: "blur(0px) saturate(1.12)",
+          },
+          {
+            opacity: 0.72,
+            transform: "scale(1.05)",
+            filter: "blur(1px) saturate(1)",
+            offset: 0.55,
+          },
+          {
+            opacity: 0,
+            transform: "scale(1.18)",
+            filter: "blur(10px) saturate(.72)",
+          },
         ],
         { duration: 1680, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }
       ),
       animateFinite(
         sourceField,
         [
-          { opacity: .34, transform: "scale(.88)", filter: "blur(7px)" },
-          { opacity: 0, transform: "scale(.72)", filter: "blur(13px)" }
+          { opacity: 0.34, transform: "scale(.88)", filter: "blur(7px)" },
+          { opacity: 0, transform: "scale(.72)", filter: "blur(13px)" },
         ],
         { duration: 820, easing: "ease-out", fill: "forwards" }
       ),
       animateFinite(
         copy,
         [
-          { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0px)" },
-          { opacity: .92, transform: "translateY(-4px) scale(1)", filter: "blur(0px)", offset: .52 },
-          { opacity: 0, transform: "translateY(-20px) scale(1.018)", filter: "blur(7px)" }
+          {
+            opacity: 1,
+            transform: "translateY(0) scale(1)",
+            filter: "blur(0px)",
+          },
+          {
+            opacity: 0.92,
+            transform: "translateY(-4px) scale(1)",
+            filter: "blur(0px)",
+            offset: 0.52,
+          },
+          {
+            opacity: 0,
+            transform: "translateY(-20px) scale(1.018)",
+            filter: "blur(7px)",
+          },
         ],
-        { duration: 1420, delay: 120, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }
+        {
+          duration: 1420,
+          delay: 120,
+          easing: "cubic-bezier(.4,0,.2,1)",
+          fill: "forwards",
+        }
       ),
       animateFinite(
         axis,
         [
-          { opacity: .7, transform: "translate(-50%,-50%) scaleX(1)" },
-          { opacity: 0, transform: "translate(-50%,-50%) scaleX(1.24)" }
+          { opacity: 0.7, transform: "translate(-50%,-50%) scaleX(1)" },
+          { opacity: 0, transform: "translate(-50%,-50%) scaleX(1.24)" },
         ],
         { duration: 1260, delay: 160, easing: "ease-out", fill: "forwards" }
       ),
       animateFinite(
         veil,
         [
-          { opacity: .68, transform: "scale(1.12) rotate(3deg)" },
-          { opacity: 0, transform: "scale(1.26) rotate(8deg)" }
+          { opacity: 0.68, transform: "scale(1.12) rotate(3deg)" },
+          { opacity: 0, transform: "scale(1.26) rotate(8deg)" },
         ],
         { duration: 1560, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }
       ),
@@ -1488,12 +1621,17 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
         overlay,
         [
           { opacity: 1, clipPath: "circle(150% at 50% 50%)" },
-          { opacity: 1, clipPath: "circle(150% at 50% 50%)", offset: .36 },
-          { opacity: .72, clipPath: "circle(82% at 50% 50%)", offset: .7 },
-          { opacity: 0, clipPath: "circle(0% at 50% 50%)" }
+          { opacity: 1, clipPath: "circle(150% at 50% 50%)", offset: 0.36 },
+          { opacity: 0.72, clipPath: "circle(82% at 50% 50%)", offset: 0.7 },
+          { opacity: 0, clipPath: "circle(0% at 50% 50%)" },
         ],
-        { duration: 1780, delay: 160, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }
-      )
+        {
+          duration: 1780,
+          delay: 160,
+          easing: "cubic-bezier(.4,0,.2,1)",
+          fill: "forwards",
+        }
+      ),
     ];
 
     await Promise.allSettled(animations);
@@ -1627,9 +1765,18 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
 
     var veil = document.createElement("div");
     veil.className = "trai-v5-internal-pulse";
-    veil.style.setProperty("--accent", state.current ? state.current.accent || "#d6a33a" : "#d6a33a");
-    veil.style.setProperty("--trai-v5-x", sourceOrigin(source).x.toFixed(2) + "%");
-    veil.style.setProperty("--trai-v5-y", sourceOrigin(source).y.toFixed(2) + "%");
+    veil.style.setProperty(
+      "--accent",
+      state.current ? state.current.accent || "#d6a33a" : "#d6a33a"
+    );
+    veil.style.setProperty(
+      "--trai-v5-x",
+      sourceOrigin(source).x.toFixed(2) + "%"
+    );
+    veil.style.setProperty(
+      "--trai-v5-y",
+      sourceOrigin(source).y.toFixed(2) + "%"
+    );
     document.body.appendChild(veil);
     await delay(160);
     callback();
@@ -1699,8 +1846,8 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
         pulse,
         [
           { opacity: 0, transform: "scale(.96)" },
-          { opacity: 1, transform: "scale(1.02)", offset: .48 },
-          { opacity: .94, transform: "scale(1.06)" }
+          { opacity: 1, transform: "scale(1.02)", offset: 0.48 },
+          { opacity: 0.94, transform: "scale(1.06)" },
         ],
         { duration: 620, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" }
       );
@@ -1729,14 +1876,16 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
   }
 
   function onDocumentClick(event) {
-    var anchor = event.target && event.target.closest
-      ? event.target.closest("a[href]")
-      : null;
+    var anchor =
+      event.target && event.target.closest
+        ? event.target.closest("a[href]")
+        : null;
 
     if (!anchor) {
-      var trigger = event.target && event.target.closest
-        ? event.target.closest("[data-trai-world]")
-        : null;
+      var trigger =
+        event.target && event.target.closest
+          ? event.target.closest("[data-trai-world]")
+          : null;
       if (trigger && trigger.dataset.traiWorld) {
         var triggeredWorld = state.worlds.get(trigger.dataset.traiWorld);
         if (triggeredWorld && triggeredWorld.id !== SELF) {
@@ -1801,7 +1950,7 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     });
     observer.observe(document.documentElement, {
       subtree: true,
-      childList: true
+      childList: true,
     });
   }
 
@@ -1846,7 +1995,7 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
 
     var response = await fetch(manifestUrl, {
       cache: "no-store",
-      credentials: "same-origin"
+      credentials: "same-origin",
     });
 
     if (!response.ok) {
@@ -1896,7 +2045,7 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
       routeChanged: routeChanged,
       rewriteAnchors: function () {
         rewriteAnchors(document);
-      }
+      },
     };
 
     window.dispatchEvent(
@@ -1904,8 +2053,8 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
         detail: {
           version: VERSION,
           world: SELF,
-          manifest: manifest
-        }
+          manifest: manifest,
+        },
       })
     );
   }
@@ -1928,7 +2077,9 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
   if (window.__TRAI_ORGANISM_V54_HOLOGRAM__) return;
   window.__TRAI_ORGANISM_V54_HOLOGRAM__ = true;
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
   const root = document.createElement("div");
   root.className = "trai-v54-hologram";
   root.setAttribute("aria-hidden", "true");
@@ -1997,14 +2148,24 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
   document.body.appendChild(root);
 
   if (!reduceMotion) {
-    window.addEventListener("pointermove", (event) => {
-      root.style.setProperty("--v54-x", `${event.clientX}px`);
-      root.style.setProperty("--v54-y", `${event.clientY}px`);
-    }, { passive: true });
+    window.addEventListener(
+      "pointermove",
+      event => {
+        root.style.setProperty("--v54-x", `${event.clientX}px`);
+        root.style.setProperty("--v54-y", `${event.clientY}px`);
+      },
+      { passive: true }
+    );
 
-    window.addEventListener("pointerdown", () => {
-      root.dataset.pulse = "true";
-      window.setTimeout(() => { root.dataset.pulse = "false"; }, 420);
-    }, { passive: true });
+    window.addEventListener(
+      "pointerdown",
+      () => {
+        root.dataset.pulse = "true";
+        window.setTimeout(() => {
+          root.dataset.pulse = "false";
+        }, 420);
+      },
+      { passive: true }
+    );
   }
 })();
