@@ -1,4 +1,5 @@
 import express from "express";
+import fs from "fs";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -16,11 +17,14 @@ async function startServer() {
       ? path.resolve(__dirname, "public")
       : path.resolve(__dirname, "..", "dist", "public");
 
+  const indexPath = path.join(staticPath, "index.html");
+  const indexHtml = await fs.promises.readFile(indexPath, "utf-8");
+
   app.use(express.static(staticPath));
 
-  // Handle client-side routing - serve index.html for all routes
+  // Handle client-side routing from an in-memory SPA shell.
   app.get("*", (_req, res) => {
-    res.sendFile(path.join(staticPath, "index.html"));
+    res.status(200).type("html").send(indexHtml);
   });
 
   const port = process.env.PORT || 3000;
