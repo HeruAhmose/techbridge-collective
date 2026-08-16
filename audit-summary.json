@@ -1,0 +1,305 @@
+{
+  "vulnerabilities": {
+    "info": 0,
+    "low": 9,
+    "moderate": 51,
+    "high": 28,
+    "critical": 1
+  },
+  "totalDependencies": 683,
+  "advisoryCount": 89,
+  "packageCount": 15,
+  "packages": [
+    {
+      "module": "vitest",
+      "severity": "critical",
+      "advisoryCount": 1,
+      "patchedVersions": [
+        ">=3.2.6"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-5xrq-8626-4rwp"
+      ]
+    },
+    {
+      "module": "axios",
+      "severity": "high",
+      "advisoryCount": 28,
+      "patchedVersions": [
+        ">=1.15.0",
+        ">=1.15.1",
+        ">=1.15.2",
+        ">=1.16.0",
+        ">=1.18.0"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-3p68-rc4w-qgx5",
+        "GHSA-w9j2-pvgh-6h63",
+        "GHSA-pmwg-cvhr-8vh7",
+        "GHSA-3w6x-2g7m-8v23",
+        "GHSA-xhjh-pmcv-23jw",
+        "GHSA-445q-vr5w-6q77",
+        "GHSA-m7pr-hjqh-92cm",
+        "GHSA-5c9x-8gcm-mpgx",
+        "GHSA-vf2m-468p-8v99",
+        "GHSA-pf86-5x62-jrwf",
+        "GHSA-6chq-wfr3-2hj9",
+        "GHSA-xx6v-rp6x-q39c",
+        "GHSA-q8qp-cvcw-x6jj",
+        "GHSA-fvcv-3m26-pcqx",
+        "GHSA-62hf-57xw-28j9",
+        "GHSA-hfxv-24rg-xrqf",
+        "GHSA-777c-7fjr-54vf",
+        "GHSA-p92q-9vqr-4j8v",
+        "GHSA-j5f8-grm9-p9fc",
+        "GHSA-3g43-6gmg-66jw",
+        "GHSA-35jp-ww65-95wh",
+        "GHSA-898c-q2cr-xwhg",
+        "GHSA-42h9-826w-cgv3",
+        "GHSA-pmv8-rq9r-6j72",
+        "GHSA-jqh4-m9w3-8hp9",
+        "GHSA-mmx7-hfxf-jppx",
+        "GHSA-7q8q-rj6j-mhjq",
+        "GHSA-mwf2-3pr3-8698"
+      ]
+    },
+    {
+      "module": "form-data",
+      "severity": "high",
+      "advisoryCount": 1,
+      "patchedVersions": [
+        ">=4.0.6"
+      ],
+      "suggestedTargets": [
+        "4.0.6"
+      ],
+      "advisoryIds": [
+        "GHSA-hmw2-7cc7-3qxx"
+      ]
+    },
+    {
+      "module": "nanoid",
+      "severity": "high",
+      "advisoryCount": 3,
+      "patchedVersions": [
+        ">=5.1.16",
+        ">=3.3.16",
+        ">=3.3.18"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-28wg-ghj8-5hjv",
+        "GHSA-28wg-ghj8-5hjv",
+        "GHSA-2v37-7h3g-55p8"
+      ]
+    },
+    {
+      "module": "pnpm",
+      "severity": "high",
+      "advisoryCount": 15,
+      "patchedVersions": [
+        ">=10.33.4",
+        ">=10.34.0",
+        ">=10.34.1",
+        ">=10.34.2",
+        ">=10.34.4"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-hg3w-7f8c-63hp",
+        "GHSA-rxhj-4m44-96r4",
+        "GHSA-cjhr-43r9-cfmw",
+        "GHSA-hwx4-2j3j-g496",
+        "GHSA-p4xf-rf54-rj3x",
+        "GHSA-q6j5-fjx5-2mc3",
+        "GHSA-54hh-g5mx-jqcp",
+        "GHSA-5wx6-mg75-v57r",
+        "GHSA-3qhv-2rgh-x77r",
+        "GHSA-4gxm-v5v7-fqc4",
+        "GHSA-w466-c33r-3gjp",
+        "GHSA-72r4-9c5j-mj57",
+        "GHSA-fr4h-3cph-29xv",
+        "GHSA-qrv3-253h-g69c",
+        "GHSA-gj8w-mvpf-x27x"
+      ]
+    },
+    {
+      "module": "postcss",
+      "severity": "high",
+      "advisoryCount": 4,
+      "patchedVersions": [
+        ">=8.5.10",
+        ">=8.5.12",
+        ">=8.5.23",
+        ">=8.5.18"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-qx2v-qp2m-jg93",
+        "GHSA-6g55-p6wh-862q",
+        "GHSA-fxqj-rqcc-2cmp",
+        "GHSA-r28c-9q8g-f849"
+      ]
+    },
+    {
+      "module": "vite",
+      "severity": "high",
+      "advisoryCount": 8,
+      "patchedVersions": [
+        ">=6.4.2",
+        ">=7.3.2",
+        ">=6.4.3",
+        ">=7.3.5"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-4w7w-66w2-5vf9",
+        "GHSA-4w7w-66w2-5vf9",
+        "GHSA-v2wj-q39q-566r",
+        "GHSA-p9ff-h696-f583",
+        "GHSA-v6wh-96g9-6wx3",
+        "GHSA-v6wh-96g9-6wx3",
+        "GHSA-fx2h-pf6j-xcff",
+        "GHSA-fx2h-pf6j-xcff"
+      ]
+    },
+    {
+      "module": "dompurify",
+      "severity": "moderate",
+      "advisoryCount": 14,
+      "patchedVersions": [
+        ">=3.4.0",
+        ">=3.4.6",
+        ">=3.4.7",
+        ">=3.4.12",
+        ">=3.4.11",
+        ">=3.4.9",
+        ">=3.4.8",
+        "<0.0.0",
+        ">=3.4.13"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-h7mw-gpvr-xq4m",
+        "GHSA-crv5-9vww-q3g8",
+        "GHSA-v9jr-rg53-9pgp",
+        "GHSA-hpcv-96wg-7vj8",
+        "GHSA-r47g-fvhr-h676",
+        "GHSA-rp9w-3fw7-7cwq",
+        "GHSA-c2j3-45gr-mqc4",
+        "GHSA-cmwh-pvxp-8882",
+        "GHSA-vxr8-fq34-vvx9",
+        "GHSA-gvmj-g25r-r7wr",
+        "GHSA-x4vx-rjvf-j5p4",
+        "GHSA-76mc-f452-cxcm",
+        "GHSA-39q2-94rc-95cp",
+        "GHSA-55q2-fjhq-7xh7"
+      ]
+    },
+    {
+      "module": "follow-redirects",
+      "severity": "moderate",
+      "advisoryCount": 1,
+      "patchedVersions": [
+        ">=1.16.0"
+      ],
+      "suggestedTargets": [
+        "1.16.0"
+      ],
+      "advisoryIds": [
+        "GHSA-r4q5-vmmm-2653"
+      ]
+    },
+    {
+      "module": "mermaid",
+      "severity": "moderate",
+      "advisoryCount": 9,
+      "patchedVersions": [
+        ">=11.15.0",
+        ">=11.16.1"
+      ],
+      "suggestedTargets": [
+        "11.16.1"
+      ],
+      "advisoryIds": [
+        "GHSA-ghcm-xqfw-q4vr",
+        "GHSA-xcj9-5m2h-648r",
+        "GHSA-6m6c-36f7-fhxh",
+        "GHSA-87f9-hvmw-gh4p",
+        "GHSA-c4c3-pg64-4m4v",
+        "GHSA-6x64-9x62-f2gx",
+        "GHSA-3rrr-jr9j-h3q3",
+        "GHSA-2v8p-3f2j-5mp7",
+        "GHSA-rhh3-jpg6-66xh"
+      ]
+    },
+    {
+      "module": "qs",
+      "severity": "moderate",
+      "advisoryCount": 1,
+      "patchedVersions": [
+        ">=6.15.2"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-q8mj-m7cp-5q26"
+      ]
+    },
+    {
+      "module": "uuid",
+      "severity": "moderate",
+      "advisoryCount": 1,
+      "patchedVersions": [
+        ">=11.1.1"
+      ],
+      "suggestedTargets": [
+        "11.1.1"
+      ],
+      "advisoryIds": [
+        "GHSA-w5hq-g745-h8pq"
+      ]
+    },
+    {
+      "module": "@babel/core",
+      "severity": "low",
+      "advisoryCount": 1,
+      "patchedVersions": [
+        ">=7.29.6"
+      ],
+      "suggestedTargets": [
+        "7.29.7"
+      ],
+      "advisoryIds": [
+        "GHSA-4x5r-pxfx-6jf8"
+      ]
+    },
+    {
+      "module": "body-parser",
+      "severity": "low",
+      "advisoryCount": 1,
+      "patchedVersions": [
+        ">=1.20.6"
+      ],
+      "suggestedTargets": [
+        "1.20.6"
+      ],
+      "advisoryIds": [
+        "GHSA-v422-hmwv-36x6"
+      ]
+    },
+    {
+      "module": "esbuild",
+      "severity": "low",
+      "advisoryCount": 1,
+      "patchedVersions": [
+        ">=0.28.1"
+      ],
+      "suggestedTargets": [],
+      "advisoryIds": [
+        "GHSA-g7r4-m6w7-qqqr"
+      ]
+    }
+  ]
+}
