@@ -66,6 +66,9 @@ jobs:
       - name: Frozen install
         run: pnpm install --frozen-lockfile
 
+      - name: Normalize dependency metadata formatting
+        run: pnpm exec prettier --write package.json pnpm-lock.yaml
+
       - name: Full repository CI
         run: pnpm run ci
 
