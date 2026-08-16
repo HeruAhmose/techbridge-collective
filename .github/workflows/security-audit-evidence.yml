@@ -6,7 +6,7 @@ on:
       - agent/security-audit-20260816
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   audit:
@@ -14,6 +14,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
@@ -27,9 +29,18 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Full audit JSON evidence
+      - name: Capture full audit JSON evidence
         shell: bash
         run: |
           set +e
-          pnpm audit --json
+          pnpm audit --json > audit.json
           exit 0
+
+      - name: Commit audit evidence to isolated branch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit.json
+          git commit -m "chore(security): capture dependency audit evidence"
+          git push origin HEAD:agent/security-audit-20260816
