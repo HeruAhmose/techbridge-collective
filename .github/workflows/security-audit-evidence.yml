@@ -29,18 +29,63 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Capture full audit JSON evidence
+      - name: Capture and summarize audit evidence
         shell: bash
         run: |
           set +e
           pnpm audit --json > audit.json
-          exit 0
+          set -e
+          node <<'NODE'
+          const fs = require('fs');
+          const audit = JSON.parse(fs.readFileSync('audit.json', 'utf8'));
+          const rank = {critical: 4, high: 3, moderate: 2, low: 1, info: 0};
+          const advisories = Object.values(audit.advisories || {});
+          const targets = new Map();
+          for (const action of audit.actions || []) {
+            if (!action.module) continue;
+            const set = targets.get(action.module) || new Set();
+            if (action.target) set.add(String(action.target));
+            targets.set(action.module, set);
+          }
+          const grouped = new Map();
+          for (const adv of advisories) {
+            const name = adv.module_name || adv.name || 'unknown';
+            const current = grouped.get(name) || {module: name, severity: 'info', advisoryCount: 0, patchedVersions: new Set(), ids: []};
+            const sev = String(adv.severity || 'info').toLowerCase();
+            if ((rank[sev] ?? 0) > (rank[current.severity] ?? 0)) current.severity = sev;
+            current.advisoryCount += 1;
+            if (adv.patched_versions) current.patchedVersions.add(String(adv.patched_versions));
+            if (adv.github_advisory_id) current.ids.push(String(adv.github_advisory_id));
+            else if (adv.id != null) current.ids.push(String(adv.id));
+            grouped.set(name, current);
+          }
+          const packages = [...grouped.values()].map(p => ({
+            module: p.module,
+            severity: p.severity,
+            advisoryCount: p.advisoryCount,
+            patchedVersions: [...p.patchedVersions],
+            suggestedTargets: [...(targets.get(p.module) || [])],
+            advisoryIds: p.ids
+          })).sort((a,b) => (rank[b.severity] ?? 0) - (rank[a.severity] ?? 0) || a.module.localeCompare(b.module));
+          const summary = {
+            vulnerabilities: audit.metadata?.vulnerabilities || null,
+            totalDependencies: audit.metadata?.totalDependencies ?? null,
+            advisoryCount: advisories.length,
+            packageCount: packages.length,
+            packages
+          };
+          fs.writeFileSync('audit-summary.json', JSON.stringify(summary, null, 2) + '\n');
+          NODE
 
-      - name: Commit audit evidence to isolated branch
+      - name: Commit compact audit evidence to isolated branch
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add audit.json
-          git commit -m "chore(security): capture dependency audit evidence"
+          git add audit.json audit-summary.json
+          if git diff --cached --quiet; then
+            echo "Audit evidence unchanged."
+            exit 0
+          fi
+          git commit -m "chore(security): capture compact audit evidence [skip ci]"
           git push origin HEAD:agent/security-audit-20260816
