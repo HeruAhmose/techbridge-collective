@@ -39,9 +39,9 @@ jobs:
           node <<'NODE'
           const fs = require('node:fs');
           const expected = new Map([
-            ['node_modules/tailwindcss/package.json', '4.3.1'],
-            ['node_modules/@tailwindcss/vite/package.json', '4.3.1'],
-            ['node_modules/react-hook-form/package.json', '7.83.0'],
+            ['node_modules/tailwindcss/package.json', '4.3.3'],
+            ['node_modules/@tailwindcss/vite/package.json', '4.3.3'],
+            ['node_modules/react-hook-form/package.json', '7.85.0'],
             ['node_modules/framer-motion/package.json', '12.43.0'],
             ['node_modules/vitest/package.json', '4.1.7'],
           ]);
