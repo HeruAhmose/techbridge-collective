@@ -26,8 +26,19 @@ jobs:
       - name: Install pinned pnpm
         run: npm install --global pnpm@10.34.5
 
+      - name: Assert live registry target
+        shell: bash
+        run: |
+          set -euo pipefail
+          latest="$(pnpm view react-resizable-panels version)"
+          test "$latest" = "4.12.3" || {
+            echo "Registry moved: expected latest 4.12.3; got $latest" >&2
+            exit 1
+          }
+          echo "react-resizable-panels registry latest: $latest VERIFIED"
+
       - name: Upgrade react-resizable-panels
-        run: pnpm add 'react-resizable-panels@^4.12.3'
+        run: pnpm add 'react-resizable-panels@4.12.3'
 
       - name: Verify frozen install
         run: pnpm install --frozen-lockfile
