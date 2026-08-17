@@ -1,0 +1,108 @@
+name: Temporary Express live-latest migration validation
+
+on:
+  push:
+    branches:
+      - deps/express-latest-20260817
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: deps/express-latest-20260817
+          fetch-depth: 0
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install pinned pnpm
+        run: npm install --global pnpm@10.34.5
+
+      - name: Resolve and install live registry Express majors
+        shell: bash
+        run: |
+          set -euo pipefail
+          express_latest="$(pnpm view express version)"
+          types_latest="$(pnpm view @types/express version)"
+          test -n "$express_latest"
+          test -n "$types_latest"
+          echo "EXPRESS_LATEST=$express_latest" >> "$GITHUB_ENV"
+          echo "EXPRESS_TYPES_LATEST=$types_latest" >> "$GITHUB_ENV"
+          echo "express registry latest: $express_latest"
+          echo "@types/express registry latest: $types_latest"
+          pnpm add "express@$express_latest"
+          pnpm add --save-dev "@types/express@$types_latest"
+
+      - name: Verify frozen install
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify installed versions equal live registry targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs');
+          const expected = new Map([
+            ['node_modules/express/package.json', process.env.EXPRESS_LATEST],
+            ['node_modules/@types/express/package.json', process.env.EXPRESS_TYPES_LATEST],
+          ]);
+          for (const [file, want] of expected) {
+            const got = JSON.parse(fs.readFileSync(file, 'utf8')).version;
+            if (!want || got !== want) throw new Error(`${file}: expected ${want}; got ${got}`);
+            console.log(`${file}: ${got} VERIFIED`);
+          }
+          NODE
+
+      - name: Format migration files
+        run: pnpm exec prettier --write package.json pnpm-lock.yaml server/index.ts .github/workflows/tmp-express-latest.yml
+
+      - name: Run repository CI
+        run: pnpm run ci
+
+      - name: Runtime smoke-test built Express server
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=4179 NODE_ENV=production node dist/index.js >/tmp/techbridge-express.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+
+          ready=0
+          for _ in {1..30}; do
+            if curl --fail --silent --show-error http://127.0.0.1:4179/ -o /tmp/root.html; then
+              ready=1
+              break
+            fi
+            sleep 0.2
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/techbridge-express.log >&2
+            exit 1
+          fi
+
+          curl --fail --silent --show-error http://127.0.0.1:4179/nested/spa/route -o /tmp/nested.html
+          grep -qi '<!doctype html' /tmp/root.html
+          grep -qi '<!doctype html' /tmp/nested.html
+          kill "$server_pid"
+          wait "$server_pid" || true
+          trap - EXIT
+          echo "Express runtime root + nested SPA routing VERIFIED"
+
+      - name: Commit migration and remove temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -- .github/workflows/tmp-express-latest.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml server/index.ts .github/workflows/tmp-express-latest.yml
+          git commit -m "chore(deps): migrate Express to ${EXPRESS_LATEST}"
+          git push origin HEAD:deps/express-latest-20260817
