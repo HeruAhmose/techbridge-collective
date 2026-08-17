@@ -40,7 +40,7 @@ jobs:
           test "$version" = "4.1.7"
 
       - name: Run repository CI
-        run: pnpm ci
+        run: pnpm run ci
 
       - name: Commit generated lockfile and remove temporary workflow
         shell: bash
