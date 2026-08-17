@@ -35,6 +35,12 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Prevent debug collector re-entry
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e client/public/__manus__/debug-collector.js
+
       - name: CI
         run: pnpm run ci
 
@@ -53,10 +59,19 @@ jobs:
             sleep 1
           done
 
-          curl --fail --silent --show-error http://127.0.0.1:4177/ -o /tmp/root.html
+          curl --fail --silent --show-error -D /tmp/headers.txt \
+            http://127.0.0.1:4177/ -o /tmp/root.html
           curl --fail --silent --show-error http://127.0.0.1:4177/programs/digital-equity/deep-route -o /tmp/deep.html
           cmp --silent /tmp/root.html /tmp/deep.html
           grep --quiet '<div id="root"' /tmp/root.html
+          grep -qi '^x-content-type-options: nosniff' /tmp/headers.txt
+          grep -qi '^x-frame-options: DENY' /tmp/headers.txt
+          grep -qi '^referrer-policy: strict-origin-when-cross-origin' /tmp/headers.txt
+          grep -qi '^strict-transport-security: max-age=31536000' /tmp/headers.txt
+          if grep -qi '^x-powered-by:' /tmp/headers.txt; then
+            echo 'Express fingerprint header must remain disabled.' >&2
+            exit 1
+          fi
 
           asset_path="$(grep -oE '/assets/[^\"]+\.(js|css)' /tmp/root.html | head -n 1)"
           test -n "$asset_path"
