@@ -125,8 +125,7 @@ function ChartTooltipContent({
     indicator?: "line" | "dot" | "dashed";
     nameKey?: string;
     labelKey?: string;
-  } &
-  Omit<
+  } & Omit<
     RechartsPrimitive.DefaultTooltipContentProps<
       TooltipValueType,
       TooltipNameType
@@ -268,8 +267,7 @@ function ChartLegendContent({
 }: React.ComponentProps<"div"> & {
   hideIcon?: boolean;
   nameKey?: string;
-} &
-  RechartsPrimitive.DefaultLegendContentProps) {
+} & RechartsPrimitive.DefaultLegendContentProps) {
   const { config } = useChart();
 
   if (!payload?.length) {
