@@ -1,0 +1,116 @@
+name: Temporary Express current migration validation v3
+
+on:
+  push:
+    branches:
+      - deps/express-current-v3-20260817
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: deps/express-current-v3-20260817
+          fetch-depth: 0
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install pinned pnpm
+        run: npm install --global pnpm@10.34.5
+
+      - name: Resolve live registry targets
+        id: targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          express_latest="$(npm view express version)"
+          types_latest="$(npm view @types/express version)"
+          test -n "$express_latest"
+          test -n "$types_latest"
+          echo "express=$express_latest" >> "$GITHUB_OUTPUT"
+          echo "types=$types_latest" >> "$GITHUB_OUTPUT"
+
+      - name: Upgrade Express runtime and types
+        run: |
+          pnpm add "express@${{ steps.targets.outputs.express }}"
+          pnpm add -D "@types/express@${{ steps.targets.outputs.types }}"
+
+      - name: Verify frozen install
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify exact installed versions
+        shell: bash
+        env:
+          EXPRESS_EXPECTED: ${{ steps.targets.outputs.express }}
+          TYPES_EXPECTED: ${{ steps.targets.outputs.types }}
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs');
+          for (const [file, want] of [
+            ['node_modules/express/package.json', process.env.EXPRESS_EXPECTED],
+            ['node_modules/@types/express/package.json', process.env.TYPES_EXPECTED],
+          ]) {
+            const got = JSON.parse(fs.readFileSync(file, 'utf8')).version;
+            if (!want || got !== want) throw new Error(`${file}: expected ${want}; got ${got}`);
+            console.log(`${file}: ${got} VERIFIED`);
+          }
+          NODE
+
+      - name: Verify Express 5 wildcard source migration
+        shell: bash
+        run: grep -F 'app.get("/{*splat}"' server/index.ts
+
+      - name: Smoke test Express 5 root and nested wildcard routing
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import express from 'express';
+          const app = express();
+          app.get('/{*splat}', (_req, res) => res.status(200).send('spa-shell'));
+          const server = app.listen(0, '127.0.0.1');
+          await new Promise((resolve, reject) => {
+            server.once('listening', resolve);
+            server.once('error', reject);
+          });
+          try {
+            const address = server.address();
+            if (!address || typeof address === 'string') throw new Error('No TCP address');
+            for (const pathname of ['/', '/deep/client/route']) {
+              const response = await fetch(`http://127.0.0.1:${address.port}${pathname}`);
+              const text = await response.text();
+              if (response.status !== 200 || text !== 'spa-shell') throw new Error(`${pathname}: ${response.status}`);
+              console.log(`${pathname}: VERIFIED`);
+            }
+          } finally {
+            await new Promise(resolve => server.close(resolve));
+          }
+          NODE
+
+      - name: Format migration files
+        run: pnpm exec prettier --write server/index.ts package.json pnpm-lock.yaml .github/workflows/tmp-express-current-v3.yml
+
+      - name: Run repository CI
+        run: pnpm run ci
+
+      - name: Commit generated migration and remove temporary workflow
+        shell: bash
+        env:
+          EXPRESS_VERSION: ${{ steps.targets.outputs.express }}
+        run: |
+          set -euo pipefail
+          rm -- .github/workflows/tmp-express-current-v3.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/index.ts package.json pnpm-lock.yaml .github/workflows/tmp-express-current-v3.yml
+          git commit -m "chore(deps): migrate Express to ${EXPRESS_VERSION} on current main"
+          git push origin HEAD:deps/express-current-v3-20260817
