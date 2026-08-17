@@ -7,8 +7,8 @@ on:
 permissions:
   contents: write
 
-# One-shot migration helper: resolve only the Express graph, then apply the
-# repository's Prettier policy before evaluating lockfile diff scope.
+# One-shot migration helper: resolve only the Express graph, materialize that
+# graph without lifecycle scripts, then apply the repository's Prettier policy.
 jobs:
   refresh-lock:
     if: github.actor != 'github-actions[bot]'
@@ -27,6 +27,8 @@ jobs:
           cache: pnpm
       - name: Resolve targeted Express 5 graph
         run: pnpm update express@5.2.1 @types/express@5.0.6 --lockfile-only --ignore-scripts
+      - name: Materialize resolved graph without lifecycle scripts
+        run: pnpm install --ignore-scripts
       - name: Format lockfile with repository policy
         run: pnpm exec prettier --write pnpm-lock.yaml
       - name: Preserve reviewed manifest
