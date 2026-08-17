@@ -23,7 +23,7 @@ async function startServer() {
   app.use(express.static(staticPath));
 
   // Handle client-side routing from an in-memory SPA shell.
-  // Express 5 requires a named wildcard; braces preserve root-path coverage.
+  // Express 5 requires a named wildcard; the braced form also matches the root path.
   app.get("/{*splat}", (_req, res) => {
     res.status(200).type("html").send(indexHtml);
   });
