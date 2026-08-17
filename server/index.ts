@@ -22,8 +22,9 @@ async function startServer() {
 
   app.use(express.static(staticPath));
 
-  // Handle client-side routing from an in-memory SPA shell.
-  app.get("*", (_req, res) => {
+  // Framework-neutral SPA fallback: safe under Express 5 and preserves
+  // client-side routing without relying on legacy wildcard route syntax.
+  app.use((_req, res) => {
     res.status(200).type("html").send(indexHtml);
   });
 
