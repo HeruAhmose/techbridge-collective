@@ -57,3 +57,10 @@ jobs:
           curl --fail --silent --show-error http://127.0.0.1:4177/programs/digital-equity/deep-route -o /tmp/deep.html
           cmp --silent /tmp/root.html /tmp/deep.html
           grep --quiet '<div id="root"' /tmp/root.html
+
+          asset_path="$(grep -oE '/assets/[^\"]+\.(js|css)' /tmp/root.html | head -n 1)"
+          test -n "$asset_path"
+          curl --fail --silent --show-error \
+            "http://127.0.0.1:4177${asset_path}" \
+            -o /tmp/techbridge-asset
+          test -s /tmp/techbridge-asset
