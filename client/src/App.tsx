@@ -12,6 +12,7 @@ import Navigation from "./components/Navigation";
 import HKChatBubble from "./components/HKChatBubble";
 import BridgeProgressBar from "./components/BridgeProgressBar";
 import CinematicIntro from "./components/CinematicIntro";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const Home = lazy(() => import("./pages/Home"));
 const GetHelp = lazy(() => import("./pages/GetHelp"));
@@ -146,44 +147,46 @@ function App() {
       <Navigation />
 
       {/* Page Routes */}
-      <Suspense fallback={<LoadingScreen />}>
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/get-help" component={GetHelp} />
-          <Route path="/host-a-hub" component={HostAHub} />
-          <Route path="/impact" component={Impact} />
-          <Route path="/about" component={About} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route>
-            <div
-              className="min-h-screen flex items-center justify-center"
-              style={{ background: "#0F2B1F" }}
-            >
-              <div className="text-center">
-                <h1
-                  className="font-display text-7xl font-bold mb-4"
-                  style={{ color: "#C9A227" }}
-                >
-                  404
-                </h1>
-                <p
-                  className="text-base mb-6"
-                  style={{ color: "rgba(253, 248, 240, 0.6)" }}
-                >
-                  This bridge doesn't lead anywhere yet.
-                </p>
-                <a
-                  href="/"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-display font-bold transition-all hover:scale-105"
-                  style={{ background: "#C9A227", color: "#1B4332" }}
-                >
-                  Return Home
-                </a>
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingScreen />}>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/get-help" component={GetHelp} />
+            <Route path="/host-a-hub" component={HostAHub} />
+            <Route path="/impact" component={Impact} />
+            <Route path="/about" component={About} />
+            <Route path="/dashboard" component={Dashboard} />
+            <Route>
+              <div
+                className="min-h-screen flex items-center justify-center"
+                style={{ background: "#0F2B1F" }}
+              >
+                <div className="text-center">
+                  <h1
+                    className="font-display text-7xl font-bold mb-4"
+                    style={{ color: "#C9A227" }}
+                  >
+                    404
+                  </h1>
+                  <p
+                    className="text-base mb-6"
+                    style={{ color: "rgba(253, 248, 240, 0.6)" }}
+                  >
+                    This bridge doesn't lead anywhere yet.
+                  </p>
+                  <a
+                    href="/"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-display font-bold transition-all hover:scale-105"
+                    style={{ background: "#C9A227", color: "#1B4332" }}
+                  >
+                    Return Home
+                  </a>
+                </div>
               </div>
-            </div>
-          </Route>
-        </Switch>
-      </Suspense>
+            </Route>
+          </Switch>
+        </Suspense>
+      </ErrorBoundary>
 
       {/* H.K. AI Floating Chat Bubble — Always visible */}
       <HKChatBubble />

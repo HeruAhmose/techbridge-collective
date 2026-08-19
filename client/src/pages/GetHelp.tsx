@@ -1333,15 +1333,19 @@ export default function GetHelp() {
                   >
                     <div className="text-5xl mb-4">{"🌉"}</div>
                     <h3 className="font-display text-2xl font-bold mb-3 text-glow-gold">
-                      Bridge Connected
+                      Request Saved — Here's the Honest Part
                     </h3>
                     <p
                       className="text-base mb-6"
                       style={{ color: "rgba(253, 248, 240, 0.7)" }}
                     >
-                      Thank you, {formData.name}. A Digital Navigator will reach
-                      out within 24 hours. In the meantime, H.K. is available
-                      24/7 if you need immediate guidance.
+                      Thank you, {formData.name}. This form isn't wired to a
+                      live intake system yet — no hub is staffed in your area
+                      today, so nobody has received this request. That's the gap
+                      this page is honest about: the forms are online, the
+                      person who walks you through it isn't here yet. In the
+                      meantime, H.K. is available 24/7 if you need immediate
+                      guidance.
                     </p>
                     <a
                       href="https://techbridge-collective.org"
