@@ -531,7 +531,7 @@ export default function GetHelp() {
           <Reveal>
             <div className="text-center mb-16">
               <p className="text-sm font-mono tracking-widest uppercase mb-4 text-glow-gold">
-                Real Scenarios
+                Illustrative Scenarios
               </p>
               <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
                 One Visit Can Change{" "}
@@ -541,8 +541,10 @@ export default function GetHelp() {
                 className="text-base max-w-2xl mx-auto"
                 style={{ color: "rgba(253, 248, 240, 0.55)" }}
               >
-                Click any story to see how a single help desk visit transforms a
-                navigation problem into a solved one.
+                Click any story to see the kind of help a Digital Navigator
+                provides once a hub is open near you. These are illustrative
+                scenarios, not reports from real visits — TechBridge Collective
+                hasn't opened a hub yet.
               </p>
             </div>
           </Reveal>
