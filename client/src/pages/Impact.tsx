@@ -748,14 +748,16 @@ export default function Impact() {
                 From the SPAN Document §5.3
               </p>
               <h2 className="font-display text-3xl md:text-4xl font-bold">
-                Real Scenarios, Real{" "}
+                Illustrative Scenarios, Real{" "}
                 <span className="text-glow-gold">Protocols</span>
               </h2>
               <p
                 className="text-base mt-3 max-w-xl mx-auto"
                 style={{ color: "rgba(253, 248, 240, 0.55)" }}
               >
-                Click any scenario to see the full protocol.
+                Click any scenario to see the full protocol. These are
+                illustrative scenarios, not reports from real visits —
+                TechBridge Collective hasn't opened a hub yet.
               </p>
             </div>
           </Reveal>
