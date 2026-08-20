@@ -319,6 +319,7 @@ export default function GetHelp() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (formSubmitted) return; // guard against duplicate handling on rapid re-submit
     setFormSubmitted(true);
     tbSoundEngine.play("form_submit");
   };
@@ -1200,12 +1201,14 @@ export default function GetHelp() {
                     <div className="flex flex-col gap-6">
                       <div>
                         <label
+                          htmlFor="get-help-name"
                           className="block text-sm font-semibold mb-2"
                           style={{ color: "var(--tb-cream)" }}
                         >
                           Your Name
                         </label>
                         <input
+                          id="get-help-name"
                           type="text"
                           required
                           value={formData.name}
@@ -1235,12 +1238,14 @@ export default function GetHelp() {
                       </div>
                       <div>
                         <label
+                          htmlFor="get-help-need"
                           className="block text-sm font-semibold mb-2"
                           style={{ color: "var(--tb-cream)" }}
                         >
                           What Do You Need Help With?
                         </label>
                         <textarea
+                          id="get-help-need"
                           required
                           value={formData.need}
                           onChange={e =>
@@ -1270,12 +1275,14 @@ export default function GetHelp() {
                       </div>
                       <div>
                         <label
+                          htmlFor="get-help-contact"
                           className="block text-sm font-semibold mb-2"
                           style={{ color: "var(--tb-cream)" }}
                         >
                           Best Way to Reach You
                         </label>
                         <input
+                          id="get-help-contact"
                           type="text"
                           required
                           value={formData.contact}
@@ -1326,6 +1333,8 @@ export default function GetHelp() {
                 ) : (
                   <motion.div
                     key="success"
+                    role="status"
+                    aria-live="polite"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="glass-card p-10 text-center"
