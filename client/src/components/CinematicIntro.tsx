@@ -68,6 +68,14 @@ export default function CinematicIntro({
     }
   }, [dismissed, onComplete]);
 
+  // Respect OS-level "reduce motion" — skip the animated sequence entirely
+  // rather than forcing a click-driven animation on users who disabled it.
+  useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setDismissed(true);
+    }
+  }, []);
+
   // Particle system
   useEffect(() => {
     if (dismissed) return;

@@ -176,6 +176,7 @@ export default function HKChatBubble() {
   const [showTooltip, setShowTooltip] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
   // Show tooltip after 3 seconds if not interacted
   useEffect(() => {
@@ -198,6 +199,20 @@ export default function HKChatBubble() {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
+  }, [isOpen]);
+
+  // Close on Escape, and return focus to the toggle button for keyboard users
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        tbSoundEngine.play("hk_close");
+        setIsOpen(false);
+        toggleButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [isOpen]);
 
   const toggleChat = useCallback(() => {
@@ -301,6 +316,7 @@ export default function HKChatBubble() {
 
         {/* The Bubble Button */}
         <motion.button
+          ref={toggleButtonRef}
           onClick={toggleChat}
           className="relative w-16 h-16 rounded-full overflow-hidden shadow-2xl"
           style={{
@@ -325,7 +341,9 @@ export default function HKChatBubble() {
           transition={
             isOpen ? {} : { duration: 2, repeat: Infinity, ease: "easeInOut" }
           }
-          aria-label="Ask H.K. AI"
+          aria-expanded={isOpen}
+          aria-haspopup="dialog"
+          aria-label={isOpen ? "Close H.K. AI chat" : "Open H.K. AI chat"}
         >
           {isOpen ? (
             <motion.div
@@ -369,6 +387,9 @@ export default function HKChatBubble() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            role="dialog"
+            aria-modal="false"
+            aria-label="H.K. AI chat"
             className="fixed bottom-28 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
             style={{
               background: "#0F2B1F",
