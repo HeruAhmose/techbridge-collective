@@ -20,6 +20,7 @@ import {
 } from "framer-motion";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
+import BridgeSVG from "../components/BridgeSVG";
 
 const CDN = {
   bridgeHero:
@@ -651,6 +652,31 @@ export default function Home() {
   const [expandedValue, setExpandedValue] = useState<number | null>(null);
   const [, navigate] = useLocation();
 
+  // Scroll progress for the bridge-building illustration, scoped to its
+  // own section (same scrollTop/docHeight-style calculation as
+  // BridgeProgressBar, adapted to a single section's viewport travel).
+  const bridgeSectionRef = useRef<HTMLDivElement>(null);
+  const [bridgeProgress, setBridgeProgress] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const el = bridgeSectionRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const total = rect.height + vh;
+      const traveled = vh - rect.top;
+      const pct = total > 0 ? Math.max(0, Math.min(1, traveled / total)) : 0;
+      setBridgeProgress(pct);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   const initSound = useCallback(() => {
     tbSoundEngine.init();
   }, []);
@@ -859,6 +885,21 @@ export default function Home() {
               </p>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* ============================================
+          BRIDGE BUILDING — Scroll-linked SVG illustration
+          ============================================ */}
+      <section
+        ref={bridgeSectionRef}
+        className="py-16 md:py-20 relative overflow-hidden"
+        style={{ background: "var(--tb-forest)" }}
+      >
+        <div className="container relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <BridgeSVG progress={bridgeProgress} />
+          </div>
         </div>
       </section>
 
