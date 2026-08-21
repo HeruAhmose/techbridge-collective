@@ -933,22 +933,22 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     var raw = anchor.getAttribute("href");
     if (!raw) return;
 
-    var url;
-    try {
-      url = new URL(raw, window.location.href);
-    } catch {
-      anchor.removeAttribute("href");
-      anchor.setAttribute("aria-disabled", "true");
+    var normalizedRaw = raw.trim();
+    if (!normalizedRaw) return;
+
+    var explicitScheme = normalizedRaw.match(/^([a-z][a-z0-9+.-]*):/i);
+    if (
+      explicitScheme &&
+      explicitScheme[1].toLowerCase() !== "http" &&
+      explicitScheme[1].toLowerCase() !== "https"
+    ) {
       return;
     }
 
-    var protocol = url.protocol.toLowerCase();
-    if (protocol === "mailto:" || protocol === "tel:") {
-      return;
-    }
-    if (protocol !== "http:" && protocol !== "https:") {
-      anchor.removeAttribute("href");
-      anchor.setAttribute("aria-disabled", "true");
+    var url;
+    try {
+      url = new URL(normalizedRaw, window.location.href);
+    } catch {
       return;
     }
 
@@ -1032,7 +1032,10 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     button.style.setProperty("--world-accent", world.accent || "#d6a33a");
     button.innerHTML =
       '<span class="trai-v5-world__index">' +
-      String(index + 1).padStart(2, "0") +
+      // Canonical organ number from the manifest. Falls back to position only
+      // for a world with no index, so numbering no longer shifts depending on
+      // which site the portal is opened from.
+      escapeHtml(world.index || String(index + 1).padStart(2, "0")) +
       (world.id === SELF ? " · CURRENT" : "") +
       "</span>" +
       "<strong>" +
