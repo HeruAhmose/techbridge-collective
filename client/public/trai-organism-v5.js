@@ -23,7 +23,6 @@
   var reducedMotion =
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var legacyHost = ["manus", "computer"].join(".");
   var protocolSearch = new URL(window.location.href).searchParams;
   var pendingArrival =
     (protocolSearch.get("trai_v") === "5" ||
@@ -879,11 +878,6 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     document.head.appendChild(style);
   }
 
-  function isLegacyHost(hostname) {
-    var host = String(hostname || "").toLowerCase();
-    return host === legacyHost || host.endsWith("." + legacyHost);
-  }
-
   function normalizedPath(pathname) {
     var path = String(pathname || "/").replace(/\/+$/, "");
     return path || "/";
@@ -895,10 +889,6 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
       url = input instanceof URL ? input : new URL(input, window.location.href);
     } catch {
       return null;
-    }
-
-    if (isLegacyHost(url.hostname)) {
-      return state.worlds.get("peoples") || null;
     }
 
     var worlds = Array.from(state.worlds.values());
@@ -949,16 +939,6 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     try {
       url = new URL(normalizedRaw, window.location.href);
     } catch {
-      return;
-    }
-
-    if (isLegacyHost(url.hostname)) {
-      var peoples = state.worlds.get("peoples");
-      if (peoples && peoples.url) {
-        anchor.href = peoples.url;
-        anchor.dataset.traiWorld = "peoples";
-        anchor.dataset.traiLegacyRewritten = "true";
-      }
       return;
     }
 
