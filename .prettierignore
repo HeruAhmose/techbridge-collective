@@ -3,3 +3,7 @@ node_modules
 .git
 *.min.js
 *.min.css
+
+# Machine-generated. Prettier reformatting it breaks pnpm regeneration
+# and causes lockfile conflicts on every Dependabot PR.
+pnpm-lock.yaml
