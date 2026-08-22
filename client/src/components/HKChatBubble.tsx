@@ -6,7 +6,7 @@
  * - Floating bubble with animated avatar in bottom-right
  * - Expandable chat interface with typing indicators
  * - Quick action buttons for common tasks
- * - Claude AI via Manus Forge API for real intelligent responses
+ * - Claude AI via the /api/hk-chat proxy for real intelligent responses
  * - Keyword fallback when API unavailable
  * - Sound effects on open/close/message
  * - Pulse animation when idle, breathing when active

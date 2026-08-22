@@ -246,9 +246,6 @@ importers:
       vite:
         specifier: 7.3.6
         version: 7.3.6(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.12)
-      vite-plugin-manus-runtime:
-        specifier: ^0.0.59
-        version: 0.0.59
       vitest:
         specifier: 4.1.10
         version: 4.1.10(@types/node@24.12.0)(vite@7.3.6(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.12))
@@ -853,12 +850,6 @@ packages:
     resolution:
       {
         integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==,
-      }
-
-  "@medv/finder@4.0.2":
-    resolution:
-      {
-        integrity: sha512-RraNY9SCcx4KZV0Dh6BEW6XEW2swkqYca74pkFFRw6hHItSHiy+O/xMnpbofjYbzXj0tSpBGthUF1hHTsr3vIQ==,
       }
 
   "@mermaid-js/parser@1.2.0":
@@ -4243,12 +4234,6 @@ packages:
         integrity: sha512-SnL6sNutTwRWWR/vcmCYHSADjiEesp5TGQQ0pXyLhW5IoeibRlF/CbSLailbB3CNqJUk9cVJ9dUDnbD7GrcHBQ==,
       }
 
-  modern-screenshot@4.6.8:
-    resolution:
-      {
-        integrity: sha512-GJkv/yWPOJTlxj1LZDU2k474cDyOWL+LVaqTdDWQwQ5d8zIuTz1892+1cV9V0ZpK6HYZFo/+BNLBbierO9d2TA==,
-      }
-
   motion-dom@13.0.0:
     resolution:
       {
@@ -4273,14 +4258,6 @@ packages:
         integrity: sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==,
       }
     engines: { node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1 }
-    hasBin: true
-
-  nanoid@5.1.16:
-    resolution:
-      {
-        integrity: sha512-kVrnsrJqMR8+oLJnGEmSWw9BivK5mt7H3FZatVRjrc5wGqFYuBxX1yG7+A7Gi5AefkX6t/oCkizcQgpu0cY1dQ==,
-      }
-    engines: { node: ^18 || >=20 }
     hasBin: true
 
   nanoid@6.0.1:
@@ -5162,12 +5139,6 @@ packages:
         integrity: sha512-SbPDPdDBYp+5MJHhBCAyI7wKM3d5ivekigc2Dk2s7pgbZ9wIgIBYGVw4zGHBml/qTFbexrofXW6Gu4noGxrOwQ==,
       }
 
-  vite-plugin-manus-runtime@0.0.59:
-    resolution:
-      {
-        integrity: sha512-rgEEON7T63R+/2SHAJ0YoKR0skSWKYuCuIZBeRcVnjSWGsZsTigXFHfjpe9/wJCJAeqPVAUhTv0D+CTlPxnCiw==,
-      }
-
   vite@7.3.6:
     resolution:
       {
@@ -5583,8 +5554,6 @@ snapshots:
     dependencies:
       "@jridgewell/resolve-uri": 3.1.2
       "@jridgewell/sourcemap-codec": 1.5.5
-
-  "@medv/finder@4.0.2": {}
 
   "@mermaid-js/parser@1.2.0":
     dependencies:
@@ -7945,8 +7914,6 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.6.3
 
-  modern-screenshot@4.6.8: {}
-
   motion-dom@13.0.0:
     dependencies:
       motion-utils: 13.0.0
@@ -7956,8 +7923,6 @@ snapshots:
   ms@2.1.3: {}
 
   nanoid@3.3.18: {}
-
-  nanoid@5.1.16: {}
 
   nanoid@6.0.1: {}
 
@@ -8544,16 +8509,6 @@ snapshots:
       d3-shape: 3.2.0
       d3-time: 3.1.0
       d3-timer: 3.0.1
-
-  vite-plugin-manus-runtime@0.0.59:
-    dependencies:
-      "@medv/finder": 4.0.2
-      clsx: 2.1.1
-      modern-screenshot: 4.6.8
-      nanoid: 5.1.16
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      tailwind-merge: 3.6.0
 
   vite@7.3.6(@types/node@24.12.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.12):
     dependencies:
