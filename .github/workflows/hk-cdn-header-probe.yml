@@ -1,0 +1,52 @@
+name: H.K. CDN browser-header probe
+
+on:
+  push:
+    branches:
+      - probe/hk-visual-assets-20260823
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe H.K. and bridge with production browser headers
+        shell: bash
+        run: |
+          set -u -o pipefail
+          failures=0
+
+          probe() {
+            local name="$1"
+            local url="$2"
+            local out="${name}.body"
+            local meta
+            meta=$(curl -sS -L --connect-timeout 10 --max-time 30 \
+              -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/151 Safari/537.36' \
+              -H 'Referer: https://techbridge-collective.org/' \
+              -H 'Origin: https://techbridge-collective.org' \
+              -o "$out" \
+              -w '%{http_code}|%{content_type}|%{size_download}' \
+              "$url") || meta='CURL_ERROR||0'
+            echo "$name $meta"
+            if [[ "$meta" != 200\|image/* ]]; then
+              echo '--- response body ---'
+              head -c 500 "$out" || true
+              echo
+              echo '--- end body ---'
+              failures=$((failures + 1))
+            fi
+          }
+
+          probe HK_AVATAR 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_1024_6c459caf.jpg'
+          probe BRIDGE_HERO 'https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/bridge-hero-3L5v75UNyLV5wZc3BXy2gE.webp'
+
+          echo "BROWSER_HEADER_FAILURE_COUNT=$failures"
+          test "$failures" -eq 0
