@@ -9,9 +9,18 @@ interface BridgeSVGProps {
   className?: string;
 }
 
-const FLOW_LABELS = ["ACCESS", "NAVIGATION", "SKILLS", "TRUST", "OPPORTUNITY"] as const;
+const FLOW_LABELS = [
+  "ACCESS",
+  "NAVIGATION",
+  "SKILLS",
+  "TRUST",
+  "OPPORTUNITY",
+] as const;
 
-export default function BridgeSVG({ progress, className = "" }: BridgeSVGProps) {
+export default function BridgeSVG({
+  progress,
+  className = "",
+}: BridgeSVGProps) {
   const uid = useId().replace(/:/g, "");
   const ids = {
     gold: `${uid}-bridge-gold`,
@@ -39,9 +48,13 @@ export default function BridgeSVG({ progress, className = "" }: BridgeSVGProps) 
         filter: `drop-shadow(0 18px 46px rgba(27, 67, 50, ${0.12 + flow * 0.16}))`,
       }}
     >
-      <title id={`${uid}-title`}>TechBridge community infrastructure bridge</title>
+      <title id={`${uid}-title`}>
+        TechBridge community infrastructure bridge
+      </title>
       <desc id={`${uid}-desc`}>
-        An animated bridge turns digital access, navigation, skills, trust, and opportunity into visible flows between community need and practical capability.
+        An animated bridge turns digital access, navigation, skills, trust, and
+        opportunity into visible flows between community need and practical
+        capability.
       </desc>
 
       <defs>
@@ -72,15 +85,42 @@ export default function BridgeSVG({ progress, className = "" }: BridgeSVGProps) 
         </filter>
       </defs>
 
-      <ellipse cx="600" cy="226" rx="470" ry="118" fill={`url(#${ids.haze})`} opacity={flow * 0.9} />
+      <ellipse
+        cx="600"
+        cy="226"
+        rx="470"
+        ry="118"
+        fill={`url(#${ids.haze})`}
+        opacity={flow * 0.9}
+      />
 
       <g opacity={foundation}>
-        <path d="M0 236 L0 332 L185 332 L185 270 Q185 244 158 238 Z" fill={`url(#${ids.forest})`} />
-        <path d="M1200 236 L1200 332 L1015 332 L1015 270 Q1015 244 1042 238 Z" fill={`url(#${ids.forest})`} />
+        <path
+          d="M0 236 L0 332 L185 332 L185 270 Q185 244 158 238 Z"
+          fill={`url(#${ids.forest})`}
+        />
+        <path
+          d="M1200 236 L1200 332 L1015 332 L1015 270 Q1015 244 1042 238 Z"
+          fill={`url(#${ids.forest})`}
+        />
         {[154, 1026].map(x => (
           <g key={x}>
-            <rect x={x - 22} y="210" width="44" height="122" rx="8" fill="#163B2D" />
-            <rect x={x - 17} y="202" width="34" height="12" rx="4" fill={`url(#${ids.gold})`} />
+            <rect
+              x={x - 22}
+              y="210"
+              width="44"
+              height="122"
+              rx="8"
+              fill="#163B2D"
+            />
+            <rect
+              x={x - 17}
+              y="202"
+              width="34"
+              height="12"
+              rx="4"
+              fill={`url(#${ids.gold})`}
+            />
           </g>
         ))}
       </g>
@@ -105,17 +145,44 @@ export default function BridgeSVG({ progress, className = "" }: BridgeSVGProps) 
       />
 
       <g opacity={deck}>
-        <rect x="164" y="263" width={872 * deck} height="12" rx="5" fill={`url(#${ids.gold})`} />
-        <rect x="164" y="279" width={872 * deck} height="3" rx="2" fill="#E8C84A" opacity="0.36" />
+        <rect
+          x="164"
+          y="263"
+          width={872 * deck}
+          height="12"
+          rx="5"
+          fill={`url(#${ids.gold})`}
+        />
+        <rect
+          x="164"
+          y="279"
+          width={872 * deck}
+          height="3"
+          rx="2"
+          fill="#E8C84A"
+          opacity="0.36"
+        />
       </g>
 
       <g opacity={cables}>
         {[264, 348, 432, 516, 600, 684, 768, 852, 936].map((x, i) => {
-          const archY = 272 - Math.sin(((x - 176) / 848) * Math.PI) * 124 * arch;
-          const individual = Math.max(0, Math.min(1, (cables - i * 0.045) * 2.4));
+          const archY =
+            272 - Math.sin(((x - 176) / 848) * Math.PI) * 124 * arch;
+          const individual = Math.max(
+            0,
+            Math.min(1, (cables - i * 0.045) * 2.4)
+          );
           return (
             <g key={x} opacity={individual}>
-              <line x1={x} y1="263" x2={x} y2={archY} stroke="#D7B945" strokeWidth="1.6" opacity="0.72" />
+              <line
+                x1={x}
+                y1="263"
+                x2={x}
+                y2={archY}
+                stroke="#D7B945"
+                strokeWidth="1.6"
+                opacity="0.72"
+              />
               <circle cx={x} cy={archY} r="3" fill="#E8C84A" />
               <circle cx={x} cy="263" r="2.2" fill="#245641" />
             </g>
@@ -128,9 +195,25 @@ export default function BridgeSVG({ progress, className = "" }: BridgeSVGProps) 
           const x = 300 + i * 150;
           return (
             <g key={label}>
-              <circle cx={x} cy="244" r="10" fill="#07110D" stroke="#D4B542" strokeWidth="1.5" />
+              <circle
+                cx={x}
+                cy="244"
+                r="10"
+                fill="#07110D"
+                stroke="#D4B542"
+                strokeWidth="1.5"
+              />
               <circle cx={x} cy="244" r="3" fill="#E8C84A" />
-              <text x={x} y="318" textAnchor="middle" fill="#5D7569" fontSize="9" fontWeight="700" letterSpacing="1.7" fontFamily="var(--font-mono, ui-monospace)">
+              <text
+                x={x}
+                y="318"
+                textAnchor="middle"
+                fill="#5D7569"
+                fontSize="9"
+                fontWeight="700"
+                letterSpacing="1.7"
+                fontFamily="var(--font-mono, ui-monospace)"
+              >
                 {label}
               </text>
             </g>
@@ -139,7 +222,13 @@ export default function BridgeSVG({ progress, className = "" }: BridgeSVGProps) 
       </g>
 
       <g opacity={flow}>
-        <path d="M190 257 C360 230 470 292 600 253 C730 214 846 283 1010 252" fill="none" stroke={`url(#${ids.glow})`} strokeWidth="3" filter={`url(#${ids.warmGlow})`} />
+        <path
+          d="M190 257 C360 230 470 292 600 253 C730 214 846 283 1010 252"
+          fill="none"
+          stroke={`url(#${ids.glow})`}
+          strokeWidth="3"
+          filter={`url(#${ids.warmGlow})`}
+        />
         {[0, 1, 2, 3].map(i => (
           <circle key={i} r="5" fill="#F5DD7C" filter={`url(#${ids.warmGlow})`}>
             <animateMotion
@@ -153,27 +242,75 @@ export default function BridgeSVG({ progress, className = "" }: BridgeSVGProps) 
       </g>
 
       <g opacity={foundation}>
-        <text x="90" y="215" textAnchor="middle" fill="#224E3B" fontSize="10" fontWeight="700" letterSpacing="1.4" fontFamily="var(--font-mono, ui-monospace)">
+        <text
+          x="90"
+          y="215"
+          textAnchor="middle"
+          fill="#224E3B"
+          fontSize="10"
+          fontWeight="700"
+          letterSpacing="1.4"
+          fontFamily="var(--font-mono, ui-monospace)"
+        >
           COMMUNITY NEED
         </text>
-        <text x="90" y="231" textAnchor="middle" fill="#60796C" fontSize="9" fontFamily="var(--font-display)">
+        <text
+          x="90"
+          y="231"
+          textAnchor="middle"
+          fill="#60796C"
+          fontSize="9"
+          fontFamily="var(--font-display)"
+        >
           devices · access · confidence
         </text>
       </g>
       <g opacity={flow}>
-        <text x="1110" y="215" textAnchor="middle" fill="#B89320" fontSize="10" fontWeight="700" letterSpacing="1.4" fontFamily="var(--font-mono, ui-monospace)">
+        <text
+          x="1110"
+          y="215"
+          textAnchor="middle"
+          fill="#B89320"
+          fontSize="10"
+          fontWeight="700"
+          letterSpacing="1.4"
+          fontFamily="var(--font-mono, ui-monospace)"
+        >
           PRACTICAL CAPABILITY
         </text>
-        <text x="1110" y="231" textAnchor="middle" fill="#8A7332" fontSize="9" fontFamily="var(--font-display)">
+        <text
+          x="1110"
+          y="231"
+          textAnchor="middle"
+          fill="#8A7332"
+          fontSize="9"
+          fontFamily="var(--font-display)"
+        >
           agency · work · services
         </text>
       </g>
 
       <g opacity={flow * 0.8}>
-        <text x="600" y="66" textAnchor="middle" fill="#183E2E" fontSize="10" fontWeight="800" letterSpacing="2.5" fontFamily="var(--font-mono, ui-monospace)">
+        <text
+          x="600"
+          y="66"
+          textAnchor="middle"
+          fill="#183E2E"
+          fontSize="10"
+          fontWeight="800"
+          letterSpacing="2.5"
+          fontFamily="var(--font-mono, ui-monospace)"
+        >
           DIGITAL EQUITY AS INFRASTRUCTURE
         </text>
-        <text x="600" y="86" textAnchor="middle" fill="#6F735D" fontSize="10" fontFamily="var(--font-display)">
+        <text
+          x="600"
+          y="86"
+          textAnchor="middle"
+          fill="#6F735D"
+          fontSize="10"
+          fontFamily="var(--font-display)"
+        >
           Human support is the span. Measurable outcomes are the load path.
         </text>
       </g>
