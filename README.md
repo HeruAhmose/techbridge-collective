@@ -14,12 +14,18 @@ Copyright (c) 2026 Tamerian Materials and Jonathan Peoples. All rights reserved.
 
 TechBridge Collective is a three-pillar model for closing the digital divide
 at community sites: a **Weekly Help Desk** staffed by paid Digital
-Navigators for free, walk-in 1:1 tech help; **H.K.** (named for Horace King,
-the 19th-century bridge builder), an AI guide available 24/7 between visits
-that gives step-by-step guidance and escalates complex cases to a human; and
-**TechMinutes®**, a proprietary non-PII measurement unit that logs every
-session's duration, issue category, and resolution status into monthly
-impact reports for hosting partners.
+Navigators for free, walk-in 1:1 tech help; **H.K.**, a male Help Desk
+Architect inspired by Horace King, the 19th-century bridge builder, that uses
+deterministic triage to stabilize risk, classify an issue, recommend a safe
+next step, and flag cases that need a person; and **TechMinutes®**, a
+proprietary non-PII measurement unit that logs every session's duration,
+issue category, and resolution status into monthly impact reports for hosting
+partners.
+
+H.K. is a product persona inspired by Horace King's bridge-building legacy;
+it is not an impersonation of the historical Horace King. The current H.K.
+triage runtime is deterministic and runs in the site interface. It does not
+send chat text to Claude or another external language-model endpoint.
 
 The site is honest about where the venture actually stands: no hub is
 staffed yet. The "Get Help" form's post-submit copy says so directly — it
@@ -58,9 +64,16 @@ organs of one organism. A visitor typically arrives through the gate
 - **TypeScript** `5.6.3`, **Vitest** `4.1.10`, **Prettier** `^3.9.6`
 - **pnpm** `10.34.5` as package manager
 
-H.K. (`client/src/components/HKChatBubble.tsx`) calls Claude through a
-`/api/hk-chat` serverless proxy, with a keyword-based fallback reply when
-that endpoint is unavailable.
+H.K. is implemented in `client/src/components/HKChatBubble.tsx`, backed by the
+deterministic state/routing logic in `client/src/lib/hkTriage.ts`. Security
+or scam signals are stabilized and escalated before ordinary troubleshooting;
+known issue classes are routed to bounded safe-fix guidance; ambiguous issues
+ask for one clarifying category. `client/src/lib/hkTriage.test.ts` contains
+the regression suite for these guarantees.
+
+A future generative-AI augmentation must add a real authenticated server-side
+route, secret management, rate limiting, safety tests, and truthful runtime
+status before the interface can claim an external model is powering H.K.
 
 ---
 
