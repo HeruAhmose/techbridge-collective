@@ -184,7 +184,7 @@ function ParticleCanvas() {
       "rgba(253, 248, 240,",
     ];
     const addParticle = () => {
-      if (particles.length > 32) return;
+      if (particles.length > 80) return;
       const color = colors[Math.floor(Math.random() * colors.length)];
       particles.push({
         x: Math.random() * canvas.width,
@@ -199,7 +199,7 @@ function ParticleCanvas() {
     };
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (Math.random() < 0.11) addParticle();
+      if (Math.random() < 0.2) addParticle();
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
@@ -230,7 +230,7 @@ function ParticleCanvas() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ opacity: 0.28 }}
+      style={{ opacity: 0.7 }}
     />
   );
 }
