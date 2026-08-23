@@ -1,0 +1,73 @@
+name: H.K. visual asset probe
+
+on:
+  push:
+    branches:
+      - probe/hk-visual-assets-20260823
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify external flagship image assets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          probe_image() {
+            local name="$1"
+            local url="$2"
+            local out="$3"
+            local meta
+
+            meta=$(curl -sS -L --retry 2 --connect-timeout 10 --max-time 30 \
+              -o "$out" \
+              -w '%{http_code}|%{content_type}|%{size_download}' \
+              "$url")
+
+            IFS='|' read -r status content_type size <<< "$meta"
+            echo "$name status=$status content_type=$content_type bytes=$size"
+            test "$status" = "200"
+            [[ "$content_type" == image/* ]]
+            test "$size" -gt 1000
+            file "$out"
+            sha256sum "$out"
+          }
+
+          probe_image \
+            "HK_AVATAR" \
+            "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_1024_6c459caf.jpg" \
+            hk-avatar.jpg
+
+          probe_image \
+            "BRIDGE_HERO" \
+            "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/bridge-hero-3L5v75UNyLV5wZc3BXy2gE.webp" \
+            bridge-hero.webp
+
+      - name: Verify public production bundle carries H.K. identity and flagship asset references
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl -fsSL --retry 2 --connect-timeout 10 --max-time 30 \
+            https://techbridge-collective.org/ -o index.html
+
+          js_path=$(grep -oE '/assets/index-[A-Za-z0-9_-]+\.js' index.html | head -n 1)
+          test -n "$js_path"
+          echo "PUBLIC_JS=$js_path"
+
+          curl -fsSL --retry 2 --connect-timeout 10 --max-time 30 \
+            "https://techbridge-collective.org${js_path}" -o public.js
+
+          grep -Fq 'H.K. ASSISTANT' public.js
+          grep -Fq '24/7 GUIDE' public.js
+          grep -Fq 'HK_avatar_1024_6c459caf.jpg' public.js
+          grep -Fq 'bridge-hero-3L5v75UNyLV5wZc3BXy2gE.webp' public.js
+
+          echo 'HK_PUBLIC_IDENTITY=PASS'
+          echo 'HK_PUBLIC_ASSET_REFERENCES=PASS'
