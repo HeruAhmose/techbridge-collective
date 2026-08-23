@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
+import ResilientMedia from "../components/ResilientMedia";
 
 const IMAGES = {
   heroBridge:
@@ -331,7 +332,7 @@ export default function GetHelp() {
           ============================================ */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={IMAGES.heroBridge}
             alt=""
             className="w-full h-full object-cover"
@@ -447,7 +448,7 @@ export default function GetHelp() {
                     "0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(232,185,49,0.08)",
                 }}
               >
-                <img
+                <ResilientMedia
                   src={IMAGES.navigatorSession}
                   alt="Digital Navigator helping a community member"
                   className="w-full h-full object-cover"
@@ -752,7 +753,7 @@ export default function GetHelp() {
               className="mt-16 rounded-2xl overflow-hidden max-w-5xl mx-auto"
               style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.4)" }}
             >
-              <img
+              <ResilientMedia
                 src={IMAGES.communityHub}
                 alt="TechBridge community hub in action"
                 className="w-full"
@@ -844,7 +845,7 @@ export default function GetHelp() {
                       "radial-gradient(circle, rgba(232, 185, 49, 0.12), transparent 70%)",
                   }}
                 />
-                <img
+                <ResilientMedia
                   src={IMAGES.hkAI}
                   alt="H.K. AI Assistant"
                   className="rounded-2xl w-full relative"

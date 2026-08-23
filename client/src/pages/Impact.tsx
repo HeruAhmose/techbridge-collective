@@ -13,6 +13,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
+import ResilientMedia from "../components/ResilientMedia";
 
 const CDN = {
   successMoment:
@@ -227,7 +228,7 @@ export default function Impact() {
       {/* HERO */}
       <section className="relative min-h-[75vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.successMoment}
             alt=""
             className="w-full h-full object-cover"
@@ -693,7 +694,7 @@ export default function Impact() {
       {/* NAVIGATOR PHOTO BREAK */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.navigatorHelping}
             alt="Digital Navigator helping community member"
             className="w-full h-full object-cover"
@@ -986,7 +987,7 @@ export default function Impact() {
       {/* COMMUNITY PHOTO BREAK */}
       <section className="relative py-28 overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.communityGathering}
             alt="Community gathering"
             className="w-full h-full object-cover"

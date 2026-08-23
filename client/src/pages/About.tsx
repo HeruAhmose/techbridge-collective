@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
+import ResilientMedia from "../components/ResilientMedia";
 
 const CDN = {
   hk: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_1024_6c459caf.jpg",
@@ -123,7 +124,7 @@ export default function About() {
       {/* HERO */}
       <section className="relative min-h-[75vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.horaceKing}
             alt="Horace King tribute"
             className="w-full h-full object-cover"
@@ -180,7 +181,7 @@ export default function About() {
                     "0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(232, 185, 49, 0.08)",
                 }}
               >
-                <img
+                <ResilientMedia
                   src={CDN.horaceKing}
                   alt="Horace King, master bridge builder"
                   className="w-full h-auto"
@@ -215,7 +216,7 @@ export default function About() {
                   initials and his spirit of connection.
                 </p>
                 <div className="glass-card flex items-center gap-3 p-4 mt-6">
-                  <img
+                  <ResilientMedia
                     src={CDN.hk}
                     alt="H.K. AI"
                     className="w-12 h-12 rounded-full"
@@ -248,7 +249,7 @@ export default function About() {
       {/* NAVIGATOR PHOTO SECTION */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.navigatorHelping}
             alt="Digital Navigator helping community member"
             className="w-full h-full object-cover"
@@ -296,7 +297,7 @@ export default function About() {
         style={{ background: "var(--tb-forest)" }}
       >
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.spanJourney}
             alt=""
             className="w-full h-full object-cover"
@@ -491,7 +492,7 @@ export default function About() {
       {/* HANDS GUIDING — Photo Section */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.handsGuiding}
             alt="Navigator guiding a community member"
             className="w-full h-full object-cover"

@@ -20,6 +20,7 @@ import {
 } from "framer-motion";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
+import ResilientMedia from "../components/ResilientMedia";
 import BridgeSVG from "../components/BridgeSVG";
 
 const CDN = {
@@ -275,7 +276,7 @@ const PILLARS = [
       "Routes you to the right portal and walks through each step",
       "Never guesses, never asks for credentials or passwords",
       "Escalates to a human Navigator when needed",
-      "Powered by Anthropic Claude with TechBridge safety guardrails",
+      "Deterministic TechBridge triage with safety-first human escalation",
     ],
     link: "/get-help",
     icon: (
@@ -703,7 +704,7 @@ export default function Home() {
         className="relative min-h-[calc(100vh-4rem)] flex items-center overflow-hidden"
       >
         <motion.div className="absolute inset-0" style={{ y: heroY }}>
-          <img
+          <ResilientMedia
             src={CDN.bridgeHero}
             alt=""
             className="w-full h-full object-cover"
@@ -1140,7 +1141,7 @@ export default function Home() {
           ============================================ */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.navigatorHelping}
             alt="Digital Navigator helping community member"
             className="w-full h-full object-cover"
@@ -1523,7 +1524,7 @@ export default function Home() {
                         boxShadow: "var(--glow-gold)",
                       }}
                     >
-                      <img
+                      <ResilientMedia
                         src={CDN.hkAvatar}
                         alt="H.K."
                         className="w-full h-full object-cover"
@@ -1674,7 +1675,7 @@ export default function Home() {
         style={{ background: "var(--tb-forest-mid)" }}
       >
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.spanJourney}
             alt=""
             className="w-full h-full object-cover"
@@ -2279,7 +2280,7 @@ export default function Home() {
           ============================================ */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ResilientMedia
             src={CDN.successMoment}
             alt="Community member celebrating"
             className="w-full h-full object-cover"

@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
+import ResilientMedia from "../components/ResilientMedia";
 
 const CDN = {
   hub: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/hub-exterior-Dp9FtPxyv99F7AzXgr44Ue.webp",
@@ -206,7 +207,7 @@ export default function HostAHub() {
       {/* HERO */}
       <section className="relative min-h-[75vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={CDN.hub} alt="" className="w-full h-full object-cover" />
+          <ResilientMedia src={CDN.hub} alt="" className="w-full h-full object-cover" />
           <div
             className="absolute inset-0"
             style={{
