@@ -25,7 +25,9 @@ describe("triageHKRequest", () => {
   });
 
   it("routes email recovery to account access", () => {
-    const result = triageHKRequest("I forgot my Gmail password and cannot sign in");
+    const result = triageHKRequest(
+      "I forgot my Gmail password and cannot sign in"
+    );
 
     expect(result.category).toBe("account-access");
     expect(result.stage).toBe("safe-fix");
