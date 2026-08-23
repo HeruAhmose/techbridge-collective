@@ -35,6 +35,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: H.K. deterministic triage tests
+        run: pnpm exec vitest run client/src/lib/hkTriage.test.ts
+
       - name: Prevent debug collector re-entry
         shell: bash
         run: |
