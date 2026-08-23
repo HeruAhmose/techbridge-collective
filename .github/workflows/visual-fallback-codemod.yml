@@ -1,0 +1,95 @@
+name: Visual fallback codemod
+
+on:
+  push:
+    branches: [fix/resilient-flagship-visuals-20260823]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: fix/resilient-flagship-visuals-20260823
+          fetch-depth: 0
+      - name: Replace legacy remote media with resilient renderer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          paths = [
+              Path('client/src/pages/Home.tsx'),
+              Path('client/src/pages/About.tsx'),
+              Path('client/src/pages/GetHelp.tsx'),
+              Path('client/src/pages/Impact.tsx'),
+              Path('client/src/pages/HostAHub.tsx'),
+          ]
+
+          def transform_tag(match):
+              tag = match.group(0)
+              if 'src={CDN.' not in tag and 'src={IMAGES.' not in tag:
+                  return tag
+              return tag.replace('<img', '<ResilientMedia', 1)
+
+          total = 0
+          for path in paths:
+              text = path.read_text()
+              before = text
+              import_line = 'import ResilientMedia from "../components/ResilientMedia";\n'
+              if import_line not in text:
+                  footer_import = 'import Footer from "../components/Footer";\n'
+                  if footer_import not in text:
+                      raise SystemExit(f'{path}: Footer import anchor missing')
+                  text = text.replace(footer_import, footer_import + import_line, 1)
+
+              text, count = re.subn(r'<img\b[^>]*?/>', transform_tag, text, flags=re.S)
+              total += count
+
+              # The H.K. runtime was made deterministic in PR #86; prevent the
+              # older marketing sentence from re-asserting a Claude runtime.
+              text = text.replace(
+                  '"Powered by Anthropic Claude with TechBridge safety guardrails",',
+                  '"Deterministic TechBridge triage with safety-first human escalation",',
+              )
+
+              if text == before:
+                  raise SystemExit(f'{path}: expected visual patch produced no change')
+              path.write_text(text)
+
+          # Count only the tags we actually transformed, not all img tags.
+          remaining = []
+          for path in paths:
+              text = path.read_text()
+              for match in re.finditer(r'<img\b[^>]*?/>', text, flags=re.S):
+                  tag = match.group(0)
+                  if 'src={CDN.' in tag or 'src={IMAGES.' in tag:
+                      remaining.append((str(path), tag[:160]))
+          if remaining:
+              for item in remaining:
+                  print('UNPATCHED', item)
+              raise SystemExit('legacy image render tags remain')
+
+          print(f'VISUAL_CODEMOD_FILES={len(paths)}')
+          print('LEGACY_IMG_TAGS_REMAINING=0')
+          PY
+
+          git diff --check
+          git diff -- client/src/pages/Home.tsx client/src/pages/About.tsx client/src/pages/GetHelp.tsx client/src/pages/Impact.tsx client/src/pages/HostAHub.tsx
+
+      - name: Commit branch-only repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add client/src/pages/Home.tsx client/src/pages/About.tsx client/src/pages/GetHelp.tsx client/src/pages/Impact.tsx client/src/pages/HostAHub.tsx
+          git diff --cached --quiet && { echo 'No codemod changes to commit'; exit 1; }
+          git commit -m 'fix(visuals): route legacy media through resilient renderer'
+          git push origin HEAD:fix/resilient-flagship-visuals-20260823
