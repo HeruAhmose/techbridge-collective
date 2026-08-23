@@ -11,11 +11,7 @@ export type HKTriageCategory =
 export type HKTriagePriority = "urgent" | "high" | "normal";
 
 export type HKTriageStage =
-  | "stabilize"
-  | "classify"
-  | "collect-evidence"
-  | "safe-fix"
-  | "escalate";
+  "stabilize" | "classify" | "collect-evidence" | "safe-fix" | "escalate";
 
 export interface HKTriageResult {
   category: HKTriageCategory;
@@ -194,9 +190,10 @@ function classify(text: string): {
   label: string;
   confidence: HKTriageResult["confidence"];
 } {
-  const scored = RULES.map(rule => ({ rule, score: scoreRule(text, rule) })).sort(
-    (a, b) => b.score - a.score
-  );
+  const scored = RULES.map(rule => ({
+    rule,
+    score: scoreRule(text, rule),
+  })).sort((a, b) => b.score - a.score);
 
   const best = scored[0];
   if (!best || best.score === 0) {
