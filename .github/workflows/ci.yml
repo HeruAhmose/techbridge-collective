@@ -38,21 +38,6 @@ jobs:
       - name: H.K. deterministic triage tests
         run: pnpm exec vitest run client/src/lib/hkTriage.test.ts
 
-      - name: Capture H.K. Prettier evidence
-        shell: bash
-        run: |
-          set -euo pipefail
-          pnpm exec prettier --write \
-            client/src/components/HKChatBubble.tsx \
-            client/src/lib/hkTriage.ts \
-            client/src/lib/hkTriage.test.ts
-          echo '=== HK_PRETTIER_DIFF_BEGIN ==='
-          git diff -- \
-            client/src/components/HKChatBubble.tsx \
-            client/src/lib/hkTriage.ts \
-            client/src/lib/hkTriage.test.ts
-          echo '=== HK_PRETTIER_DIFF_END ==='
-
       - name: Prevent debug collector re-entry
         shell: bash
         run: |
