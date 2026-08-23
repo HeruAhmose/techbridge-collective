@@ -1,0 +1,30 @@
+name: prestige-organism-sync
+on:
+  push:
+    branches: [feat/prestige-organism-20260823]
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/prestige-organism-20260823
+      - name: Import validated shared v5.5 organism runtime
+        run: |
+          set -euo pipefail
+          test "$(git hash-object client/public/trai-organism-v5.js)" = "9de6bfe531e47a32374fa70007a6ec1e33f0704b"
+          curl --fail --silent --show-error --location \
+            https://raw.githubusercontent.com/HeruAhmose/tamerian-materials/feat/prestige-organism-20260823/client/public/trai-organism-v5.js \
+            -o client/public/trai-organism-v5.js
+          grep -Fq 'var VERSION = "5.5.0";' client/public/trai-organism-v5.js
+          grep -Fq 'SEVEN REGIONS · SEVEN FUNCTIONS · ONE MEMORY' client/public/trai-organism-v5.js
+      - name: Commit shared runtime
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add client/public/trai-organism-v5.js
+          git commit -m 'feat(organism): adopt seven-region prestige system'
+          git push origin HEAD:feat/prestige-organism-20260823
