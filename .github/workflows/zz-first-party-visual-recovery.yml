@@ -1,0 +1,321 @@
+name: First-party H.K. and bridge visual recovery
+
+on:
+  push:
+    branches:
+      - fix/first-party-hk-bridge-visuals-20260823
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repair branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply fail-closed source repair
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          home_path = Path("client/src/pages/Home.tsx")
+          hk_path = Path("client/src/components/HKChatBubble.tsx")
+          home = home_path.read_text()
+          hk = hk_path.read_text()
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected exactly one match, found {count}")
+              return text.replace(old, new, 1)
+
+          home = replace_once(
+              home,
+              'import BridgeSVG from "../components/BridgeSVG";\n',
+              'import BridgeSVG from "../components/BridgeSVG";\nimport {\n  HeroInfrastructureBackdrop,\n  HKIdentityMark,\n  HubInfrastructureVisual,\n  NavigatorInfrastructureBackdrop,\n  SpanInfrastructureBackdrop,\n  SuccessInfrastructureBackdrop,\n} from "../components/TechBridgeVisuals";\n',
+              "visual imports",
+          )
+
+          match = re.search(r'\nconst CDN = \{\n.*?\n\};\n', home, flags=re.S)
+          if not match or "d2xsxph8kpxj0f.cloudfront.net" not in match.group(0):
+              raise SystemExit("CDN block: expected dead CloudFront asset block was not found")
+          home = home[: match.start()] + "\n" + home[match.end() :]
+
+          home = replace_once(
+              home,
+              '    desc: "Named for Horace King, master bridge builder. 24/7 step-by-step guidance between visits.",',
+              '    desc: "H.K. is TechBridge\'s male Help Desk Architect, inspired by Horace King. Deterministic guidance between visits.",',
+              "H.K. pillar description",
+          )
+          home = replace_once(
+              home,
+              '      "Powered by Anthropic Claude with TechBridge safety guardrails",',
+              '      "Deterministic browser-based triage with TechBridge safety guardrails",',
+              "H.K. pillar runtime claim",
+          )
+
+          home = replace_once(
+              home,
+              '''    const hkButton = document.querySelector(
+              'button[aria-label="Ask H.K. AI"]'
+            ) as HTMLButtonElement;''',
+              '''    const hkButton = document.querySelector(
+              'button[data-hk-launcher="true"]'
+            ) as HTMLButtonElement;''',
+              "H.K. launcher selector",
+          )
+
+          home = replace_once(
+              home,
+              '''          <img
+                    src={CDN.bridgeHero}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />''',
+              '''          <HeroInfrastructureBackdrop />''',
+              "hero visual",
+          )
+          home = replace_once(
+              home,
+              '"linear-gradient(135deg, rgba(10, 31, 20, 0.85) 0%, rgba(10, 31, 20, 0.7) 40%, rgba(10, 31, 20, 0.92) 100%)"',
+              '"linear-gradient(135deg, rgba(10, 31, 20, 0.48) 0%, rgba(10, 31, 20, 0.34) 44%, rgba(10, 31, 20, 0.68) 100%)"',
+              "hero visual veil",
+          )
+
+          home = replace_once(
+              home,
+              '''          <img
+                    src={CDN.navigatorHelping}
+                    alt="Digital Navigator helping community member"
+                    className="w-full h-full object-cover"
+                  />''',
+              '''          <NavigatorInfrastructureBackdrop />''',
+              "Navigator visual",
+          )
+          home = replace_once(
+              home,
+              '"linear-gradient(to right, rgba(10, 31, 20, 0.92), rgba(10, 31, 20, 0.6))"',
+              '"linear-gradient(to right, rgba(10, 31, 20, 0.82), rgba(10, 31, 20, 0.34))"',
+              "Navigator visual veil",
+          )
+
+          home = replace_once(
+              home,
+              '''                      <img
+                                src={i === 0 ? CDN.hubExterior : CDN.communityGathering}
+                                alt={hub.name}
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                              />''',
+              '''                      <HubInfrastructureVisual index={i} label={hub.name} />''',
+              "hub visuals",
+          )
+
+          home = replace_once(
+              home,
+              '''                    <div
+                              className="w-10 h-10 rounded-full overflow-hidden"
+                              style={{
+                                border: "2px solid var(--tb-gold)",
+                                boxShadow: "var(--glow-gold)",
+                              }}
+                            >
+                              <img
+                                src={CDN.hkAvatar}
+                                alt="H.K."
+                                className="w-full h-full object-cover"
+                              />
+                            </div>''',
+              '''                    <HKIdentityMark size="sm" />''',
+              "H.K. Home identity",
+          )
+          home = replace_once(
+              home,
+              '                          Powered by Claude AI',
+              '                          Deterministic triage · privacy-first',
+              "H.K. Home status",
+          )
+          home = replace_once(
+              home,
+              '''                  Named for{" "}
+                  <strong className="text-glow-gold">Horace King</strong>, the
+                  enslaved master bridge builder who connected communities
+                  across the American South.''',
+              '''                  H.K. is TechBridge's male Help Desk Architect, inspired by
+                  the bridge-building legacy of{" "}
+                  <strong className="text-glow-gold">Horace King</strong>. It is
+                  a product persona, not an impersonation of the historical
+                  Horace King.''',
+              "H.K. Home identity copy",
+          )
+          home = replace_once(
+              home,
+              '''                  H.K. never guesses. Never asks for credentials. Routes you to
+                  the right portal, walks you through each step, and escalates
+                  to a human Navigator when needed.''',
+              '''                  H.K. follows a bounded triage flow: stabilize risk, classify
+                  the issue, recommend a safe next step, and escalate to a human
+                  Navigator when the issue needs a person.''',
+              "H.K. Home behavior copy",
+          )
+          home = replace_once(
+              home,
+              '''                    "H.K. is not a chatbot. It is a deterministic triage state
+                    machine augmented by generative AI."''',
+              '''                    "H.K. uses deterministic triage to classify, stabilize,
+                    guide, and escalate without sending chat text to an external
+                    language-model endpoint."''',
+              "H.K. Home runtime quote",
+          )
+          home = replace_once(
+              home,
+              '''                        "📧 Recover my email",
+                        "💼 Apply for jobs",
+                        "📱 Set up my phone",
+                        "📁 Upload documents",
+                        "🔑 Reset a password",
+                        "🏥 Set up telehealth",''',
+              '''                        "🛡️ Check a suspicious message",
+                        "📧 Recover my email",
+                        "🌐 Fix Wi-Fi",
+                        "💼 Apply for jobs",
+                        "📱 Set up my phone",
+                        "📁 Upload documents",
+                        "🏥 Set up telehealth",''',
+              "H.K. Home quick starts",
+          )
+
+          home = replace_once(
+              home,
+              '''          <img
+                    src={CDN.spanJourney}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    style={{ opacity: 0.06 }}
+                  />''',
+              '''          <SpanInfrastructureBackdrop />''',
+              "SPAN visual",
+          )
+
+          home = replace_once(
+              home,
+              '''          <img
+                    src={CDN.successMoment}
+                    alt="Community member celebrating"
+                    className="w-full h-full object-cover"
+                  />''',
+              '''          <SuccessInfrastructureBackdrop />''',
+              "success visual",
+          )
+          home = replace_once(
+              home,
+              '"linear-gradient(to left, rgba(10, 31, 20, 0.92), rgba(10, 31, 20, 0.6))"',
+              '"linear-gradient(to left, rgba(10, 31, 20, 0.82), rgba(10, 31, 20, 0.36))"',
+              "success visual veil",
+          )
+
+          hk = replace_once(
+              hk,
+              '          ref={toggleButtonRef}\n          onClick={toggleChat}',
+              '          ref={toggleButtonRef}\n          data-hk-launcher="true"\n          onClick={toggleChat}',
+              "stable H.K. launcher hook",
+          )
+          hk = replace_once(
+              hk,
+              '          className="relative grid h-16 w-16 place-items-center rounded-full shadow-2xl"',
+              '          className="relative flex h-16 min-w-16 items-center justify-center gap-3 rounded-full px-2.5 shadow-2xl sm:min-w-[204px] sm:justify-start sm:pr-5"',
+              "named H.K. launcher capsule",
+          )
+          hk = replace_once(
+              hk,
+              '''          ) : (
+            <HKMark />
+          )}
+          <span''',
+              '''          ) : (
+            <HKMark />
+          )}
+          <div className="hidden min-w-0 text-left sm:block">
+            <p className="text-sm font-bold leading-tight" style={{ color: "#FDF8F0" }}>
+              {isOpen ? "Close H.K." : "H.K."}
+            </p>
+            <p className="mt-0.5 text-[10px] font-mono uppercase tracking-[0.12em]" style={{ color: "#D8B84A" }}>
+              {isOpen ? "Return to site" : "Help Desk Architect"}
+            </p>
+          </div>
+          <span''',
+              "visible H.K. launcher identity",
+          )
+
+          home_path.write_text(home)
+          hk_path.write_text(hk)
+          PY
+
+      - name: Format repaired sources
+        run: |
+          corepack enable
+          pnpm exec prettier --write client/src/pages/Home.tsx client/src/components/HKChatBubble.tsx client/src/components/TechBridgeVisuals.tsx
+
+      - name: Validate repair invariants
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          home = Path("client/src/pages/Home.tsx").read_text()
+          hk = Path("client/src/components/HKChatBubble.tsx").read_text()
+          visuals = Path("client/src/components/TechBridgeVisuals.tsx").read_text()
+          forbidden = [
+              "d2xsxph8kpxj0f.cloudfront.net",
+              "Powered by Claude AI",
+              "Powered by Anthropic Claude",
+              "augmented by generative AI",
+          ]
+          for value in forbidden:
+              if value in home:
+                  raise SystemExit(f"forbidden stale dependency/claim remains in Home.tsx: {value}")
+          required_home = [
+              "HeroInfrastructureBackdrop",
+              "NavigatorInfrastructureBackdrop",
+              "HubInfrastructureVisual",
+              "HKIdentityMark",
+              "SpanInfrastructureBackdrop",
+              "SuccessInfrastructureBackdrop",
+              'button[data-hk-launcher="true"]',
+          ]
+          for value in required_home:
+              if value not in home:
+                  raise SystemExit(f"required Home repair marker missing: {value}")
+          if 'data-hk-launcher="true"' not in hk:
+              raise SystemExit("stable H.K. launcher hook missing")
+          if "Help Desk Architect" not in hk or "Help Desk Architect" not in visuals:
+              raise SystemExit("H.K. visible identity missing")
+          print("TECHBRIDGE_FIRST_PARTY_VISUAL_REPAIR=PASS")
+          PY
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: H.K. deterministic triage regression tests
+        run: pnpm exec vitest run client/src/lib/hkTriage.test.ts
+
+      - name: Type-check
+        run: pnpm check
+
+      - name: Production build
+        run: pnpm build
+
+      - name: Remove ephemeral repair workflow and commit verified source
+        shell: bash
+        run: |
+          rm .github/workflows/zz-first-party-visual-recovery.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/src/pages/Home.tsx client/src/components/HKChatBubble.tsx client/src/components/TechBridgeVisuals.tsx .github/workflows/zz-first-party-visual-recovery.yml
+          git commit -m "fix(visuals): restore first-party H.K. and bridge presence"
+          git push origin HEAD:fix/first-party-hk-bridge-visuals-20260823
