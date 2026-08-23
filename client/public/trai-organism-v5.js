@@ -1175,8 +1175,14 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
 
     button.addEventListener("pointermove", function (event) {
       var rect = button.getBoundingClientRect();
-      button.style.setProperty("--trai-v5-mx", ((event.clientX - rect.left) / rect.width * 100).toFixed(2) + "%");
-      button.style.setProperty("--trai-v5-my", ((event.clientY - rect.top) / rect.height * 100).toFixed(2) + "%");
+      button.style.setProperty(
+        "--trai-v5-mx",
+        (((event.clientX - rect.left) / rect.width) * 100).toFixed(2) + "%"
+      );
+      button.style.setProperty(
+        "--trai-v5-my",
+        (((event.clientY - rect.top) / rect.height) * 100).toFixed(2) + "%"
+      );
     });
     button.addEventListener("pointerleave", function () {
       button.style.removeProperty("--trai-v5-mx");
@@ -1184,7 +1190,9 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
     });
     button.addEventListener("click", function () {
       button.dataset.activating = "true";
-      window.setTimeout(function () { delete button.dataset.activating; }, 720);
+      window.setTimeout(function () {
+        delete button.dataset.activating;
+      }, 720);
       selectWorld(world.id);
     });
     return button;
@@ -1291,7 +1299,10 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
       shell.dataset.selectedWorld = world.id;
       shell.dataset.selectedSkin = world.skin || "orbit";
       shell.style.setProperty("--trai-v5-selected", world.accent || "#d6a33a");
-      shell.style.setProperty("--trai-v5-selected-secondary", world.secondary || "#7dd3fc");
+      shell.style.setProperty(
+        "--trai-v5-selected-secondary",
+        world.secondary || "#7dd3fc"
+      );
     }
 
     state.dialog.querySelectorAll(".trai-v5-world").forEach(function (button) {
@@ -1309,27 +1320,48 @@ html[data-trai-v5-internal="true"]::view-transition-new(root) {
         '<a class="trai-v5-newtab" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>' +
         "</div>";
 
-    var regionLabel = world.kind === "organ"
-      ? "REGION " + escapeHtml(world.index || "—") + " · " + escapeHtml(world.organ || "TRAI organ")
-      : escapeHtml(world.index || world.kind || "ORIENTATION");
+    var regionLabel =
+      world.kind === "organ"
+        ? "REGION " +
+          escapeHtml(world.index || "—") +
+          " · " +
+          escapeHtml(world.organ || "TRAI organ")
+        : escapeHtml(world.index || world.kind || "ORIENTATION");
     var status = world.status
-      ? '<span class="trai-v5-detail__status">' + escapeHtml(world.status) + "</span>"
+      ? '<span class="trai-v5-detail__status">' +
+        escapeHtml(world.status) +
+        "</span>"
       : "";
     var functionLine = world.domain || world.role || "TRAI world";
 
     detail.innerHTML =
       '<div class="trai-v5-detail__instrument" aria-hidden="true"><i></i><i></i><i></i></div>' +
-      '<div class="trai-v5-detail__region">' + regionLabel + "</div>" +
-      '<div class="trai-v5-detail__role">' + escapeHtml(functionLine) + "</div>" +
-      "<h3>" + escapeHtml(world.name) + "</h3>" +
-      '<p class="trai-v5-detail__thesis">' + escapeHtml(world.thesis || "") + "</p>" +
+      '<div class="trai-v5-detail__region">' +
+      regionLabel +
+      "</div>" +
+      '<div class="trai-v5-detail__role">' +
+      escapeHtml(functionLine) +
+      "</div>" +
+      "<h3>" +
+      escapeHtml(world.name) +
+      "</h3>" +
+      '<p class="trai-v5-detail__thesis">' +
+      escapeHtml(world.thesis || "") +
+      "</p>" +
       '<div class="trai-v5-detail__memory"><span>SHARED MEMORY</span><p>' +
-      escapeHtml(world.transitionLine || "This region exchanges context with the wider TRAI organism.") +
+      escapeHtml(
+        world.transitionLine ||
+          "This region exchanges context with the wider TRAI organism."
+      ) +
       "</p></div>" +
       "<details open>" +
       "<summary>Function briefing</summary>" +
-      "<p>" + escapeHtml(world.synopsis || world.thesis || "") + "</p>" +
-      "</details>" + status + actions;
+      "<p>" +
+      escapeHtml(world.synopsis || world.thesis || "") +
+      "</p>" +
+      "</details>" +
+      status +
+      actions;
 
     if (!isCurrent) {
       var enter = detail.querySelector(".trai-v5-enter");
