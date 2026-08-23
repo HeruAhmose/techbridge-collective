@@ -1,9 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  triageHKRequest,
-  type HKTriageResult,
-} from "../lib/hkTriage";
+import { triageHKRequest, type HKTriageResult } from "../lib/hkTriage";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 
 interface Message {
@@ -97,7 +94,10 @@ function PriorityBadge({ triage }: { triage: HKTriageResult }) {
   const isHigh = triage.priority === "high";
 
   return (
-    <div className="mt-2 flex flex-wrap gap-1.5" aria-label="H.K. triage result">
+    <div
+      className="mt-2 flex flex-wrap gap-1.5"
+      aria-label="H.K. triage result"
+    >
       <span
         className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em]"
         style={{
@@ -331,7 +331,10 @@ export default function HKChatBubble() {
               <HKMark />
               <div className="min-w-0 flex-1">
                 <h3 className="font-display text-sm font-bold text-[#FDF8F0]">
-                  H.K. <span className="font-normal opacity-55">Help Desk Architect</span>
+                  H.K.{" "}
+                  <span className="font-normal opacity-55">
+                    Help Desk Architect
+                  </span>
                 </h3>
                 <p className="mt-0.5 text-[11px] text-emerald-300/80">
                   Male AI guide · inspired by Horace King
@@ -386,7 +389,9 @@ export default function HKChatBubble() {
                     >
                       {message.text}
                     </div>
-                    {message.triage && <PriorityBadge triage={message.triage} />}
+                    {message.triage && (
+                      <PriorityBadge triage={message.triage} />
+                    )}
                   </div>
                 </motion.div>
               ))}
@@ -457,7 +462,10 @@ export default function HKChatBubble() {
               }}
             >
               <p className="text-[11px] leading-relaxed text-white/45">
-                <strong className="text-white/60">Privacy boundary:</strong> H.K. triage is deterministic in this interface. Do not enter passwords, SSNs, bank information, medical details, or verification codes.
+                <strong className="text-white/60">Privacy boundary:</strong>{" "}
+                H.K. triage is deterministic in this interface. Do not enter
+                passwords, SSNs, bank information, medical details, or
+                verification codes.
               </p>
             </div>
 
