@@ -1,27 +1,27 @@
 name: CI
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
   pull_request:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: repair-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  repair:
-    if: github.head_ref == 'fix/first-party-hk-bridge-visuals-20260823'
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout repair branch
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: fix/first-party-hk-bridge-visuals-20260823
-          fetch-depth: 0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
         with:
@@ -35,55 +35,50 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Apply fail-closed first-party visual recovery
-        run: python3 scripts/first-party-visual-recovery.py
-
-      - name: Format repaired source
-        run: pnpm exec prettier --write client/src/pages/Home.tsx client/src/components/HKChatBubble.tsx client/src/components/TechBridgeVisuals.tsx
-
-      - name: Revalidate first-party visual invariants
-        shell: bash
-        run: |
-          set -euo pipefail
-          ! grep -q 'd2xsxph8kpxj0f.cloudfront.net' client/src/pages/Home.tsx
-          ! grep -q 'Powered by Claude AI' client/src/pages/Home.tsx
-          ! grep -q 'Powered by Anthropic Claude' client/src/pages/Home.tsx
-          ! grep -q 'augmented by generative AI' client/src/pages/Home.tsx
-          grep -q 'HeroInfrastructureBackdrop' client/src/pages/Home.tsx
-          grep -q 'NavigatorInfrastructureBackdrop' client/src/pages/Home.tsx
-          grep -q 'HubInfrastructureVisual' client/src/pages/Home.tsx
-          grep -q 'HKIdentityMark' client/src/pages/Home.tsx
-          grep -q 'SpanInfrastructureBackdrop' client/src/pages/Home.tsx
-          grep -q 'SuccessInfrastructureBackdrop' client/src/pages/Home.tsx
-          grep -q 'button\[data-hk-launcher="true"\]' client/src/pages/Home.tsx
-          grep -q 'data-hk-launcher="true"' client/src/components/HKChatBubble.tsx
-          echo 'TECHBRIDGE_FIRST_PARTY_VISUAL_REPAIR=PASS'
-
-      - name: H.K. deterministic triage regression tests
+      - name: H.K. deterministic triage tests
         run: pnpm exec vitest run client/src/lib/hkTriage.test.ts
 
-      - name: Type-check
-        run: pnpm check
-
-      - name: Production build
-        run: pnpm build
-
-      - name: Restore pristine CI and remove repair scaffolding
+      - name: Prevent debug collector re-entry
         shell: bash
         run: |
           set -euo pipefail
-          git checkout origin/main -- .github/workflows/ci.yml
-          rm -f .github/workflows/zz-first-party-visual-recovery.yml
-          rm -f .github/repair-trigger-20260823.txt
-          rm -f scripts/first-party-visual-recovery.py
+          test ! -e client/public/__manus__/debug-collector.js
 
-      - name: Commit verified product-source repair
+      - name: CI
+        run: pnpm run ci
+
+      - name: Production server SPA smoke
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git diff --cached --check
-          git commit -m "fix(visuals): restore first-party H.K. and bridge presence"
-          git push origin HEAD:fix/first-party-hk-bridge-visuals-20260823
+          PORT=4177 NODE_ENV=production node dist/index.js > /tmp/techbridge-server.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true; cat /tmp/techbridge-server.log || true' EXIT
+
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error http://127.0.0.1:4177/ -o /tmp/root.html; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl --fail --silent --show-error -D /tmp/headers.txt \
+            http://127.0.0.1:4177/ -o /tmp/root.html
+          curl --fail --silent --show-error http://127.0.0.1:4177/programs/digital-equity/deep-route -o /tmp/deep.html
+          cmp --silent /tmp/root.html /tmp/deep.html
+          grep --quiet '<div id="root"' /tmp/root.html
+          grep -qi '^x-content-type-options: nosniff' /tmp/headers.txt
+          grep -qi '^x-frame-options: DENY' /tmp/headers.txt
+          grep -qi '^referrer-policy: strict-origin-when-cross-origin' /tmp/headers.txt
+          grep -qi '^strict-transport-security: max-age=31536000' /tmp/headers.txt
+          if grep -qi '^x-powered-by:' /tmp/headers.txt; then
+            echo 'Express fingerprint header must remain disabled.' >&2
+            exit 1
+          fi
+
+          asset_path="$(grep -oE '/assets/[^\"]+\.(js|css)' /tmp/root.html | head -n 1)"
+          test -n "$asset_path"
+          curl --fail --silent --show-error \
+            "http://127.0.0.1:4177${asset_path}" \
+            -o /tmp/techbridge-asset
+          test -s /tmp/techbridge-asset

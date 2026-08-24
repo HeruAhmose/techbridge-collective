@@ -261,8 +261,9 @@ export default function HKChatBubble() {
 
         <motion.button
           ref={toggleButtonRef}
+          data-hk-launcher="true"
           onClick={toggleChat}
-          className="relative grid h-16 w-16 place-items-center rounded-full shadow-2xl"
+          className="relative flex h-16 min-w-16 items-center justify-center gap-3 rounded-full px-2.5 shadow-2xl sm:min-w-[204px] sm:justify-start sm:pr-5"
           style={{
             background: "#0F2B1F",
             border: "2px solid #C9A227",
@@ -294,6 +295,20 @@ export default function HKChatBubble() {
           ) : (
             <HKMark />
           )}
+          <div className="hidden min-w-0 text-left sm:block">
+            <p
+              className="text-sm font-bold leading-tight"
+              style={{ color: "#FDF8F0" }}
+            >
+              {isOpen ? "Close H.K." : "H.K."}
+            </p>
+            <p
+              className="mt-0.5 text-[10px] font-mono uppercase tracking-[0.12em]"
+              style={{ color: "#D8B84A" }}
+            >
+              {isOpen ? "Return to site" : "Help Desk Architect"}
+            </p>
+          </div>
           <span
             className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2"
             style={{ background: "#34D399", borderColor: "#0F2B1F" }}

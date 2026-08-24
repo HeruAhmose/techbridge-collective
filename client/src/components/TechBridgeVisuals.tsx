@@ -27,10 +27,14 @@ export function HKIdentityMark({
 }) {
   const dimensions =
     size === "lg" ? "h-24 w-24" : size === "sm" ? "h-10 w-10" : "h-14 w-14";
-  const labelSize = size === "lg" ? "text-2xl" : size === "sm" ? "text-[10px]" : "text-sm";
+  const labelSize =
+    size === "lg" ? "text-2xl" : size === "sm" ? "text-[10px]" : "text-sm";
 
   return (
-    <div className="flex items-center gap-3" aria-label="H.K. Help Desk Architect">
+    <div
+      className="flex items-center gap-3"
+      aria-label="H.K. Help Desk Architect"
+    >
       <motion.div
         className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full ${dimensions}`}
         style={{
@@ -40,11 +44,13 @@ export function HKIdentityMark({
           boxShadow:
             "inset 0 0 28px rgba(232,185,49,.08), 0 0 28px rgba(232,185,49,.14)",
         }}
-        animate={{ boxShadow: [
-          "inset 0 0 28px rgba(232,185,49,.08), 0 0 20px rgba(232,185,49,.10)",
-          "inset 0 0 28px rgba(232,185,49,.10), 0 0 34px rgba(0,212,170,.14)",
-          "inset 0 0 28px rgba(232,185,49,.08), 0 0 20px rgba(232,185,49,.10)",
-        ] }}
+        animate={{
+          boxShadow: [
+            "inset 0 0 28px rgba(232,185,49,.08), 0 0 20px rgba(232,185,49,.10)",
+            "inset 0 0 28px rgba(232,185,49,.10), 0 0 34px rgba(0,212,170,.14)",
+            "inset 0 0 28px rgba(232,185,49,.08), 0 0 20px rgba(232,185,49,.10)",
+          ],
+        }}
         transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
       >
         <span
@@ -71,16 +77,25 @@ export function HKIdentityMark({
         </svg>
         <span
           className="absolute right-[11%] top-[12%] h-2 w-2 rounded-full"
-          style={{ background: "#34D399", boxShadow: "0 0 10px rgba(52,211,153,.8)" }}
+          style={{
+            background: "#34D399",
+            boxShadow: "0 0 10px rgba(52,211,153,.8)",
+          }}
           aria-hidden="true"
         />
       </motion.div>
       {showLabel && (
         <div className="min-w-0 text-left">
-          <p className="font-display text-sm font-bold" style={{ color: "var(--tb-cream)" }}>
+          <p
+            className="font-display text-sm font-bold"
+            style={{ color: "var(--tb-cream)" }}
+          >
             H.K.
           </p>
-          <p className="text-[10px] font-mono uppercase tracking-[0.13em]" style={{ color: "rgba(0,212,170,.72)" }}>
+          <p
+            className="text-[10px] font-mono uppercase tracking-[0.13em]"
+            style={{ color: "rgba(0,212,170,.72)" }}
+          >
             Help Desk Architect
           </p>
         </div>
@@ -121,7 +136,13 @@ export function HeroInfrastructureBackdrop() {
 
 export function NavigatorInfrastructureBackdrop() {
   const nodes = [
-    [14, 66], [28, 44], [44, 58], [58, 30], [72, 52], [86, 34], [92, 68],
+    [14, 66],
+    [28, 44],
+    [44, 58],
+    [58, 30],
+    [72, 52],
+    [86, 34],
+    [92, 68],
   ];
   return (
     <div
@@ -133,7 +154,11 @@ export function NavigatorInfrastructureBackdrop() {
       aria-hidden="true"
     >
       <NetworkGrid opacity={0.16} />
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <svg
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+      >
         <path
           d="M8 78 C24 50, 34 62, 47 42 S72 28, 95 58"
           fill="none"
@@ -150,15 +175,41 @@ export function NavigatorInfrastructureBackdrop() {
         />
         {nodes.map(([x, y], i) => (
           <g key={`${x}-${y}`}>
-            <circle cx={x} cy={y} r="1.2" fill={i % 2 ? "#E8B931" : "#00D4AA"} opacity=".85" />
-            <circle cx={x} cy={y} r="3.5" fill="none" stroke={i % 2 ? "rgba(232,185,49,.22)" : "rgba(0,212,170,.2)"} strokeWidth=".45" />
+            <circle
+              cx={x}
+              cy={y}
+              r="1.2"
+              fill={i % 2 ? "#E8B931" : "#00D4AA"}
+              opacity=".85"
+            />
+            <circle
+              cx={x}
+              cy={y}
+              r="3.5"
+              fill="none"
+              stroke={i % 2 ? "rgba(232,185,49,.22)" : "rgba(0,212,170,.2)"}
+              strokeWidth=".45"
+            />
           </g>
         ))}
       </svg>
-      <div className="absolute right-[9%] top-1/2 -translate-y-1/2 rounded-2xl p-5 backdrop-blur-sm" style={{ background: "rgba(7,17,13,.48)", border: "1px solid rgba(0,212,170,.13)" }}>
+      <div
+        className="absolute right-[9%] top-1/2 -translate-y-1/2 rounded-2xl p-5 backdrop-blur-sm"
+        style={{
+          background: "rgba(7,17,13,.48)",
+          border: "1px solid rgba(0,212,170,.13)",
+        }}
+      >
         <div className="grid grid-cols-2 gap-2 opacity-65">
           {["LISTEN", "GUIDE", "VERIFY", "RETURN"].map(label => (
-            <span key={label} className="rounded-md px-2 py-1 text-[9px] font-mono tracking-[.15em]" style={{ color: "#8FE0C8", border: "1px solid rgba(0,212,170,.16)" }}>
+            <span
+              key={label}
+              className="rounded-md px-2 py-1 text-[9px] font-mono tracking-[.15em]"
+              style={{
+                color: "#8FE0C8",
+                border: "1px solid rgba(0,212,170,.16)",
+              }}
+            >
               {label}
             </span>
           ))}
@@ -168,7 +219,13 @@ export function NavigatorInfrastructureBackdrop() {
   );
 }
 
-export function HubInfrastructureVisual({ index, label }: { index: number; label: string }) {
+export function HubInfrastructureVisual({
+  index,
+  label,
+}: {
+  index: number;
+  label: string;
+}) {
   return (
     <div
       className="absolute inset-0 overflow-hidden"
@@ -182,17 +239,59 @@ export function HubInfrastructureVisual({ index, label }: { index: number; label
       }}
     >
       <NetworkGrid opacity={0.12} />
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <svg
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 400 190"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
         <path d="M0 154H400" stroke="rgba(232,185,49,.30)" />
-        <path d="M52 154V96h72v58M138 154V72h98v82M252 154V106h92v48" fill="none" stroke="rgba(253,248,240,.42)" strokeWidth="2" />
-        <path d="M160 72l27-24 27 24M282 106l16-18 16 18" fill="none" stroke="rgba(232,185,49,.65)" strokeWidth="2" />
+        <path
+          d="M52 154V96h72v58M138 154V72h98v82M252 154V106h92v48"
+          fill="none"
+          stroke="rgba(253,248,240,.42)"
+          strokeWidth="2"
+        />
+        <path
+          d="M160 72l27-24 27 24M282 106l16-18 16 18"
+          fill="none"
+          stroke="rgba(232,185,49,.65)"
+          strokeWidth="2"
+        />
         {[72, 96, 160, 187, 214, 276, 304, 328].map((x, i) => (
-          <rect key={x} x={x} y={i > 4 ? 120 : i > 1 ? 92 : 112} width="10" height="14" rx="2" fill={i % 2 ? "rgba(0,212,170,.55)" : "rgba(232,185,49,.48)"} />
+          <rect
+            key={x}
+            x={x}
+            y={i > 4 ? 120 : i > 1 ? 92 : 112}
+            width="10"
+            height="14"
+            rx="2"
+            fill={i % 2 ? "rgba(0,212,170,.55)" : "rgba(232,185,49,.48)"}
+          />
         ))}
-        <circle cx={index % 2 === 0 ? 187 : 298} cy="49" r="6" fill="#00D4AA" opacity=".85" />
-        <circle cx={index % 2 === 0 ? 187 : 298} cy="49" r="18" fill="none" stroke="rgba(0,212,170,.24)" />
+        <circle
+          cx={index % 2 === 0 ? 187 : 298}
+          cy="49"
+          r="6"
+          fill="#00D4AA"
+          opacity=".85"
+        />
+        <circle
+          cx={index % 2 === 0 ? 187 : 298}
+          cy="49"
+          r="18"
+          fill="none"
+          stroke="rgba(0,212,170,.24)"
+        />
       </svg>
-      <div className="absolute bottom-4 left-5 rounded-full px-3 py-1 text-[9px] font-mono uppercase tracking-[.16em]" style={{ color: "rgba(253,248,240,.72)", background: "rgba(7,17,13,.58)", border: "1px solid rgba(232,185,49,.16)" }}>
+      <div
+        className="absolute bottom-4 left-5 rounded-full px-3 py-1 text-[9px] font-mono uppercase tracking-[.16em]"
+        style={{
+          color: "rgba(253,248,240,.72)",
+          background: "rgba(7,17,13,.58)",
+          border: "1px solid rgba(232,185,49,.16)",
+        }}
+      >
         Pilot location · concept visual
       </div>
     </div>
@@ -203,11 +302,31 @@ export function SpanInfrastructureBackdrop() {
   return (
     <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
       <NetworkGrid opacity={0.08} />
-      <svg className="absolute inset-0 h-full w-full opacity-20" viewBox="0 0 1000 600" preserveAspectRatio="none">
-        <path d="M40 480 C190 170 330 500 500 250 S800 120 960 350" fill="none" stroke="#E8B931" strokeWidth="2" />
-        <path d="M60 180 C250 360 370 110 540 330 S810 480 950 210" fill="none" stroke="#00D4AA" strokeWidth="1.5" />
+      <svg
+        className="absolute inset-0 h-full w-full opacity-20"
+        viewBox="0 0 1000 600"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M40 480 C190 170 330 500 500 250 S800 120 960 350"
+          fill="none"
+          stroke="#E8B931"
+          strokeWidth="2"
+        />
+        <path
+          d="M60 180 C250 360 370 110 540 330 S810 480 950 210"
+          fill="none"
+          stroke="#00D4AA"
+          strokeWidth="1.5"
+        />
         {[120, 250, 390, 520, 650, 780, 900].map((x, i) => (
-          <circle key={x} cx={x} cy={i % 2 ? 325 : 275} r="6" fill={i % 2 ? "#00D4AA" : "#E8B931"} />
+          <circle
+            key={x}
+            cx={x}
+            cy={i % 2 ? 325 : 275}
+            r="6"
+            fill={i % 2 ? "#00D4AA" : "#E8B931"}
+          />
         ))}
       </svg>
     </div>
@@ -225,12 +344,41 @@ export function SuccessInfrastructureBackdrop() {
       aria-hidden="true"
     >
       <NetworkGrid opacity={0.12} />
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice">
-        <path d="M70 310 C250 210 340 330 510 220 S820 140 1120 220" fill="none" stroke="rgba(232,185,49,.52)" strokeWidth="4" strokeLinecap="round" />
-        <path d="M70 330 C260 260 370 360 530 250 S830 175 1120 245" fill="none" stroke="rgba(0,212,170,.24)" strokeWidth="2" strokeLinecap="round" />
+      <svg
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 1200 420"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <path
+          d="M70 310 C250 210 340 330 510 220 S820 140 1120 220"
+          fill="none"
+          stroke="rgba(232,185,49,.52)"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <path
+          d="M70 330 C260 260 370 360 530 250 S830 175 1120 245"
+          fill="none"
+          stroke="rgba(0,212,170,.24)"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
         <circle cx="1090" cy="220" r="12" fill="#E8B931" />
-        <circle cx="1090" cy="220" r="34" fill="none" stroke="rgba(232,185,49,.26)" strokeWidth="2" />
-        <circle cx="1090" cy="220" r="58" fill="none" stroke="rgba(232,185,49,.12)" />
+        <circle
+          cx="1090"
+          cy="220"
+          r="34"
+          fill="none"
+          stroke="rgba(232,185,49,.26)"
+          strokeWidth="2"
+        />
+        <circle
+          cx="1090"
+          cy="220"
+          r="58"
+          fill="none"
+          stroke="rgba(232,185,49,.12)"
+        />
       </svg>
     </div>
   );

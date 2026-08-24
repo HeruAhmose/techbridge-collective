@@ -21,29 +21,14 @@ import {
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
 import BridgeSVG from "../components/BridgeSVG";
-
-const CDN = {
-  bridgeHero:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/bridge-hero-3L5v75UNyLV5wZc3BXy2gE.webp",
-  communityHub:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-hub-Q9JLQXRqmAttfmjNjBXFon.webp",
-  hkAvatar:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_1024_6c459caf.jpg",
-  horaceKing:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/horace-king-tribute-WrUcXchvoiExwCufr5cq2T.webp",
-  spanJourney:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/span-journey-fgm8ge9JC6YczpG5dzHFSm.webp",
-  navigatorHelping:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
-  communityGathering:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp",
-  handsGuiding:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/navigator-session-7Fy7vkxQXuw2y8AmS6RLxZ.webp",
-  hubExterior:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/hub-exterior-Dp9FtPxyv99F7AzXgr44Ue.webp",
-  successMoment:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/success-moment-hm2uPdPFHXpkuohVUwwfqe.webp",
-};
+import {
+  HeroInfrastructureBackdrop,
+  HKIdentityMark,
+  HubInfrastructureVisual,
+  NavigatorInfrastructureBackdrop,
+  SpanInfrastructureBackdrop,
+  SuccessInfrastructureBackdrop,
+} from "../components/TechBridgeVisuals";
 
 /* ============================================
    UTILITY: Scroll-triggered reveal
@@ -268,14 +253,14 @@ const PILLARS = [
   {
     num: "02",
     title: "H.K. AI Triage",
-    desc: "Named for Horace King, master bridge builder. 24/7 step-by-step guidance between visits.",
+    desc: "H.K. is TechBridge's male Help Desk Architect, inspired by Horace King. Deterministic guidance between visits.",
     quote:
       '"H.K. is not a chatbot. It is a deterministic triage state machine." — SPAN §6.2',
     details: [
       "Routes you to the right portal and walks through each step",
       "Never guesses, never asks for credentials or passwords",
       "Escalates to a human Navigator when needed",
-      "Powered by Anthropic Claude with TechBridge safety guardrails",
+      "Deterministic browser-based triage with TechBridge safety guardrails",
     ],
     link: "/get-help",
     icon: (
@@ -685,7 +670,7 @@ export default function Home() {
   const openHKChat = useCallback(() => {
     // Find and click the H.K. chat bubble button
     const hkButton = document.querySelector(
-      'button[aria-label="Ask H.K. AI"]'
+      'button[data-hk-launcher="true"]'
     ) as HTMLButtonElement;
     if (hkButton) {
       hkButton.click();
@@ -703,16 +688,12 @@ export default function Home() {
         className="relative min-h-[calc(100vh-4rem)] flex items-center overflow-hidden"
       >
         <motion.div className="absolute inset-0" style={{ y: heroY }}>
-          <img
-            src={CDN.bridgeHero}
-            alt=""
-            className="w-full h-full object-cover"
-          />
+          <HeroInfrastructureBackdrop />
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(135deg, rgba(10, 31, 20, 0.85) 0%, rgba(10, 31, 20, 0.7) 40%, rgba(10, 31, 20, 0.92) 100%)",
+                "linear-gradient(135deg, rgba(10, 31, 20, 0.48) 0%, rgba(10, 31, 20, 0.34) 44%, rgba(10, 31, 20, 0.68) 100%)",
             }}
           />
         </motion.div>
@@ -1140,16 +1121,12 @@ export default function Home() {
           ============================================ */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src={CDN.navigatorHelping}
-            alt="Digital Navigator helping community member"
-            className="w-full h-full object-cover"
-          />
+          <NavigatorInfrastructureBackdrop />
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to right, rgba(10, 31, 20, 0.92), rgba(10, 31, 20, 0.6))",
+                "linear-gradient(to right, rgba(10, 31, 20, 0.82), rgba(10, 31, 20, 0.34))",
             }}
           />
         </div>
@@ -1323,11 +1300,7 @@ export default function Home() {
                     onClick={() => tbSoundEngine.play("nav_click")}
                   >
                     <div className="h-48 overflow-hidden relative">
-                      <img
-                        src={i === 0 ? CDN.hubExterior : CDN.communityGathering}
-                        alt={hub.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
+                      <HubInfrastructureVisual index={i} label={hub.name} />
                       <div
                         className="absolute inset-0"
                         style={{
@@ -1456,26 +1429,28 @@ export default function Home() {
                   className="text-base mb-4 leading-relaxed"
                   style={{ color: "rgba(253, 248, 240, 0.7)" }}
                 >
-                  Named for{" "}
-                  <strong className="text-glow-gold">Horace King</strong>, the
-                  enslaved master bridge builder who connected communities
-                  across the American South.
+                  H.K. is TechBridge's male Help Desk Architect, inspired by the
+                  bridge-building legacy of{" "}
+                  <strong className="text-glow-gold">Horace King</strong>. It is
+                  a product persona, not an impersonation of the historical
+                  Horace King.
                 </p>
                 <p
                   className="text-base mb-6 leading-relaxed"
                   style={{ color: "rgba(253, 248, 240, 0.5)" }}
                 >
-                  H.K. never guesses. Never asks for credentials. Routes you to
-                  the right portal, walks you through each step, and escalates
-                  to a human Navigator when needed.
+                  H.K. follows a bounded triage flow: stabilize risk, classify
+                  the issue, recommend a safe next step, and escalate to a human
+                  Navigator when the issue needs a person.
                 </p>
                 <div className="glass-card p-4 mb-6">
                   <p
                     className="text-sm italic relative z-10"
                     style={{ color: "rgba(253, 248, 240, 0.6)" }}
                   >
-                    "H.K. is not a chatbot. It is a deterministic triage state
-                    machine augmented by generative AI."
+                    "H.K. uses deterministic triage to classify, stabilize,
+                    guide, and escalate without sending chat text to an external
+                    language-model endpoint."
                   </p>
                   <p
                     className="text-xs font-mono mt-2 relative z-10"
@@ -1516,19 +1491,7 @@ export default function Home() {
                     className="flex items-center gap-3 px-5 py-4 relative z-10"
                     style={{ borderBottom: "1px solid var(--glass-border)" }}
                   >
-                    <div
-                      className="w-10 h-10 rounded-full overflow-hidden"
-                      style={{
-                        border: "2px solid var(--tb-gold)",
-                        boxShadow: "var(--glow-gold)",
-                      }}
-                    >
-                      <img
-                        src={CDN.hkAvatar}
-                        alt="H.K."
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                    <HKIdentityMark size="sm" />
                     <div>
                       <p
                         className="font-display text-sm font-bold"
@@ -1539,7 +1502,7 @@ export default function Home() {
                           className="font-normal text-xs"
                           style={{ color: "rgba(253, 248, 240, 0.4)" }}
                         >
-                          Powered by Claude AI
+                          Deterministic triage · privacy-first
                         </span>
                       </p>
                     </div>
@@ -1565,11 +1528,12 @@ export default function Home() {
                     </p>
                     <div className="flex flex-wrap gap-2 mt-3">
                       {[
+                        "🛡️ Check a suspicious message",
                         "📧 Recover my email",
+                        "🌐 Fix Wi-Fi",
                         "💼 Apply for jobs",
                         "📱 Set up my phone",
                         "📁 Upload documents",
-                        "🔑 Reset a password",
                         "🏥 Set up telehealth",
                       ].map(label => (
                         <motion.button
@@ -1674,12 +1638,7 @@ export default function Home() {
         style={{ background: "var(--tb-forest-mid)" }}
       >
         <div className="absolute inset-0">
-          <img
-            src={CDN.spanJourney}
-            alt=""
-            className="w-full h-full object-cover"
-            style={{ opacity: 0.06 }}
-          />
+          <SpanInfrastructureBackdrop />
         </div>
         <div className="container relative z-10">
           <Reveal>
@@ -2279,16 +2238,12 @@ export default function Home() {
           ============================================ */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src={CDN.successMoment}
-            alt="Community member celebrating"
-            className="w-full h-full object-cover"
-          />
+          <SuccessInfrastructureBackdrop />
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to left, rgba(10, 31, 20, 0.92), rgba(10, 31, 20, 0.6))",
+                "linear-gradient(to left, rgba(10, 31, 20, 0.82), rgba(10, 31, 20, 0.36))",
             }}
           />
         </div>
