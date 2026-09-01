@@ -21,6 +21,24 @@ const Impact = lazy(() => import("./pages/Impact"));
 const About = lazy(() => import("./pages/About"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 
+const INTRO_SESSION_KEY = "techbridge:intro-seen:v2";
+
+function hasSeenIntroThisSession() {
+  try {
+    return window.sessionStorage.getItem(INTRO_SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberIntroForSession() {
+  try {
+    window.sessionStorage.setItem(INTRO_SESSION_KEY, "1");
+  } catch {
+    // Storage may be unavailable in hardened/private browsing contexts.
+  }
+}
+
 function LoadingScreen() {
   return (
     <div
@@ -114,31 +132,33 @@ function LoadingScreen() {
 }
 
 function App() {
-  // Intro shows every page refresh — always starts as false
-  const [introComplete, setIntroComplete] = useState(false);
   const [location] = useLocation();
+  const [introComplete, setIntroComplete] = useState(
+    () => location !== "/" || hasSeenIntroThisSession()
+  );
 
   useEffect(() => {
     (window as any).TRAIOrganismV5?.routeChanged?.(location);
   }, [location]);
 
   const handleIntroComplete = useCallback(() => {
+    rememberIntroForSession();
     setIntroComplete(true);
   }, []);
 
-  // Safety: if intro hasn't completed after 30s, force it
-  useEffect(() => {
-    if (introComplete) return;
-    const safety = setTimeout(() => {
-      setIntroComplete(true);
-    }, 30000);
-    return () => clearTimeout(safety);
-  }, [introComplete]);
-
   return (
-    <div style={{ minHeight: "100vh", background: "var(--tb-forest)" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        maxWidth: "100vw",
+        overflowX: "clip",
+        background: "var(--tb-forest)",
+      }}
+    >
       {/* Cinematic Bridge-Building Intro */}
-      {!introComplete && <CinematicIntro onComplete={handleIntroComplete} />}
+      {location === "/" && !introComplete && (
+        <CinematicIntro onComplete={handleIntroComplete} />
+      )}
 
       {/* Bridge Progress Bar (scroll-linked) */}
       <BridgeProgressBar />

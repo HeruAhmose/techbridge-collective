@@ -9,17 +9,15 @@ import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
 
 const IMAGES = {
-  heroBridge:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/tb-hero-bridge-UbQzT3Yxdjbgg9ttB4ndQo.webp",
+  heroBridge: "/images/techbridge/tb-hero-bridge-UbQzT3Yxdjbgg9ttB4ndQo.webp",
   navigatorSession:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
+    "/images/techbridge/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
   communityHub:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp",
-  hkAI: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_1024_6c459caf.jpg",
+    "/images/techbridge/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp",
+  hkAI: "/images/hk/HK_avatar_1024.jpg",
   successMoment:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/success-moment-hm2uPdPFHXpkuohVUwwfqe.webp",
-  hubExterior:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/hub-exterior-Dp9FtPxyv99F7AzXgr44Ue.webp",
+    "/images/techbridge/success-moment-hm2uPdPFHXpkuohVUwwfqe.webp",
+  hubExterior: "/images/techbridge/hub-exterior-Dp9FtPxyv99F7AzXgr44Ue.webp",
 };
 
 const STORIES = [
@@ -86,7 +84,7 @@ const PILLARS = [
   },
   {
     number: 2,
-    title: "H.K. AI — 24/7 Triage",
+    title: "H.K. — 24/7 Triage",
     description:
       "Named for Horace King. Step-by-step guidance between visits. Complex cases flagged for human follow-up at next session.",
     icon: "🌉",
@@ -763,7 +761,7 @@ export default function GetHelp() {
       </section>
 
       {/* ============================================
-          H.K. AI SECTION
+          H.K. TRIAGE SECTION
           ============================================ */}
       <section
         className="py-24 md:py-36 relative overflow-hidden"
@@ -788,17 +786,18 @@ export default function GetHelp() {
                   className="text-base leading-relaxed mb-6"
                   style={{ color: "rgba(253, 248, 240, 0.7)" }}
                 >
-                  Named for Horace King, H.K. is an AI assistant that provides
-                  step-by-step guidance between hub visits. Need help at 2 AM?
-                  H.K. walks you through it. Hit something complex? H.K. flags
-                  it for your next in-person session.
+                  Named for Horace King, H.K. is a deterministic triage
+                  assistant that provides tested, step-by-step guidance between
+                  hub visits. Need help outside hub hours? H.K. routes the issue
+                  to a safe next step. Hit something complex or risky? H.K.
+                  recommends human follow-up instead of guessing.
                 </p>
                 <div className="flex flex-col gap-3">
                   {[
                     "Step-by-step guidance for common tasks",
                     "Complex cases flagged for human follow-up",
                     "Available 24/7 — no wait, no appointment",
-                    "Learns the most common community needs",
+                    "Uses tested routes for common community needs",
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <div
@@ -846,7 +845,7 @@ export default function GetHelp() {
                 />
                 <img
                   src={IMAGES.hkAI}
-                  alt="H.K. AI Assistant"
+                  alt="H.K., TechBridge Help Desk Architect"
                   className="rounded-2xl w-full relative"
                   style={{
                     boxShadow:
