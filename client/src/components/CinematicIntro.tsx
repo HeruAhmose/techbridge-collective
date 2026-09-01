@@ -1,40 +1,43 @@
 /**
  * CinematicIntro — Interactive Bridge-Building Opening Sequence
  *
- * A cinematic intro where the user CLICKS to advance each phase.
- * Each phase is slower, more dramatic, with real weight.
- * Phases: Darkness → Pillars Rise → Cables Draw → Deck Builds → Name Reveals → Enter
- *
- * The user controls the pace. Each click triggers the next phase with
- * sound and animation. The bridge builds as the user engages.
+ * A concise, self-advancing bridge-build sequence. Visitors can click to
+ * accelerate it, skip it, or let the complete crossing reveal itself.
  */
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 
 const PHASE_TEXT = [
-  { title: "", subtitle: "", hint: "Click anywhere to begin" },
+  {
+    title: "A bridge begins with a promise",
+    subtitle: "No one should have to cross the digital divide alone",
+    hint: "Building the crossing · click to advance",
+  },
   {
     title: "The Pillars Rise",
-    subtitle: "Every bridge begins with a foundation",
-    hint: "Click to draw the cables",
+    subtitle: "Trust and human guidance form the foundation",
+    hint: "Drawing the cables · click to advance",
   },
   {
     title: "The Cables Draw Taut",
-    subtitle: "Connecting what was once divided",
-    hint: "Click to build the deck",
+    subtitle: "Connecting people to systems built without them in mind",
+    hint: "Building the deck · click to advance",
   },
   {
-    title: "The Deck Takes Shape",
-    subtitle: "Plank by plank, a path emerges",
-    hint: "Click to reveal the name",
+    title: "The Crossing Takes Shape",
+    subtitle: "Access becomes capability. Capability becomes opportunity.",
+    hint: "Opening the bridge · click to advance",
   },
   {
     title: "TechBridge Collective",
     subtitle: "Building bridges of access, dignity, and opportunity",
-    hint: "Click to enter",
+    hint: "Entering automatically · click to enter now",
   },
 ];
+
+const INTRO_BRIDGE_IMAGE =
+  "/images/techbridge/bridge-hero-3L5v75UNyLV5wZc3BXy2gE.webp";
 
 export default function CinematicIntro({
   onComplete,
@@ -60,21 +63,36 @@ export default function CinematicIntro({
   const completedRef = useRef(false);
   const soundInitRef = useRef(false);
 
-  // If dismissed (safety timer or skip), call onComplete
-  useEffect(() => {
-    if (dismissed && !completedRef.current) {
-      completedRef.current = true;
-      onComplete();
-    }
-  }, [dismissed, onComplete]);
+  const completeIntro = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    setDismissed(true);
+    onComplete();
+  }, [onComplete]);
 
   // Respect OS-level "reduce motion" — skip the animated sequence entirely
   // rather than forcing a click-driven animation on users who disabled it.
   useEffect(() => {
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      setDismissed(true);
+      completeIntro();
     }
-  }, []);
+  }, [completeIntro]);
+
+  // The story advances on its own; interaction only accelerates the sequence.
+  useEffect(() => {
+    if (dismissed) return;
+    const timer = window.setTimeout(
+      () => {
+        if (phase < 4) {
+          setPhase(current => Math.min(4, current + 1));
+        } else {
+          completeIntro();
+        }
+      },
+      phase === 4 ? 1600 : 1350
+    );
+    return () => window.clearTimeout(timer);
+  }, [completeIntro, dismissed, phase]);
 
   // Particle system
   useEffect(() => {
@@ -114,15 +132,13 @@ export default function CinematicIntro({
     const interval = setInterval(() => {
       const w = canvas.width;
       const h = canvas.height;
+      addParticle(
+        Math.random() * w,
+        h * 0.5 + Math.random() * h * 0.3,
+        "rgba(201, 162, 39, 0.6)",
+        2
+      );
       if (phase >= 1) {
-        addParticle(
-          Math.random() * w,
-          h * 0.5 + Math.random() * h * 0.3,
-          "rgba(201, 162, 39, 0.6)",
-          2
-        );
-      }
-      if (phase >= 2) {
         addParticle(
           Math.random() * w,
           h * 0.3 + Math.random() * h * 0.2,
@@ -167,19 +183,6 @@ export default function CinematicIntro({
     };
   }, [dismissed, phase]);
 
-  // Safety timer — force complete after 25 seconds
-  useEffect(() => {
-    if (dismissed) return;
-    const safetyTimer = setTimeout(() => {
-      if (!completedRef.current) {
-        completedRef.current = true;
-        setDismissed(true);
-        onComplete();
-      }
-    }, 25000);
-    return () => clearTimeout(safetyTimer);
-  }, [dismissed, onComplete]);
-
   // Handle click to advance phase
   const handleAdvance = useCallback(() => {
     // Init sound on first interaction
@@ -209,33 +212,56 @@ export default function CinematicIntro({
       }
     } else {
       // Phase 4 → complete
-      completedRef.current = true;
       tbSoundEngine.play("section_enter");
-      setDismissed(true);
-      onComplete();
+      completeIntro();
     }
-  }, [phase, onComplete]);
+  }, [completeIntro, phase]);
 
   const skip = useCallback(() => {
-    if (completedRef.current) return;
-    completedRef.current = true;
-    setDismissed(true);
     tbSoundEngine.init();
-    onComplete();
-  }, [onComplete]);
+    completeIntro();
+  }, [completeIntro]);
 
   if (dismissed) return null;
 
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden cursor-pointer select-none"
-        style={{ background: "#0a1f14" }}
+        className="fixed inset-0 z-[2147483550] flex flex-col items-center justify-center overflow-hidden cursor-pointer select-none"
+        style={{ background: "#07170f" }}
         initial={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 1 }}
         onClick={handleAdvance}
+        onKeyDown={event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleAdvance();
+          }
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-label="TechBridge Collective opening bridge sequence"
+        tabIndex={0}
       >
+        {/* Recovered bridge image keeps the first frame visually meaningful. */}
+        <motion.img
+          src={INTRO_BRIDGE_IMAGE}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          initial={{ opacity: 0.32, scale: 1.035 }}
+          animate={{ opacity: 0.5, scale: 1 }}
+          transition={{ duration: 3.8, ease: [0.22, 1, 0.36, 1] }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(7,23,15,0.58) 0%, rgba(7,23,15,0.28) 48%, rgba(7,23,15,0.82) 100%)",
+          }}
+        />
+
         {/* Particle canvas */}
         <canvas
           ref={canvasRef}
@@ -250,7 +276,7 @@ export default function CinematicIntro({
             background:
               "radial-gradient(ellipse at center 60%, rgba(201, 162, 39, 0.1) 0%, transparent 70%)",
           }}
-          animate={{ opacity: phase >= 1 ? 0.3 + phase * 0.15 : 0 }}
+          animate={{ opacity: 0.38 + phase * 0.12 }}
           transition={{ duration: 2 }}
         />
 
@@ -271,7 +297,7 @@ export default function CinematicIntro({
               height="60"
               fill="url(#waterGrad)"
               initial={{ opacity: 0 }}
-              animate={{ opacity: phase >= 1 ? 0.4 : 0 }}
+              animate={{ opacity: 0.4 }}
               transition={{ duration: 2 }}
             />
 
@@ -284,7 +310,7 @@ export default function CinematicIntro({
               rx="4"
               fill="#C9A227"
               initial={{ scaleY: 0 }}
-              animate={{ scaleY: phase >= 1 ? 1 : 0 }}
+              animate={{ scaleY: 1 }}
               transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
               style={{ transformOrigin: "135px 240px" }}
             />
@@ -298,7 +324,7 @@ export default function CinematicIntro({
               rx="4"
               fill="#C9A227"
               initial={{ scaleY: 0 }}
-              animate={{ scaleY: phase >= 1 ? 1 : 0 }}
+              animate={{ scaleY: 1 }}
               transition={{
                 duration: 1.5,
                 delay: 0.4,
@@ -316,7 +342,7 @@ export default function CinematicIntro({
               rx="3"
               fill="#2D6A4F"
               initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: phase >= 1 ? 1 : 0, y: phase >= 1 ? 0 : 15 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.2 }}
             />
             <motion.rect
@@ -327,7 +353,7 @@ export default function CinematicIntro({
               rx="3"
               fill="#2D6A4F"
               initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: phase >= 1 ? 1 : 0, y: phase >= 1 ? 0 : 15 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.5 }}
             />
 
@@ -339,7 +365,7 @@ export default function CinematicIntro({
               fill="none"
               strokeLinecap="round"
               initial={{ pathLength: 0 }}
-              animate={{ pathLength: phase >= 2 ? 1 : 0 }}
+              animate={{ pathLength: phase >= 1 ? 1 : 0 }}
               transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
             />
             <motion.path
@@ -348,7 +374,7 @@ export default function CinematicIntro({
               strokeWidth="1.5"
               fill="none"
               initial={{ pathLength: 0 }}
-              animate={{ pathLength: phase >= 2 ? 1 : 0 }}
+              animate={{ pathLength: phase >= 1 ? 1 : 0 }}
               transition={{ duration: 2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
             />
 
@@ -365,7 +391,7 @@ export default function CinematicIntro({
                   stroke="rgba(201, 162, 39, 0.5)"
                   strokeWidth="1"
                   initial={{ pathLength: 0 }}
-                  animate={{ pathLength: phase >= 2 ? 1 : 0 }}
+                  animate={{ pathLength: phase >= 1 ? 1 : 0 }}
                   transition={{ duration: 0.8, delay: 0.8 + i * 0.15 }}
                 />
               );
@@ -380,7 +406,7 @@ export default function CinematicIntro({
               rx="2"
               fill="#2D6A4F"
               initial={{ scaleX: 0 }}
-              animate={{ scaleX: phase >= 3 ? 1 : 0 }}
+              animate={{ scaleX: phase >= 2 ? 1 : 0 }}
               transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
               style={{ transformOrigin: "135px 201px" }}
             />
@@ -396,7 +422,7 @@ export default function CinematicIntro({
                 rx="1"
                 fill="rgba(201, 162, 39, 0.3)"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: phase >= 3 ? 1 : 0 }}
+                animate={{ opacity: phase >= 2 ? 1 : 0 }}
                 transition={{ duration: 0.3, delay: 0.5 + i * 0.06 }}
               />
             ))}
@@ -410,12 +436,12 @@ export default function CinematicIntro({
               stroke="rgba(201, 162, 39, 0.3)"
               strokeWidth="1.5"
               initial={{ pathLength: 0 }}
-              animate={{ pathLength: phase >= 3 ? 1 : 0 }}
+              animate={{ pathLength: phase >= 2 ? 1 : 0 }}
               transition={{ duration: 1.2, delay: 0.8 }}
             />
 
             {/* Walking figures on completed bridge */}
-            {phase >= 4 && (
+            {phase >= 3 && (
               <>
                 <motion.circle
                   cx="250"
@@ -483,9 +509,9 @@ export default function CinematicIntro({
           <motion.div
             className="text-center mt-8"
             key={`text-${phase}`}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.72, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
           >
             {phase === 4 ? (
               <>
@@ -513,7 +539,7 @@ export default function CinematicIntro({
                 {PHASE_TEXT[phase].subtitle && (
                   <p
                     className="text-sm md:text-base mt-2 font-display italic"
-                    style={{ color: "rgba(253, 248, 240, 0.5)" }}
+                    style={{ color: "rgba(253, 248, 240, 0.72)" }}
                   >
                     {PHASE_TEXT[phase].subtitle}
                   </p>
@@ -529,7 +555,7 @@ export default function CinematicIntro({
           key={`hint-${phase}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: phase === 0 ? 0.5 : 1.5, duration: 0.8 }}
+          transition={{ delay: phase === 0 ? 0.35 : 0.15, duration: 0.3 }}
         >
           <motion.p
             className="text-sm font-mono tracking-wider"
@@ -563,8 +589,10 @@ export default function CinematicIntro({
         <motion.button
           className="absolute top-6 right-6 px-4 py-2 rounded-lg text-xs font-mono transition-all hover:scale-105 z-20"
           style={{
-            color: "rgba(253, 248, 240, 0.3)",
-            border: "1px solid rgba(253, 248, 240, 0.1)",
+            color: "rgba(253, 248, 240, 0.82)",
+            background: "rgba(7, 23, 15, 0.64)",
+            border: "1px solid rgba(201, 162, 39, 0.45)",
+            boxShadow: "0 8px 30px rgba(0, 0, 0, 0.22)",
           }}
           onClick={e => {
             e.stopPropagation();
@@ -572,7 +600,7 @@ export default function CinematicIntro({
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.35 }}
           whileHover={{
             color: "rgba(253, 248, 240, 0.8)",
             borderColor: "rgba(201, 162, 39, 0.4)",

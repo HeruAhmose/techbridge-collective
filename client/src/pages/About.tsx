@@ -9,15 +9,14 @@ import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
 
 const CDN = {
-  hk: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/HK_avatar_1024_6c459caf.jpg",
+  hk: "/images/hk/HK_avatar_1024.jpg",
   horaceKing:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/horace-king-tribute-WrUcXchvoiExwCufr5cq2T.webp",
+    "/images/techbridge/horace-king-tribute-WrUcXchvoiExwCufr5cq2T.webp",
   navigatorHelping:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
+    "/images/techbridge/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
   handsGuiding:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/navigator-session-7Fy7vkxQXuw2y8AmS6RLxZ.webp",
-  spanJourney:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/span-journey-fgm8ge9JC6YczpG5dzHFSm.webp",
+    "/images/techbridge/navigator-session-7Fy7vkxQXuw2y8AmS6RLxZ.webp",
+  spanJourney: "/images/techbridge/span-journey-fgm8ge9JC6YczpG5dzHFSm.webp",
 };
 
 function Reveal({
@@ -150,7 +149,8 @@ export default function About() {
               Our Story
             </div>
             <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 max-w-4xl">
-              Where Carbon Meets <span className="text-glow-gold">Crystal</span>
+              The human bridge to{" "}
+              <span className="text-glow-gold">digital access.</span>
             </h1>
             <p
               className="text-lg md:text-xl max-w-2xl"
@@ -235,7 +235,7 @@ export default function About() {
                       className="text-xs"
                       style={{ color: "rgba(0, 212, 170, 0.6)" }}
                     >
-                      24/7 AI bridge between visits
+                      24/7 deterministic triage between visits
                     </p>
                   </div>
                 </div>

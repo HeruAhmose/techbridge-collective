@@ -8,11 +8,11 @@ import { tbSoundEngine } from "../lib/TBSoundEngine";
 import Footer from "../components/Footer";
 
 const CDN = {
-  hub: "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/hub-exterior-Dp9FtPxyv99F7AzXgr44Ue.webp",
+  hub: "/images/techbridge/hub-exterior-Dp9FtPxyv99F7AzXgr44Ue.webp",
   navigator:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
+    "/images/techbridge/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
   gathering:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp",
+    "/images/techbridge/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp",
 };
 
 function Reveal({
@@ -143,7 +143,7 @@ const WE_PROVIDE = [
   {
     icon: "🌉",
     title: "H.K. AI Triage System",
-    desc: "24/7 AI-powered guidance between visits. Handles routine queries, flags complex cases.",
+    desc: "24/7 deterministic guidance between visits. Handles routine queries and flags complex cases.",
     accent: "#00D4AA",
   },
   {

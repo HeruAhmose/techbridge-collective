@@ -16,11 +16,11 @@ import Footer from "../components/Footer";
 
 const CDN = {
   successMoment:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/success-moment-hm2uPdPFHXpkuohVUwwfqe.webp",
+    "/images/techbridge/success-moment-hm2uPdPFHXpkuohVUwwfqe.webp",
   navigatorHelping:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
+    "/images/techbridge/community-navigator-J3QgpVMcvM5w7siVQDejbC.webp",
   communityGathering:
-    "https://d2xsxph8kpxj0f.cloudfront.net/310419663029216973/6A6PRiSc2SBdMKdQGVopRa/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp",
+    "/images/techbridge/community-gathering-7tsUyPrugQMATVzsJ7YZx2.webp",
 };
 
 function Reveal({
@@ -1047,7 +1047,7 @@ export default function Impact() {
                     {
                       icon: "📊",
                       title: "Proprietary Measurement",
-                      desc: "No other RDU program combines paid staff, consistent schedule, 24/7 AI, and proprietary measurement in a single zero-cost offering.",
+                      desc: "No other RDU program combines paid staff, consistent schedule, 24/7 triage, and proprietary measurement in a single zero-cost offering.",
                       source: "— SPAN §9.6",
                     },
                     {
