@@ -1,8 +1,8 @@
 /**
  * CinematicIntro — Interactive Bridge-Building Opening Sequence
  *
- * A concise, self-advancing bridge-build sequence. Visitors can click to
- * accelerate it, skip it, or let the complete crossing reveal itself.
+ * A concise, user-paced bridge-build sequence. Visitors click, tap, or use
+ * Enter/Space to advance one phase at a time, with a visible Skip option.
  */
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,7 +32,7 @@ const PHASE_TEXT = [
   {
     title: "TechBridge Collective",
     subtitle: "Building bridges of access, dignity, and opportunity",
-    hint: "Entering automatically · click to enter now",
+    hint: "Bridge complete · click to enter",
   },
 ];
 
@@ -77,22 +77,6 @@ export default function CinematicIntro({
       completeIntro();
     }
   }, [completeIntro]);
-
-  // The story advances on its own; interaction only accelerates the sequence.
-  useEffect(() => {
-    if (dismissed) return;
-    const timer = window.setTimeout(
-      () => {
-        if (phase < 4) {
-          setPhase(current => Math.min(4, current + 1));
-        } else {
-          completeIntro();
-        }
-      },
-      phase === 4 ? 1600 : 1350
-    );
-    return () => window.clearTimeout(timer);
-  }, [completeIntro, dismissed, phase]);
 
   // Particle system
   useEffect(() => {
@@ -183,7 +167,7 @@ export default function CinematicIntro({
     };
   }, [dismissed, phase]);
 
-  // Handle click to advance phase
+  // Handle click, tap, Enter, or Space to advance one phase.
   const handleAdvance = useCallback(() => {
     // Init sound on first interaction
     if (!soundInitRef.current) {
