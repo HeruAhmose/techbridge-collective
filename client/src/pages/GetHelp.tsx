@@ -696,8 +696,8 @@ export default function GetHelp() {
                 className="text-base max-w-2xl mx-auto"
                 style={{ color: "rgba(253, 248, 240, 0.55)" }}
               >
-                A complete system — not just a program. In-person help, AI
-                triage between visits, and measurable impact every month.
+                A complete system — not just a program. In-person help,
+                deterministic triage between visits, and measurable impact every month.
               </p>
             </div>
           </Reveal>

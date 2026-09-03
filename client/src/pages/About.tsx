@@ -210,14 +210,14 @@ export default function About() {
                 >
                   His legacy lives in our name and our mission. The digital
                   divide is today's river — and we build the bridges to cross
-                  it. Our AI assistant,{" "}
+                  it. Our Help Desk Architect,{" "}
                   <strong className="text-glow-gold">H.K.</strong>, carries his
                   initials and his spirit of connection.
                 </p>
                 <div className="glass-card flex items-center gap-3 p-4 mt-6">
                   <img
                     src={CDN.hk}
-                    alt="H.K. AI"
+                    alt="H.K., Help Desk Architect"
                     className="w-12 h-12 rounded-full"
                     style={{
                       border: "2px solid #E8B931",

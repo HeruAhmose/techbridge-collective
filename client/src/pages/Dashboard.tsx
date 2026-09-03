@@ -176,7 +176,7 @@ const TABS = [
   { id: "categories", label: "Categories", icon: "📁" },
   { id: "trends", label: "Trends", icon: "📈" },
   { id: "sessions", label: "Sessions", icon: "📋" },
-  { id: "hk", label: "H.K. AI", icon: "🌉" },
+  { id: "hk", label: "H.K. Triage", icon: "🌉" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -254,7 +254,7 @@ export default function Dashboard() {
                 boxShadow: "0 0 8px rgba(0, 212, 170, 0.6)",
               }}
             />
-            Live · Updates every 30s
+            Simulation · Demo data
           </div>
         </div>
 
@@ -773,7 +773,7 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* H.K. AI */}
+            {/* H.K. deterministic triage */}
             {tab === "hk" && (
               <div className="space-y-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

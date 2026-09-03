@@ -264,7 +264,7 @@ const PILLARS = [
   },
   {
     num: "02",
-    title: "H.K. AI Triage",
+    title: "H.K. Deterministic Triage",
     desc: "H.K. is TechBridge's male Help Desk Architect, inspired by Horace King. Deterministic guidance between visits.",
     quote:
       '"H.K. is not a chatbot. It is a deterministic triage state machine." — SPAN §6.2',
@@ -415,11 +415,11 @@ const SPAN_SECTIONS = [
     num: "2",
     name: "The Structure",
     subtitle: "The Three-Pillar Model",
-    focus: "Weekly Help Desk + H.K. AI Triage + TechMinutes® Reporting.",
+    focus: "Weekly Help Desk + H.K. Deterministic Triage + TechMinutes® Reporting.",
     deep: [
       "Three pillars delivered at every hub",
       "Host provides: space, Wi-Fi, promotion",
-      "TechBridge provides: Navigators, H.K. AI, reporting, all tech",
+      "TechBridge provides: Navigators, deterministic H.K. triage, reporting, all tech",
       "60-day launch timeline from agreement to first session",
       "Zero cost to the host site",
     ],
@@ -1429,7 +1429,7 @@ export default function Home() {
       </section>
 
       {/* ============================================
-          H.K. AI PREVIEW — Quick-starts open real chat
+          H.K. TRIAGE PREVIEW — Quick-starts open real chat
           ============================================ */}
       <section
         className="py-24 md:py-32"

@@ -2,7 +2,7 @@
 
 ## Context
 
-TechBridge Collective bridges the digital divide in Raleigh-Durham through paid Digital Navigators, 24/7 H.K. AI triage, and TechMinutes® impact measurement. Named for Horace King (1807–1885), the bridge builder. The "Get Help" page is the primary resident-facing entry point — it must feel warm, accessible, trustworthy, and technically impressive.
+TechBridge Collective bridges the digital divide in Raleigh-Durham through paid Digital Navigators, 24/7 deterministic H.K. triage, and TechMinutes® impact measurement. Named for Horace King (1807–1885), the bridge builder. The "Get Help" page is the primary resident-facing entry point — it must feel warm, accessible, trustworthy, and technically impressive.
 
 ---
 
