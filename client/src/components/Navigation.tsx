@@ -221,7 +221,7 @@ export default function Navigation() {
                     boxShadow: "0 0 6px rgba(0, 212, 170, 0.5)",
                   }}
                 />
-                Ask H.K. AI
+                Ask H.K.
               </span>
             </Link>
 
@@ -389,7 +389,7 @@ export default function Navigation() {
                       className="inline-block w-2 h-2 rounded-full animate-pulse mr-2"
                       style={{ background: "#00D4AA" }}
                     />
-                    Ask H.K. AI
+                    Ask H.K.
                   </span>
                 </Link>
                 <a

@@ -1057,8 +1057,8 @@ export default function Impact() {
                       source: "— SPAN §1.4, Core Value #6",
                     },
                     {
-                      icon: "🤖",
-                      title: "H.K. AI Continuity",
+                      icon: "🌉",
+                      title: "H.K. Deterministic Continuity",
                       desc: "Between visits, H.K. provides 24/7 step-by-step guidance. Complex cases are flagged for human follow-up at the next session.",
                       source: "",
                     },

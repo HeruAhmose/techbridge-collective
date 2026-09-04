@@ -47,6 +47,21 @@ jobs:
       - name: CI
         run: pnpm run ci
 
+      - name: Enforce deterministic H.K. public language
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -R -Fq 'H.K. Deterministic Triage' dist/public/assets
+          grep -R -Fq 'Simulation · Demo data' dist/public/assets
+
+          if grep -RInE 'H\.K\. AI|Our AI assistant|Live · Updates every 30s' dist/public \
+            --include='*.html' \
+            --include='*.js' \
+            --include='*.css'; then
+            echo "::error::Stale generative-AI or false-live dashboard language detected."
+            exit 1
+          fi
+
       - name: Production server SPA smoke
         shell: bash
         run: |

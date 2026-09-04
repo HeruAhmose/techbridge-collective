@@ -142,7 +142,7 @@ const WE_PROVIDE = [
   },
   {
     icon: "🌉",
-    title: "H.K. AI Triage System",
+    title: "H.K. Deterministic Triage",
     desc: "24/7 deterministic guidance between visits. Handles routine queries and flags complex cases.",
     accent: "#00D4AA",
   },
