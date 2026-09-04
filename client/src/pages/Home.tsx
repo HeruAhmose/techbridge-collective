@@ -415,7 +415,8 @@ const SPAN_SECTIONS = [
     num: "2",
     name: "The Structure",
     subtitle: "The Three-Pillar Model",
-    focus: "Weekly Help Desk + H.K. Deterministic Triage + TechMinutes® Reporting.",
+    focus:
+      "Weekly Help Desk + H.K. Deterministic Triage + TechMinutes® Reporting.",
     deep: [
       "Three pillars delivered at every hub",
       "Host provides: space, Wi-Fi, promotion",
