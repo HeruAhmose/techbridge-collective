@@ -3,8 +3,7 @@ import fs from "node:fs/promises";
 
 const PORT = 4187;
 const BASE = `http://127.0.0.1:${PORT}`;
-const CDP_HTTP =
-  process.env.TECHBRIDGE_CDP_URL || "http://127.0.0.1:9237";
+const CDP_HTTP = process.env.TECHBRIDGE_CDP_URL || "http://127.0.0.1:9237";
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function waitFor(url, attempts = 80) {
@@ -122,7 +121,9 @@ try {
     };
   })()`);
   if (initial.state !== "off" || initial.pressed !== "false") {
-    throw new Error(`sound control not truthfully off: ${JSON.stringify(initial)}`);
+    throw new Error(
+      `sound control not truthfully off: ${JSON.stringify(initial)}`
+    );
   }
   if (initial.probe.contexts !== 0 || initial.probe.oscillators !== 0) {
     throw new Error(
@@ -223,7 +224,9 @@ try {
     reduced.soundState !== "off" ||
     reduced.overflow > 1
   ) {
-    throw new Error(`reduced-motion contract failed: ${JSON.stringify(reduced)}`);
+    throw new Error(
+      `reduced-motion contract failed: ${JSON.stringify(reduced)}`
+    );
   }
 
   const report = {
