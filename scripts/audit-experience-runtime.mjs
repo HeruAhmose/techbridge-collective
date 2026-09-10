@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 
 const PORT = 4187;
 const BASE = `http://127.0.0.1:${PORT}`;
-const CDP_HTTP = process.env.TECHBRIDGE_CDP_URL || "http://127.0.0.1:9237";
+const CDP_HTTP = "http://127.0.0.1:9237";
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function waitFor(url, attempts = 80) {
