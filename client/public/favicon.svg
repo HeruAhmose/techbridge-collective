@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="TechBridge Collective bridge mark">
+  <rect width="64" height="64" rx="14" fill="#0F2B1F"/>
+  <path d="M8 43C18 24 46 24 56 43" fill="none" stroke="#C9A227" stroke-width="5" stroke-linecap="round"/>
+  <path d="M10 44H54" stroke="#F5DD7C" stroke-width="4" stroke-linecap="round"/>
+  <path d="M20 43V34M32 43V28M44 43V34" stroke="#C9A227" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="8" cy="43" r="3" fill="#F5DD7C"/><circle cx="56" cy="43" r="3" fill="#F5DD7C"/>
+</svg>
