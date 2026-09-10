@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { tbSoundEngine } from "../lib/TBSoundEngine";
 
 export default function SoundToggle() {
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
 
   const toggle = useCallback(() => {
     const newMuted = !muted;
@@ -29,8 +29,10 @@ export default function SoundToggle() {
         background: "rgba(201, 162, 39, 0.1)",
         border: "1px solid rgba(201, 162, 39, 0.2)",
       }}
-      aria-label={muted ? "Unmute sounds" : "Mute sounds"}
-      title={muted ? "Turn on sounds" : "Turn off sounds"}
+      aria-label={muted ? "Enable sounds" : "Mute sounds"}
+      aria-pressed={!muted}
+      data-techbridge-sound={muted ? "off" : "on"}
+      title={muted ? "Enable sounds" : "Mute sounds"}
     >
       {/* Waveform bars */}
       <div className="flex items-end gap-[2px] h-4">

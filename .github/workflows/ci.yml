@@ -97,3 +97,25 @@ jobs:
             "http://127.0.0.1:4177${asset_path}" \
             -o /tmp/techbridge-asset
           test -s /tmp/techbridge-asset
+
+      - name: Experience runtime browser contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/techbridge-experience-chrome
+          chrome="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$chrome"
+          "$chrome" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage \
+            --no-first-run --disable-background-networking \
+            --remote-debugging-address=127.0.0.1 --remote-debugging-port=9237 \
+            --remote-allow-origins='*' --user-data-dir=/tmp/techbridge-experience-chrome \
+            about:blank >/tmp/techbridge-experience-chrome.log 2>&1 &
+          chrome_pid=$!
+          trap 'kill "$chrome_pid" 2>/dev/null || true; cat /tmp/techbridge-experience-chrome.log || true' EXIT
+          for _ in $(seq 1 80); do
+            curl --fail --silent http://127.0.0.1:9237/json/version >/dev/null && break
+            sleep .25
+          done
+          curl --fail --silent http://127.0.0.1:9237/json/version >/dev/null
+          node scripts/audit-experience-runtime.mjs
+          cat techbridge-experience-audit.json

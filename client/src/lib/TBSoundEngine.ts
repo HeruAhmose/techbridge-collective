@@ -35,13 +35,17 @@ class TBSoundEngine {
     if (this.ctx) return;
     this.ctx = new AudioContext();
     this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.value = this.volume;
+    // Context preparation is intentionally silent. Audible output is enabled
+    // only by the explicit sound control.
+    this.masterGain.gain.value = 0;
     this.masterGain.connect(this.ctx.destination);
-    this.enabled = true;
   }
 
   setEnabled(val: boolean) {
     this.enabled = val;
+    if (val && this.ctx?.state === "suspended") {
+      void this.ctx.resume();
+    }
     if (this.masterGain) {
       this.masterGain.gain.linearRampToValueAtTime(
         val ? this.volume : 0,
