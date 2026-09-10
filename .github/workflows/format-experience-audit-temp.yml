@@ -1,0 +1,41 @@
+name: Format experience audit temp
+
+on:
+  push:
+    branches:
+      - fix/experience-runtime-20260910
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 11.22.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format exact permanent audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm exec prettier --write scripts/audit-experience-runtime.mjs
+          if git diff --quiet -- scripts/audit-experience-runtime.mjs; then
+            echo 'TECHBRIDGE_AUDIT_FORMAT=ALREADY_CLEAN'
+            exit 0
+          fi
+          pnpm exec prettier --check scripts/audit-experience-runtime.mjs
+          git diff --check
+          git config user.name 'Heru_Ahmose'
+          git config user.email 'aitconsult22@gmail.com'
+          git add scripts/audit-experience-runtime.mjs
+          git commit -m 'style(ci): format TechBridge experience audit'
+          git push origin HEAD:fix/experience-runtime-20260910
