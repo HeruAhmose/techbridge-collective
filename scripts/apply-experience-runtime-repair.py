@@ -56,4 +56,13 @@ replace_exact(
 """,
 )
 
+replace_exact(
+    "client/index.html",
+    """    <meta name=\"theme-color\" content=\"#1B4332\" />
+""",
+    """    <meta name=\"theme-color\" content=\"#1B4332\" />
+    <link rel=\"icon\" type=\"image/svg+xml\" href=\"%BASE_URL%favicon.svg\" />
+""",
+)
+
 print("TECHBRIDGE_EXPERIENCE_PATCH=APPLIED")
