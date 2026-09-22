@@ -27,5 +27,5 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: pnpm audit (high+)
-        run: pnpm audit --audit-level=high
+      - name: Audit all dependency severities
+        run: pnpm audit --audit-level=low

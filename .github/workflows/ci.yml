@@ -35,6 +35,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Audit all dependency severities
+        run: pnpm audit --audit-level=low
+
       - name: H.K. deterministic triage tests
         run: pnpm exec vitest run client/src/lib/hkTriage.test.ts
 
